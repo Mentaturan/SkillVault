@@ -78,7 +78,7 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
   return (
     <div className="space-y-3 rounded-md border bg-background p-3">
-      <div className="grid gap-3 md:grid-cols-[minmax(180px,1.4fr)_repeat(4,minmax(130px,1fr))_auto]">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(180px,1.4fr)_repeat(4,minmax(130px,1fr))_auto]">
         <div className="space-y-1.5">
           <Label htmlFor="q">搜索</Label>
           <div className="relative">
@@ -194,7 +194,7 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
               applyFilters({ sortBy: v as SortOption })
             }
           >
-            <SelectTrigger className="md:w-[130px]">
+            <SelectTrigger className="w-full lg:w-[130px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -39,6 +39,16 @@ GitHub status: no repository publishing task is tracked here until a remote and 
 - Restarting the local server does not lose data.
 - `npm run typecheck`, `npm run lint`, and `npm run build` pass.
 
+## Alpha Risk Gates
+
+These are not optional polish items. They block v0.1-alpha completion because they protect the local-first promise.
+
+- No destructive import path can proceed without a preview and an explicit user choice.
+- Rollback, import overwrite, archive, soft delete, and restore must leave a readable audit trail or visible status change.
+- Export and import must be tested as a round trip on real sample assets, not just unit-tested in isolation.
+- Duplicate handling must be deterministic. `syncId` conflicts are mandatory to resolve explicitly, and exact-content duplicates should be detectable before silent duplicate creation.
+- A restart and migration check must confirm that local SQLite data remains intact after normal development workflows.
+
 ## Phase 1 - Specification and Skeleton
 
 Status: complete.
@@ -164,6 +174,7 @@ Acceptance:
 - Pinned assets sort before unpinned assets.
 - Search covers title, description, scenario, content, and tag names.
 - Filters can be combined.
+- Exact duplicate content can be detected deterministically during create/import flows.
 - Variable placeholders use `{{variable_name}}`.
 - Rendered copy replaces variables as plain text.
 - Missing variable values are visible before copy.
@@ -181,6 +192,7 @@ Tasks:
 - [x] Add version list query and service.
 - [x] Build version history section on asset detail page.
 - [x] Add rollback Server Action.
+- [ ] Add exact-duplicate detection using content hash for create/import guardrails.
 - [ ] Smoke test metadata-only edit versus content edit.
 
 ## Phase 5 - Markdown Import and Export
@@ -204,6 +216,7 @@ Acceptance:
 - Existing `syncId` import requires overwrite, copy, or cancel.
 - Overwrite updates the existing asset and respects version rules.
 - Copy creates a new asset with a new local `id` and new `syncId`.
+- Import preview shows whether the incoming file is new, overwrite-targeted, or a duplicate candidate before mutation.
 - No automatic merge or complex diff is implemented.
 
 Tasks:
@@ -215,8 +228,10 @@ Tasks:
 - [ ] Build import page with paste/upload input.
 - [ ] Build import preview.
 - [ ] Implement `syncId` conflict detection.
+- [ ] Surface duplicate-candidate warnings for matching content hash or close metadata matches.
 - [ ] Implement overwrite, copy, and cancel strategies.
 - [ ] Add import/export smoke fixtures.
+- [ ] Run round-trip tests for export -> import overwrite and export -> import copy flows.
 
 ## Phase 6 - Alpha Polish, Verification, and Docs
 
@@ -227,6 +242,7 @@ Output:
 - Settings page.
 - Basic mobile adaptation.
 - Demo seed data.
+- Basic diagnostics or integrity status view.
 - Updated README.
 - Passing verification commands.
 - Real asset workflow smoke test.
@@ -236,6 +252,7 @@ Acceptance:
 - Mobile browser can view, search, and copy assets.
 - Data persists after service restart.
 - Empty states are useful but not marketing-heavy.
+- The app can show basic local diagnostics such as database path, migration state, and record counts.
 - README states that v0.1-alpha is localhost-only and not SaaS.
 - Full local workflow works with at least five real assets.
 
@@ -243,7 +260,10 @@ Tasks:
 
 - [ ] Build settings page with database path and project metadata.
 - [ ] Add mobile layout adaptations for list, form, and detail pages.
+- [ ] Add basic diagnostics page or settings panel section for database path, migration version, and entity counts.
 - [ ] Add seed/demo data script.
+- [ ] Add confirmations or explicit review states for destructive and overwrite-style actions.
+- [ ] Write a manual alpha smoke checklist covering CRUD, versions, rollback, import/export, archive/delete/restore, and restart persistence.
 - [ ] Update README after alpha features are complete.
 - [ ] Run `npm run typecheck`.
 - [ ] Run `npm run lint`.

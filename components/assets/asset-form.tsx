@@ -314,15 +314,15 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         <Label htmlFor="pinned">置顶这个资产</Label>
       </div>
 
-      <div className="flex gap-4">
-        <Button type="submit" disabled={isSubmitting}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
           {isSubmitting
             ? "保存中..."
             : isEditing
               ? "更新资产"
               : "创建资产"}
         </Button>
-        <Button type="button" variant="outline" onClick={() => router.back()}>
+        <Button type="button" variant="outline" onClick={() => router.back()} className="w-full sm:w-auto">
           取消
         </Button>
       </div>
