@@ -10,6 +10,19 @@ import type {
   TargetTool,
 } from "@/lib/constants";
 
+export async function findAssetBySyncId(syncId: string) {
+  return db.query.assets.findFirst({
+    where: eq(assets.syncId, syncId),
+    with: {
+      assetTags: {
+        with: {
+          tag: true,
+        },
+      },
+    },
+  });
+}
+
 export async function findAssetById(id: string) {
   return db.query.assets.findFirst({
     where: eq(assets.id, id),

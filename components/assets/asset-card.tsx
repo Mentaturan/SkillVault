@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyContentButton } from "@/components/assets/copy-content-button";
-import { Pin } from "lucide-react";
+import { Pin, Download } from "lucide-react";
 import type { Asset, Tag } from "@/db/schema";
 import { ASSET_STATUS_LABELS, ASSET_TYPE_LABELS } from "@/lib/constants";
 
@@ -53,7 +53,16 @@ export function AssetCard({ asset }: AssetCardProps) {
           >
             查看
           </Link>
-          <CopyContentButton content={asset.content} />
+          <div className="flex gap-1">
+            <Link
+              href={`/api/assets/${asset.id}/export`}
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+              title="导出 Markdown"
+            >
+              <Download className="h-4 w-4" />
+            </Link>
+            <CopyContentButton content={asset.content} />
+          </div>
         </div>
       </CardContent>
     </Card>
