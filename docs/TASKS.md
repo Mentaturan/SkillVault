@@ -8,11 +8,40 @@ SkillVault is a local-first personal workflow asset manager for 20-50 high-value
 
 The product should stay small, inspectable, and durable. It should prefer local SQLite, plain Markdown exchange, predictable UI, and explicit version history over cloud accounts, marketplaces, sync platforms, or AI automation.
 
+## Competitive Analysis
+
+A survey of existing tools in the AI workflow asset space, conducted to inform roadmap priorities.
+
+### PromptHub (790+ stars)
+
+Full-featured prompt management platform. Skill store with one-click distribution to 15+ platforms (ChatGPT, Claude, Gemini, Cursor, etc.). Rules management for AI coding tools. Project-level workspace for organizing prompts by project. AI-powered testing and evaluation. WebDAV sync. CLI tool. Client-side encryption. The strongest competitor in breadth and distribution reach.
+
+### Prompt-Tools
+
+Simpler Tauri desktop app focused on Prompt CRUD. Local-first with SQLite storage. Minimal feature set but demonstrates that a lightweight local tool can serve the same audience SkillVault targets.
+
+### Skills Desktop
+
+Dedicated SKILL.md manager. Treats SKILL.md as a first-class format rather than a generic Markdown file. Validates structure and provides tooling around the SKILL.md specification.
+
+### Anthropic Skills (agentskills.io)
+
+Official Agent Skills specification published by Anthropic. Defines a standard format for AI agent skills with metadata, triggers, and instructions. SKILL.md is becoming a de facto standard for interoperable skill definitions across AI coding tools.
+
+### Key Insights
+
+- Tool-specific export and distribution is the biggest competitive differentiator. PromptHub's one-click distribution to 15+ platforms is its most cited feature. SkillVault should prioritize making it easy to produce correct, ready-to-use files for each target tool.
+- SKILL.md is becoming a standard format. Anthropic's official specification and Skills Desktop's dedicated tooling both validate this. SkillVault should support SKILL.md as a first-class import and export format.
+- Project-level workspace organization (PromptHub) is useful for users who manage assets across multiple projects. This is a natural extension of SkillVault's collection system.
+- Local-first with SQLite (Prompt-Tools) validates SkillVault's architecture choice. The gap is in tool-specific output quality, not storage approach.
+
 ## Current Phase
 
-v0.1-alpha: complete. All acceptance criteria met.
+v0.1-beta: completing remaining items (built-in templates, export preset improvements, folder import experiment).
 
-Local status: the app has full CRUD, search/filter/sort, copy, variables, version history, rollback, Markdown import/export, settings, diagnostics, mobile adaptation, seed data, and confirmation dialogs. All verification commands pass.
+v0.2 development: starting. Tool-specific Export Templates and SKILL.md Support is the next priority, based on competitive analysis findings.
+
+Local status: the app has full CRUD, search/filter/sort, copy, variables, version history, rollback, Markdown import/export, settings, diagnostics, mobile adaptation, seed data, and confirmation dialogs. Collection CRUD, test cases, run logs, and dashboard are implemented. All verification commands pass.
 
 GitHub status: no repository publishing task is tracked here until a remote and authentication are available.
 
@@ -287,12 +316,12 @@ Primary themes:
 
 Tasks:
 
-- [ ] Implement collection CRUD.
-- [ ] Support adding and removing assets from collections.
-- [ ] Support collection ordering.
-- [ ] Implement manual test cases and run logs.
-- [ ] Attach test cases to assets and optionally to asset versions.
-- [ ] Add basic dashboard counts and recent activity.
+- [x] Implement collection CRUD.
+- [x] Support adding and removing assets from collections.
+- [x] Support collection ordering.
+- [x] Implement manual test cases and run logs.
+- [x] Attach test cases to assets and optionally to asset versions.
+- [x] Add basic dashboard counts and recent activity.
 - [ ] Add local built-in templates for common asset types.
 - [ ] Improve AGENTS.md export template.
 - [ ] Improve CLAUDE.md export template.
@@ -307,7 +336,62 @@ Exit criteria:
 - A user can record whether an asset worked in a real task.
 - A user can export multiple assets without repeating manual steps.
 
-## v0.2 - Backup, Restore, and Offline Comfort
+## v0.2 - Tool-specific Export Templates and SKILL.md Support
+
+Goal: make SkillVault the best tool for producing correct, ready-to-use files for each target AI coding tool. This is the most impactful competitive differentiator identified in the competitive analysis.
+
+Primary themes:
+
+- Tool-specific export presets with correct formatting.
+- SKILL.md first-class import and export.
+- Built-in starter templates.
+- Folder import experiment.
+
+Tasks:
+
+- [ ] Implement AGENTS.md export preset.
+- [ ] Implement CLAUDE.md export preset.
+- [ ] Implement Codex Skill SKILL.md export preset.
+- [ ] Implement Cursor Rules export preset.
+- [ ] Add SKILL.md format import detection.
+- [ ] Add SKILL.md format export.
+- [ ] Add preset-specific export API route.
+- [ ] Add built-in starter templates.
+- [ ] Experiment with folder import.
+
+Exit criteria:
+
+- A user can export an asset as a correctly formatted AGENTS.md, CLAUDE.md, Codex Skill SKILL.md, or Cursor Rules file.
+- A user can import a SKILL.md file and have it detected and parsed correctly.
+- Export presets produce files that work directly in the target tool without manual editing.
+
+## v0.3 - Project Workspace Scanner
+
+Goal: support project-level organization of assets, inspired by PromptHub's project workspace feature. Allow users to scan a local project directory and associate assets with specific projects.
+
+Primary themes:
+
+- Project workspace concept.
+- Local directory scanning.
+- Project-asset association.
+- Project-scoped views.
+
+Tasks:
+
+- [ ] Define project workspace data model.
+- [ ] Add project CRUD.
+- [ ] Support associating assets with projects.
+- [ ] Add local directory scanner for detecting existing AI config files (AGENTS.md, CLAUDE.md, .cursor/rules, etc.).
+- [ ] Add project-scoped asset view.
+- [ ] Add project dashboard with relevant asset counts and status.
+
+Exit criteria:
+
+- A user can create a project and associate assets with it.
+- A user can scan a local directory and detect existing AI configuration files.
+- A user can view all assets relevant to a specific project.
+
+## v0.4 - Backup, Restore, and Offline Comfort
 
 Goal: reduce local data-loss risk while keeping the product local-first.
 
@@ -333,7 +417,7 @@ Exit criteria:
 - A user can back up the library and restore it into a fresh local database.
 - Backup and restore behavior is understandable before any destructive operation.
 
-## v0.3 - Capture and Comparison
+## v0.5 - Capture Inbox and Version Diff
 
 Goal: make it easier to collect useful assets from daily AI work and compare changes.
 
@@ -357,58 +441,6 @@ Exit criteria:
 
 - A user can quickly capture rough material and later refine it into assets.
 - A user can compare two versions without leaving the app.
-
-## v0.4 - Local Folder Sync Experiment
-
-Goal: test whether Markdown folder sync is worth supporting without compromising data safety.
-
-Primary themes:
-
-- Local Markdown folder two-way sync.
-- Conflict copies.
-- Sync preview.
-- Optional Git repository experiment.
-
-Tasks:
-
-- [ ] Define folder sync metadata format.
-- [ ] Add dry-run sync preview.
-- [ ] Import changed Markdown files into SQLite.
-- [ ] Export changed SQLite records to Markdown.
-- [ ] Preserve conflict copies instead of overwriting silently.
-- [ ] Track `lastSyncedAt`.
-- [ ] Experiment with Git repository sync as a manual local workflow, not OAuth.
-
-Exit criteria:
-
-- Folder sync can be tested on a local folder without silent data loss.
-- Conflicts create reviewable copies.
-
-## v0.5 - Generation Templates and Composition
-
-Goal: make SkillVault better at producing tool-specific rule and skill files.
-
-Primary themes:
-
-- Codex Skill template improvements.
-- Claude Code and CLAUDE.md templates.
-- AGENTS.md composition.
-- Cursor Rules templates.
-- Skill Pack packaging.
-
-Tasks:
-
-- [ ] Add richer Codex Skill export sections.
-- [ ] Add Claude Code rule export.
-- [ ] Add CLAUDE.md export.
-- [ ] Add AGENTS.md composer from selected assets.
-- [ ] Add Cursor Rules export.
-- [ ] Define Skill Pack manifest.
-- [ ] Export a Skill Pack from a collection.
-
-Exit criteria:
-
-- A user can maintain reusable rules inside SkillVault and generate files for common AI coding tools.
 
 ## v0.6 - Curated Library, Still Local-First
 

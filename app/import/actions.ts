@@ -20,6 +20,41 @@ export async function parseMarkdownAction(markdown: string) {
   }
 }
 
+export async function batchImportAction(
+  items: { filename: string; markdown: string }[],
+) {
+  const results: { filename: string; success: boolean; assetId?: string; error?: string }[] = [];
+
+  for (const item of items) {
+    try {
+      const parsed = parseMarkdownToAsset(item.markdown);
+      if ("error" in parsed) {
+        results.push({ filename: item.filename, success: false, error: parsed.error.message });
+        continue;
+      }
+
+      const result = await importMarkdownAsset(parsed.data, "copy");
+
+      if ("cancelled" in result) {
+        results.push({ filename: item.filename, success: false, error: "导入已取消" });
+        continue;
+      }
+
+      results.push({ filename: item.filename, success: true, assetId: result.asset.id });
+    } catch (error) {
+      results.push({
+        filename: item.filename,
+        success: false,
+        error: error instanceof Error ? error.message : "导入失败",
+      });
+    }
+  }
+
+  revalidatePath("/assets");
+
+  return results;
+}
+
 export async function importMarkdownAction(
   markdown: string,
   strategy: ImportConflictStrategy,

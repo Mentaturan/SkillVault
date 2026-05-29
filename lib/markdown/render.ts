@@ -1,6 +1,11 @@
 import yaml from "js-yaml";
 import type { MarkdownFrontmatter } from "./types";
 import type { Asset, Tag } from "@/db/schema";
+import type { ExportPreset } from "@/lib/constants";
+import { renderAgentsMd } from "./presets/agents-md";
+import { renderClaudeMd } from "./presets/claude-md";
+import { renderCodexSkill } from "./presets/codex-skill";
+import { renderCursorRules } from "./presets/cursor-rules";
 
 interface AssetWithTags extends Asset {
   assetTags?: Array<{ tag: Tag }>;
@@ -38,6 +43,39 @@ export function renderAssetToMarkdown(asset: AssetWithTags): string {
   return `---\n${frontmatterStr}\n---\n\n${asset.content}`;
 }
 
+const PRESET_RENDERERS: Record<string, (asset: AssetWithTags) => string> = {
+  agents_md: renderAgentsMd,
+  claude_md: renderClaudeMd,
+  codex_skill_md: renderCodexSkill,
+  cursor_rules: renderCursorRules,
+  general_markdown: renderAssetToMarkdown,
+};
+
+export function renderAssetWithPreset(
+  asset: AssetWithTags,
+  preset?: ExportPreset,
+): string {
+  const resolved = preset ?? asset.exportPreset;
+  const renderer = PRESET_RENDERERS[resolved] ?? PRESET_RENDERERS["general_markdown"];
+  return renderer(asset);
+}
+
 export function getExportFilename(asset: Asset): string {
   return `${asset.slug}.${asset.syncId}.md`;
+}
+
+const PRESET_FILENAMES: Partial<Record<ExportPreset, (asset: Asset) => string>> = {
+  agents_md: () => "AGENTS.md",
+  claude_md: () => "CLAUDE.md",
+  codex_skill_md: (asset) => `${asset.slug}.SKILL.md`,
+  cursor_rules: (asset) => `${asset.slug}.mdc`,
+};
+
+export function getExportFilenameWithPreset(
+  asset: Asset,
+  preset?: ExportPreset,
+): string {
+  const resolved = preset ?? asset.exportPreset;
+  const fn = PRESET_FILENAMES[resolved];
+  return fn ? fn(asset) : getExportFilename(asset);
 }

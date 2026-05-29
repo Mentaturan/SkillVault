@@ -1,18 +1,18 @@
-import { renderAssetToMarkdown, getExportFilename, parseMarkdownToAsset } from "@/lib/markdown";
+import { renderAssetWithPreset, getExportFilenameWithPreset, parseMarkdownToAsset } from "@/lib/markdown";
 import type { ParsedMarkdownAsset } from "@/lib/markdown";
 import { createContentHash } from "@/lib/hash";
 import { findAssetById, findAssetBySyncId, findAssetByContentHash } from "@/server/queries/asset-queries";
 import { createNewAsset, updateExistingAsset } from "@/server/services/asset-service";
-import type { ImportConflictStrategy } from "@/lib/constants";
+import type { ImportConflictStrategy, ExportPreset } from "@/lib/constants";
 
-export async function exportAssetToMarkdown(assetId: string) {
+export async function exportAssetToMarkdown(assetId: string, preset?: ExportPreset) {
   const asset = await findAssetById(assetId);
   if (!asset) {
     throw new Error("资产不存在");
   }
 
-  const markdown = renderAssetToMarkdown(asset);
-  const filename = getExportFilename(asset);
+  const markdown = renderAssetWithPreset(asset, preset);
+  const filename = getExportFilenameWithPreset(asset, preset);
 
   return { markdown, filename };
 }

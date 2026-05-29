@@ -1,5 +1,5 @@
 export const APP_NAME = "SkillVault";
-export const APP_VERSION = "0.1.0-beta";
+export const APP_VERSION = "0.2.0-dev";
 
 export const ASSET_TYPES = [
   "agent_skill",

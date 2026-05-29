@@ -16,6 +16,7 @@ import {
   type AssetSource,
 } from "@/lib/constants";
 import { createId } from "@/lib/id";
+import { isSkillMd, parseSkillMd } from "./skill-md";
 
 function validateEnum<T extends string>(value: unknown, values: readonly T[], fallback: T): T {
   if (typeof value === "string" && (values as readonly string[]).includes(value)) {
@@ -34,6 +35,10 @@ function validateOptionalEnum<T extends string>(value: unknown, values: readonly
 export function parseMarkdownToAsset(
   markdown: string,
 ): { data: ParsedMarkdownAsset } | { error: ParseError } {
+  if (isSkillMd(markdown)) {
+    return parseSkillMd(markdown);
+  }
+
   const trimmed = markdown.trimStart();
 
   if (!trimmed.startsWith("---")) {

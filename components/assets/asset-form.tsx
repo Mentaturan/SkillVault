@@ -33,12 +33,23 @@ import type { Asset, Tag } from "@/db/schema";
 
 type FieldErrors = Record<string, string[] | undefined>;
 
+interface InitialValues {
+  title?: string;
+  type?: string;
+  targetTool?: string;
+  exportPreset?: string;
+  description?: string;
+  scenario?: string;
+  content?: string;
+}
+
 interface AssetFormProps {
   asset?: Asset & { assetTags?: { tag: Tag }[] };
   isEditing?: boolean;
+  initialValues?: InitialValues;
 }
 
-export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
+export function AssetForm({ asset, isEditing = false, initialValues }: AssetFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +109,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         <Input
           id="title"
           name="title"
-          defaultValue={asset?.title}
+          defaultValue={asset?.title ?? initialValues?.title}
           required
           maxLength={200}
           aria-invalid={!!fieldError("title")}
@@ -113,7 +124,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           <Label htmlFor="type">类型 *</Label>
           <Select
             name="type"
-            defaultValue={asset?.type ?? DEFAULT_ASSET_VALUES.type}
+            defaultValue={asset?.type ?? initialValues?.type ?? DEFAULT_ASSET_VALUES.type}
           >
             <SelectTrigger>
               <SelectValue />
@@ -136,7 +147,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           <Select
             name="targetTool"
             defaultValue={
-              asset?.targetTool ?? DEFAULT_ASSET_VALUES.targetTool
+              asset?.targetTool ?? initialValues?.targetTool ?? DEFAULT_ASSET_VALUES.targetTool
             }
           >
             <SelectTrigger>
@@ -160,7 +171,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           <Select
             name="exportPreset"
             defaultValue={
-              asset?.exportPreset ?? DEFAULT_ASSET_VALUES.exportPreset
+              asset?.exportPreset ?? initialValues?.exportPreset ?? DEFAULT_ASSET_VALUES.exportPreset
             }
           >
             <SelectTrigger>
@@ -244,7 +255,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         <Textarea
           id="description"
           name="description"
-          defaultValue={asset?.description ?? ""}
+          defaultValue={asset?.description ?? initialValues?.description ?? ""}
           rows={3}
           maxLength={2000}
         />
@@ -255,7 +266,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         <Textarea
           id="scenario"
           name="scenario"
-          defaultValue={asset?.scenario ?? ""}
+          defaultValue={asset?.scenario ?? initialValues?.scenario ?? ""}
           rows={3}
           maxLength={2000}
         />
@@ -266,7 +277,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         <Textarea
           id="content"
           name="content"
-          defaultValue={asset?.content}
+          defaultValue={asset?.content ?? initialValues?.content}
           required
           rows={10}
           className="font-mono"
