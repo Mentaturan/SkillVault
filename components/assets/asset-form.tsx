@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -313,14 +314,12 @@ export function AssetForm({ asset, isEditing = false, initialValues }: AssetForm
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
+      <div className="flex items-center space-x-2">
+        <Checkbox
           id="pinned"
           name="pinned"
           value="true"
           defaultChecked={asset?.pinned ?? false}
-          className="h-4 w-4 rounded border-gray-300"
         />
         <Label htmlFor="pinned">置顶这个资产</Label>
       </div>

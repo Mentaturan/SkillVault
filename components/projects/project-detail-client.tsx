@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Edit, Plus, Trash2, Briefcase } from "lucide-react";
 import { ASSET_TYPE_LABELS, ASSET_STATUS_LABELS } from "@/lib/constants";
-import { addAssetToProjectAction, removeAssetFromProjectAction, deleteProjectAction } from "@/app/projects/actions";
+import { removeAssetFromProjectAction, deleteProjectAction } from "@/app/projects/actions";
+import { AddAssetDialog } from "@/components/projects/add-asset-dialog";
 
 interface AssetItem {
   id: string;
@@ -38,15 +39,7 @@ interface ProjectDetailClientProps {
 
 export function ProjectDetailClient({ project, projectAssets, availableAssets }: ProjectDetailClientProps) {
   const router = useRouter();
-  const [showAdd, setShowAdd] = useState(false);
-
-  async function handleAddAsset(assetId: string) {
-    const fd = new FormData();
-    fd.set("projectId", project.id);
-    fd.set("assetId", assetId);
-    await addAssetToProjectAction(fd);
-    router.refresh();
-  }
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   async function handleRemoveAsset(assetId: string) {
     const fd = new FormData();
@@ -113,29 +106,13 @@ export function ProjectDetailClient({ project, projectAssets, availableAssets }:
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm">项目资产 ({projectAssets.length})</CardTitle>
-            <Button variant="outline" size="sm" onClick={() => setShowAdd(!showAdd)}>
+            <Button variant="outline" size="sm" onClick={() => setAddDialogOpen(true)}>
               <Plus className="mr-1 h-4 w-4" />
               添加资产
             </Button>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          {showAdd && availableAssets.length > 0 && (
-            <div className="rounded-md border p-3 space-y-2 mb-4">
-              <p className="text-sm font-medium">可添加的资产：</p>
-              <div className="space-y-1">
-                {availableAssets.map((a) => (
-                  <div key={a.id} className="flex items-center justify-between text-sm">
-                    <span>{a.title}</span>
-                    <Button size="sm" variant="ghost" onClick={() => handleAddAsset(a.id)}>
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {projectAssets.length === 0 ? (
             <p className="text-sm text-muted-foreground">暂无关联资产</p>
           ) : (
@@ -176,6 +153,13 @@ export function ProjectDetailClient({ project, projectAssets, availableAssets }:
           </dl>
         </CardContent>
       </Card>
+
+      <AddAssetDialog
+        projectId={project.id}
+        assets={availableAssets}
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+      />
     </div>
   );
 }

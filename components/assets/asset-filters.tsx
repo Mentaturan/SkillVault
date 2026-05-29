@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -210,28 +211,30 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-4 text-sm">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="includeArchived"
               checked={filters.includeArchived ?? false}
-              onChange={(e) =>
-                applyFilters({ includeArchived: e.target.checked || undefined })
+              onCheckedChange={(checked) =>
+                applyFilters({ includeArchived: checked === true || undefined })
               }
-              className="h-4 w-4 rounded border-gray-300"
             />
-            显示归档
-          </label>
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
+            <label htmlFor="includeArchived" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              显示归档
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="includeDeleted"
               checked={filters.includeDeleted ?? false}
-              onChange={(e) =>
-                applyFilters({ includeDeleted: e.target.checked || undefined })
+              onCheckedChange={(checked) =>
+                applyFilters({ includeDeleted: checked === true || undefined })
               }
-              className="h-4 w-4 rounded border-gray-300"
             />
-            显示删除
-          </label>
+            <label htmlFor="includeDeleted" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              显示删除
+            </label>
+          </div>
         </div>
 
         <div className="flex gap-2">

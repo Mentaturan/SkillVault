@@ -78,3 +78,16 @@ export async function getMaxOrderIndex(projectId: string) {
     .where(eq(projectAssets.projectId, projectId));
   return result[0]?.maxOrder ?? -1;
 }
+
+export async function findProjectsByAssetId(assetId: string) {
+  return db
+    .select({
+      id: projects.id,
+      name: projects.name,
+      icon: projects.icon,
+      color: projects.color,
+    })
+    .from(projectAssets)
+    .innerJoin(projects, eq(projectAssets.projectId, projects.id))
+    .where(eq(projectAssets.assetId, assetId));
+}

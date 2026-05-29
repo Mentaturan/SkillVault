@@ -23,6 +23,8 @@ import {
   VISIBILITY_LABELS,
 } from "@/lib/constants";
 import { ArrowLeft, Edit, History, Pin } from "lucide-react";
+import { findCollectionsByAssetId } from "@/server/queries/collection-queries";
+import { findProjectsByAssetId } from "@/server/queries/project-queries";
 
 interface AssetDetailPageProps {
   params: Promise<{ id: string }>;
@@ -40,6 +42,8 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
   const assetTags = asset.assetTags as Array<{ tag: { id: string; name: string } }> | undefined;
   const tags = assetTags?.map((at) => at.tag) ?? [];
   const variables = extractVariables(asset.content);
+  const linkedCollections = await findCollectionsByAssetId(asset.id);
+  const linkedProjects = await findProjectsByAssetId(asset.id);
 
   return (
     <div className="space-y-6">
@@ -143,6 +147,50 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
           </CardContent>
         </Card>
       )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">反向链接</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {linkedCollections.length === 0 && linkedProjects.length === 0 ? (
+            <p className="text-sm text-muted-foreground">暂无关联</p>
+          ) : (
+            <>
+              {linkedCollections.length > 0 && (
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">集合</p>
+                  {linkedCollections.map((c) => (
+                    <Link
+                      key={c.id}
+                      href={`/collections/${c.id}`}
+                      className="flex items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-muted"
+                    >
+                      <span>{c.icon ?? "📁"}</span>
+                      <span>{c.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+              {linkedProjects.length > 0 && (
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">项目</p>
+                  {linkedProjects.map((p) => (
+                    <Link
+                      key={p.id}
+                      href={`/projects/${p.id}`}
+                      className="flex items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-muted"
+                    >
+                      <span>{p.icon ?? "💼"}</span>
+                      <span>{p.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

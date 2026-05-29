@@ -146,6 +146,15 @@ export function CollectionDetailClient({ collection, collectionAssets, available
                   <Badge variant="secondary" className="text-xs shrink-0">
                     {ASSET_TYPE_LABELS[item.asset.type as keyof typeof ASSET_TYPE_LABELS] ?? item.asset.type}
                   </Badge>
+                  {item.asset.assetTags && item.asset.assetTags.length > 0 && (
+                    <>
+                      {item.asset.assetTags.map((at) => (
+                        <Badge key={at.tag.name} variant="outline" className="text-xs shrink-0">
+                          {at.tag.name}
+                        </Badge>
+                      ))}
+                    </>
+                  )}
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => handleRemove(item.assetId)}>
                   <X className="h-4 w-4 text-muted-foreground" />
