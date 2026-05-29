@@ -22,6 +22,8 @@ import type {
   AssetDeploymentPreviewView,
   AssetDeploymentStatusView,
   DeploymentTargetView,
+  ProjectDeploymentExecutionView,
+  ProjectDeploymentPreviewView,
 } from "@/lib/deployment/types";
 import { createContentHash } from "@/lib/hash";
 import { createId } from "@/lib/id";
@@ -46,6 +48,7 @@ import {
   renderAssetWithPreset,
 } from "@/lib/markdown";
 import { nowTimestamp } from "@/lib/time";
+import { getProjectById } from "@/server/services/project-service";
 
 const TARGET_TOOL_HINTS: Partial<Record<DeploymentTargetKey, TargetTool>> = {
   codex: "codex",
@@ -504,6 +507,107 @@ export async function getDeploymentPageData(assetId: string) {
       deployedContentHash: record.deployedContentHash,
       lastBackupPath: record.lastBackupPath,
       lastDeployedAt: record.lastDeployedAt,
+    })),
+  };
+}
+
+export async function previewProjectDeployment(
+  projectId: string,
+  targetId: string,
+) {
+  const project = await getProjectById(projectId);
+  if (!project) {
+    throw new Error("项目不存在");
+  }
+
+  const assetIds = project.projectAssets.map((item) => item.assetId);
+  if (assetIds.length === 0) {
+    throw new Error("项目下没有可部署的资产");
+  }
+
+  const assets = await Promise.all(
+    assetIds.map((assetId) => previewAssetDeployment({ assetId, targetId })),
+  );
+  const targetLabel = assets[0]?.targetLabel ?? "部署目标";
+
+  return {
+    projectId: project.id,
+    projectName: project.name,
+    targetId,
+    targetLabel,
+    assetCount: assets.length,
+    canDeploy: assets.every((asset) => asset.canDeploy),
+    summary: {
+      create: assets.filter((asset) => asset.plannedAction === "create").length,
+      overwrite: assets.filter((asset) => asset.plannedAction === "overwrite").length,
+      syncRecord: assets.filter((asset) => asset.plannedAction === "sync_record").length,
+      blocked: assets.filter((asset) => !asset.canDeploy).length,
+    },
+    assets,
+  } satisfies ProjectDeploymentPreviewView;
+}
+
+export async function deployProjectToTarget(
+  projectId: string,
+  targetId: string,
+) {
+  const preview = await previewProjectDeployment(projectId, targetId);
+  if (!preview.canDeploy) {
+    throw new Error("项目部署仍存在未配置的部署目标");
+  }
+
+  const results: ProjectDeploymentExecutionView["results"] = [];
+  let backupCount = 0;
+
+  for (const assetPreview of preview.assets) {
+    const result = await deployAssetToTarget({
+      assetId: assetPreview.assetId,
+      targetId,
+    });
+
+    if (result.createdBackup) {
+      backupCount += 1;
+    }
+
+    results.push({
+      assetId: assetPreview.assetId,
+      assetTitle: assetPreview.assetTitle,
+      targetFilePath: result.targetFilePath,
+      backupPath: result.backupPath,
+    });
+  }
+
+  return {
+    projectId: preview.projectId,
+    projectName: preview.projectName,
+    targetId,
+    targetLabel: preview.targetLabel,
+    deployedCount: results.length,
+    backupCount,
+    results,
+  } satisfies ProjectDeploymentExecutionView;
+}
+
+export async function getProjectDeploymentPageData(projectId: string) {
+  const project = await getProjectById(projectId);
+  if (!project) {
+    throw new Error("项目不存在");
+  }
+
+  const targets = await getDeploymentTargets();
+
+  return {
+    project: {
+      id: project.id,
+      name: project.name,
+      assetCount: project.projectAssets.length,
+    },
+    targets,
+    assets: project.projectAssets.map((item) => ({
+      id: item.asset.id,
+      title: item.asset.title,
+      status: item.asset.status,
+      type: item.asset.type,
     })),
   };
 }

@@ -79,6 +79,11 @@ export function ProjectDetailClient({ project, projectAssets, availableAssets }:
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline">
+            <Link href={`/projects/${project.id}/deploy`}>
+              部署资产
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
             <Link href={`/projects/${project.id}/edit`}>
               <Edit className="mr-2 h-4 w-4" />
               编辑

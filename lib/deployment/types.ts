@@ -54,3 +54,34 @@ export interface AssetDeploymentExecutionView {
   createdBackup: boolean;
   backupPath: string | null;
 }
+
+export interface ProjectDeploymentPreviewView {
+  projectId: string;
+  projectName: string;
+  targetId: string;
+  targetLabel: string;
+  assetCount: number;
+  canDeploy: boolean;
+  summary: {
+    create: number;
+    overwrite: number;
+    syncRecord: number;
+    blocked: number;
+  };
+  assets: AssetDeploymentPreviewView[];
+}
+
+export interface ProjectDeploymentExecutionView {
+  projectId: string;
+  projectName: string;
+  targetId: string;
+  targetLabel: string;
+  deployedCount: number;
+  backupCount: number;
+  results: Array<{
+    assetId: string;
+    assetTitle: string;
+    targetFilePath: string;
+    backupPath: string | null;
+  }>;
+}

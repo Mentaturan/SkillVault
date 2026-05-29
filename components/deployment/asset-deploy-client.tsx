@@ -72,14 +72,14 @@ export function AssetDeployClient({
     [selectedTargetId, statuses],
   );
 
-  async function handlePreview() {
+  async function runPreview(targetId: string) {
     setError(null);
     setDeployResult(null);
     setIsPreviewing(true);
 
     const result = await previewAssetDeploymentAction({
       assetId: asset.id,
-      targetId: selectedTargetId,
+      targetId,
     });
 
     if (!result.success) {
@@ -90,6 +90,10 @@ export function AssetDeployClient({
     }
 
     setIsPreviewing(false);
+  }
+
+  async function handlePreview() {
+    await runPreview(selectedTargetId);
   }
 
   async function handleDeploy() {
@@ -143,9 +147,24 @@ export function AssetDeployClient({
                 ) : null}
               </div>
               {status.lastDeployedAt ? (
-                <p className="text-xs text-muted-foreground">
-                  上次部署：{new Date(status.lastDeployedAt).toLocaleString("zh-CN")}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-muted-foreground">
+                    上次部署：{new Date(status.lastDeployedAt).toLocaleString("zh-CN")}
+                  </p>
+                  {status.enabled &&
+                  (status.status === "missing" || status.status === "broken" || status.status === "stale") ? (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={async () => {
+                        setSelectedTargetId(status.targetId);
+                        await runPreview(status.targetId);
+                      }}
+                    >
+                      修复预览
+                    </Button>
+                  ) : null}
+                </div>
               ) : null}
             </div>
           ))}

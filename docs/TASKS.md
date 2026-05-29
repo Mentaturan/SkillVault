@@ -24,7 +24,7 @@ Implemented locally:
 - Project workspaces, project-asset association, project detail views, and local directory scanning for AI config files.
 - Settings and diagnostics for local database path and record counts.
 - Full backup export bundle, restore preview and restore execution, checksum validation, and fresh-database restore smoke verification.
-- Deployment target settings, asset-level deployment preview, copy-first deploy writes, conflict backup copies, and persisted deploy status metadata.
+- Deployment target settings, asset-level and project-level deployment preview, copy-first deploy writes, conflict backup copies, persisted deploy status metadata, and repair preview for drifted targets.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -33,7 +33,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.5 local folder library and tool deployment with project-level deploy and repair actions. Backup and restore are now in place, and the single-asset deploy flow has landed.
+Next development focus: v0.6 deterministic validation and safety checks. Backup/restore and local deployment are now in place, so the next highest-value work is deterministic asset validation before broader import and deployment expansion.
 
 ## Product Positioning
 
@@ -295,7 +295,7 @@ Exit criteria:
 
 ## v0.5 - Local Folder Library and Tool Deployment
 
-Status: in progress.
+Status: complete.
 
 Goal: bridge SkillVault's database library with folder-based AI tool ecosystems while avoiding drift and silent overwrites.
 
@@ -321,9 +321,9 @@ Tasks:
 - [x] Add file existence and content-hash checks before write.
 - [x] Add conflict copy preservation for existing target files.
 - [x] Add deployment result records or metadata sufficient to show installed/stale/broken status.
-- [ ] Add project-level deploy from project assets.
-- [ ] Add repair action for missing or drifted target files.
-- [ ] Add documentation for copy vs symlink behavior.
+- [x] Add project-level deploy from project assets.
+- [x] Add repair action for missing or drifted target files.
+- [x] Add documentation for copy vs symlink behavior.
 
 Exit criteria:
 
