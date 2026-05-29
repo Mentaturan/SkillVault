@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_NAME, APP_VERSION } from "@/lib/constants";
 import { dbPath } from "@/db";
+import { DiagnosticsPanel } from "@/components/settings/diagnostics-panel";
 
 export default function SettingsPage() {
   return (
@@ -47,6 +48,8 @@ export default function SettingsPage() {
           </p>
         </CardContent>
       </Card>
+
+      <DiagnosticsPanel />
     </div>
   );
 }

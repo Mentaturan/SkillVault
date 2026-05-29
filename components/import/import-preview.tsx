@@ -17,6 +17,8 @@ interface ImportPreviewProps {
   content: string;
   hasConflict: boolean;
   conflictAssetTitle: string | null;
+  hasContentDuplicate: boolean;
+  contentDuplicateAssetTitle: string | null;
 }
 
 export function ImportPreview({
@@ -24,6 +26,8 @@ export function ImportPreview({
   content,
   hasConflict,
   conflictAssetTitle,
+  hasContentDuplicate,
+  contentDuplicateAssetTitle,
 }: ImportPreviewProps) {
   return (
     <div className="space-y-4">
@@ -113,6 +117,17 @@ export function ImportPreview({
               </p>
               <p className="text-sm text-muted-foreground">
                 冲突资产：{conflictAssetTitle}
+              </p>
+            </div>
+          )}
+
+          {hasContentDuplicate && contentDuplicateAssetTitle && (
+            <div className="rounded-md border border-yellow-500/50 bg-yellow-500/10 p-3">
+              <p className="text-sm font-medium text-yellow-600">
+                已存在内容相同的资产
+              </p>
+              <p className="text-sm text-muted-foreground">
+                重复资产：{contentDuplicateAssetTitle}
               </p>
             </div>
           )}

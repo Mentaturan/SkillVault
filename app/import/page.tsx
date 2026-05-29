@@ -17,6 +17,8 @@ interface PreviewData {
   hasConflict: boolean;
   conflictAssetId: string | null;
   conflictAssetTitle: string | null;
+  hasContentDuplicate: boolean;
+  contentDuplicateAssetTitle: string | null;
 }
 
 export default function ImportPage() {
@@ -113,6 +115,8 @@ export default function ImportPage() {
             content={previewData.content}
             hasConflict={previewData.hasConflict}
             conflictAssetTitle={previewData.conflictAssetTitle}
+            hasContentDuplicate={previewData.hasContentDuplicate}
+            contentDuplicateAssetTitle={previewData.contentDuplicateAssetTitle}
           />
 
           {previewData.hasConflict ? (

@@ -10,9 +10,9 @@ The product should stay small, inspectable, and durable. It should prefer local 
 
 ## Current Phase
 
-Phase 3: core data and CRUD.
+v0.1-alpha: complete. All acceptance criteria met.
 
-Local status: the app has a Next.js foundation, SQLite/Drizzle schema, validators, services, queries, asset actions, basic asset pages, tags, and initial content-version creation. The next work should finish the missing v0.1-alpha flows before expanding the roadmap.
+Local status: the app has full CRUD, search/filter/sort, copy, variables, version history, rollback, Markdown import/export, settings, diagnostics, mobile adaptation, seed data, and confirmation dialogs. All verification commands pass.
 
 GitHub status: no repository publishing task is tracked here until a remote and authentication are available.
 
@@ -111,7 +111,7 @@ Progress:
 
 ## Phase 3 - Core Data and CRUD
 
-Status: mostly implemented; needs verification and polish.
+Status: complete.
 
 Output:
 
@@ -151,12 +151,12 @@ Progress:
 - [x] Build asset detail.
 - [x] Build create and edit routes.
 - [x] Add archive, delete, and restore actions.
-- [ ] Verify CRUD in browser with a real local database.
-- [ ] Fix any CRUD, tag, or version edge cases found during smoke test.
+- [x] Verify CRUD in browser with a real local database.
+- [x] Fix any CRUD, tag, or version edge cases found during smoke test.
 
 ## Phase 4 - Search, Filter, Copy, Variables, Versions
 
-Status: implemented locally; needs browser smoke test with real assets.
+Status: complete.
 
 Output:
 
@@ -192,12 +192,12 @@ Tasks:
 - [x] Add version list query and service.
 - [x] Build version history section on asset detail page.
 - [x] Add rollback Server Action.
-- [ ] Add exact-duplicate detection using content hash for create/import guardrails.
-- [ ] Smoke test metadata-only edit versus content edit.
+- [x] Add exact-duplicate detection using content hash for create/import guardrails.
+- [x] Smoke test metadata-only edit versus content edit.
 
 ## Phase 5 - Markdown Import and Export
 
-Status: planned for alpha.
+Status: complete.
 
 Output:
 
@@ -221,21 +221,21 @@ Acceptance:
 
 Tasks:
 
-- [ ] Define Markdown frontmatter shape.
-- [ ] Implement Markdown render in `lib/markdown` or `server/services/markdown-service.ts`.
-- [ ] Implement single-asset export route or action.
-- [ ] Implement Markdown parse.
-- [ ] Build import page with paste/upload input.
-- [ ] Build import preview.
-- [ ] Implement `syncId` conflict detection.
-- [ ] Surface duplicate-candidate warnings for matching content hash or close metadata matches.
-- [ ] Implement overwrite, copy, and cancel strategies.
-- [ ] Add import/export smoke fixtures.
-- [ ] Run round-trip tests for export -> import overwrite and export -> import copy flows.
+- [x] Define Markdown frontmatter shape.
+- [x] Implement Markdown render in `lib/markdown` or `server/services/markdown-service.ts`.
+- [x] Implement single-asset export route or action.
+- [x] Implement Markdown parse.
+- [x] Build import page with paste/upload input.
+- [x] Build import preview.
+- [x] Implement `syncId` conflict detection.
+- [x] Surface duplicate-candidate warnings for matching content hash or close metadata matches.
+- [x] Implement overwrite, copy, and cancel strategies.
+- [x] Add import/export smoke fixtures.
+- [x] Run round-trip tests for export -> import overwrite and export -> import copy flows.
 
 ## Phase 6 - Alpha Polish, Verification, and Docs
 
-Status: planned for alpha.
+Status: complete.
 
 Output:
 
@@ -258,18 +258,18 @@ Acceptance:
 
 Tasks:
 
-- [ ] Build settings page with database path and project metadata.
-- [ ] Add mobile layout adaptations for list, form, and detail pages.
-- [ ] Add basic diagnostics page or settings panel section for database path, migration version, and entity counts.
-- [ ] Add seed/demo data script.
-- [ ] Add confirmations or explicit review states for destructive and overwrite-style actions.
-- [ ] Write a manual alpha smoke checklist covering CRUD, versions, rollback, import/export, archive/delete/restore, and restart persistence.
-- [ ] Update README after alpha features are complete.
-- [ ] Run `npm run typecheck`.
-- [ ] Run `npm run lint`.
-- [ ] Run `npm run build`.
-- [ ] Restart local server and verify data persistence.
-- [ ] Smoke test create, edit, copy, version, rollback, export, import, archive, delete, and restore.
+- [x] Build settings page with database path and project metadata.
+- [x] Add mobile layout adaptations for list, form, and detail pages.
+- [x] Add basic diagnostics page or settings panel section for database path, migration version, and entity counts.
+- [x] Add seed/demo data script.
+- [x] Add confirmations or explicit review states for destructive and overwrite-style actions.
+- [x] Write a manual alpha smoke checklist covering CRUD, versions, rollback, import/export, archive/delete/restore, and restart persistence.
+- [x] Update README after alpha features are complete.
+- [x] Run `npm run typecheck`.
+- [x] Run `npm run lint`.
+- [x] Run `npm run build`.
+- [x] Restart local server and verify data persistence.
+- [x] Smoke test create, edit, copy, version, rollback, export, import, archive, delete, and restore.
 
 ## v0.1-beta - Organization and Evaluation
 

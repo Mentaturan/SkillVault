@@ -23,6 +23,13 @@ export async function findAssetBySyncId(syncId: string) {
   });
 }
 
+export async function findAssetByContentHash(contentHash: string) {
+  return db.query.assets.findFirst({
+    where: eq(assets.contentHash, contentHash),
+    columns: { id: true, title: true, contentHash: true },
+  });
+}
+
 export async function findAssetById(id: string) {
   return db.query.assets.findFirst({
     where: eq(assets.id, id),

@@ -46,9 +46,9 @@ export async function createAssetAction(formData: FormData) {
     if (!parsed.success) {
       return { success: false, error: parsed.error.flatten().fieldErrors };
     }
-    const asset = await createNewAsset(parsed.data);
+    const result = await createNewAsset(parsed.data);
     revalidatePath("/assets");
-    return { success: true, asset };
+    return { success: true, asset: result.asset, duplicateWarning: result.duplicateWarning };
   } catch (error) {
     return {
       success: false,

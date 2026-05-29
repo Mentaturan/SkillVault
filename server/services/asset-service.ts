@@ -4,6 +4,7 @@ import { createSlug } from "@/lib/slug";
 import { nowTimestamp } from "@/lib/time";
 import {
   findAssetById,
+  findAssetByContentHash,
   findAllAssets,
   createAsset,
   updateAsset,
@@ -33,6 +34,8 @@ export async function createNewAsset(input: CreateAssetInput) {
   const slug = createSlug(input.title);
   const contentHash = createContentHash(input.content);
   const now = nowTimestamp();
+
+  const duplicate = await findAssetByContentHash(contentHash);
 
   const asset = await createAsset({
     id,
@@ -67,7 +70,11 @@ export async function createNewAsset(input: CreateAssetInput) {
     await syncAssetTags(asset.id, input.tagNames);
   }
 
-  return asset;
+  const duplicateWarning = duplicate
+    ? `已存在内容相同的资产：${duplicate.title}`
+    : undefined;
+
+  return { asset, duplicateWarning };
 }
 
 export async function updateExistingAsset(input: UpdateAssetInput) {

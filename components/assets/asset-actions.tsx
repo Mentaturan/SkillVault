@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   archiveAssetAction,
   deleteAssetAction,
@@ -18,9 +19,9 @@ interface ActionButtonProps {
 export function ArchiveButton({ id }: ActionButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   async function handleArchive() {
-    if (!confirm("确定要归档这个资产吗？")) return;
     setIsLoading(true);
     const result = await archiveAssetAction(id);
     if (result.success) {
@@ -30,19 +31,29 @@ export function ArchiveButton({ id }: ActionButtonProps) {
   }
 
   return (
-    <Button variant="outline" onClick={handleArchive} disabled={isLoading}>
-      <Archive className="mr-2 h-4 w-4" />
-      归档
-    </Button>
+    <>
+      <Button variant="outline" onClick={() => setShowConfirm(true)} disabled={isLoading}>
+        <Archive className="mr-2 h-4 w-4" />
+        归档
+      </Button>
+      <ConfirmDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title="归档资产"
+        description="确定要归档这个资产吗？归档后可以恢复。"
+        confirmLabel="归档"
+        onConfirm={handleArchive}
+      />
+    </>
   );
 }
 
 export function DeleteButton({ id }: ActionButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   async function handleDelete() {
-    if (!confirm("确定要删除这个资产吗？")) return;
     setIsLoading(true);
     const result = await deleteAssetAction(id);
     if (result.success) {
@@ -52,10 +63,21 @@ export function DeleteButton({ id }: ActionButtonProps) {
   }
 
   return (
-    <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
-      <Trash2 className="mr-2 h-4 w-4" />
-      删除
-    </Button>
+    <>
+      <Button variant="destructive" onClick={() => setShowConfirm(true)} disabled={isLoading}>
+        <Trash2 className="mr-2 h-4 w-4" />
+        删除
+      </Button>
+      <ConfirmDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title="删除资产"
+        description="确定要删除这个资产吗？删除后可以恢复。"
+        confirmLabel="删除"
+        variant="destructive"
+        onConfirm={handleDelete}
+      />
+    </>
   );
 }
 

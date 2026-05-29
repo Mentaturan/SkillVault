@@ -1,6 +1,7 @@
 import { renderAssetToMarkdown, getExportFilename, parseMarkdownToAsset } from "@/lib/markdown";
 import type { ParsedMarkdownAsset } from "@/lib/markdown";
-import { findAssetById, findAssetBySyncId } from "@/server/queries/asset-queries";
+import { createContentHash } from "@/lib/hash";
+import { findAssetById, findAssetBySyncId, findAssetByContentHash } from "@/server/queries/asset-queries";
 import { createNewAsset, updateExistingAsset } from "@/server/services/asset-service";
 import type { ImportConflictStrategy } from "@/lib/constants";
 
@@ -30,6 +31,9 @@ export async function parseMarkdownForPreview(markdown: string) {
     conflictAsset = await findAssetBySyncId(frontmatter.syncId);
   }
 
+  const contentHash = createContentHash(content);
+  const duplicateByContent = await findAssetByContentHash(contentHash);
+
   return {
     data: {
       frontmatter,
@@ -37,6 +41,8 @@ export async function parseMarkdownForPreview(markdown: string) {
       hasConflict: !!conflictAsset,
       conflictAssetId: conflictAsset?.id ?? null,
       conflictAssetTitle: conflictAsset?.title ?? null,
+      hasContentDuplicate: !!duplicateByContent,
+      contentDuplicateAssetTitle: duplicateByContent?.title ?? null,
     },
   };
 }
@@ -86,7 +92,7 @@ async function createAssetFromParsed(
 ) {
   const { frontmatter, content } = parsed;
 
-  const asset = await createNewAsset({
+  const result = await createNewAsset({
     title: frontmatter.title,
     type: frontmatter.type,
     targetTool: frontmatter.targetTool,
@@ -102,5 +108,5 @@ async function createAssetFromParsed(
     tagNames: frontmatter.tags,
   });
 
-  return { asset };
+  return { asset: result.asset };
 }
