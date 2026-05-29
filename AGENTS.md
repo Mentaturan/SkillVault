@@ -20,7 +20,7 @@ As of the current plan, v0.5 is implemented locally:
 - v0.3 project workspace scanner is complete.
 - v0.4 backup, restore, and integrity is complete.
 - v0.5 local folder library and tool deployment is complete.
-- v0.6 deterministic validation and safety checks is the next development phase.
+- v0.6 deterministic validation and safety checks is the current development phase.
 
 The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
 

@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { MarkdownFrontmatter } from "@/lib/markdown";
+import type { ValidationResult } from "@/lib/validation";
 import {
   ASSET_TYPE_LABELS,
   TARGET_TOOL_LABELS,
@@ -11,6 +12,7 @@ import {
   VISIBILITY_LABELS,
   ASSET_SOURCE_LABELS,
 } from "@/lib/constants";
+import { ValidationPanel } from "@/components/validation/validation-panel";
 
 interface ImportPreviewProps {
   frontmatter: MarkdownFrontmatter;
@@ -19,6 +21,7 @@ interface ImportPreviewProps {
   conflictAssetTitle: string | null;
   hasContentDuplicate: boolean;
   contentDuplicateAssetTitle: string | null;
+  validation: ValidationResult;
 }
 
 export function ImportPreview({
@@ -28,6 +31,7 @@ export function ImportPreview({
   conflictAssetTitle,
   hasContentDuplicate,
   contentDuplicateAssetTitle,
+  validation,
 }: ImportPreviewProps) {
   return (
     <div className="space-y-4">
@@ -145,6 +149,8 @@ export function ImportPreview({
           </pre>
         </CardContent>
       </Card>
+
+      <ValidationPanel result={validation} />
     </div>
   );
 }

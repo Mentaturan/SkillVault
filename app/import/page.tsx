@@ -9,6 +9,7 @@ import { FolderImport } from "@/components/import/folder-import";
 import { parseMarkdownAction, importMarkdownAction } from "@/app/import/actions";
 import type { MarkdownFrontmatter } from "@/lib/markdown";
 import type { ImportConflictStrategy } from "@/lib/constants";
+import type { ValidationResult } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
@@ -20,6 +21,7 @@ interface PreviewData {
   conflictAssetTitle: string | null;
   hasContentDuplicate: boolean;
   contentDuplicateAssetTitle: string | null;
+  validation: ValidationResult;
 }
 
 type ImportTab = "single" | "batch";
@@ -148,6 +150,7 @@ export default function ImportPage() {
                 conflictAssetTitle={previewData.conflictAssetTitle}
                 hasContentDuplicate={previewData.hasContentDuplicate}
                 contentDuplicateAssetTitle={previewData.contentDuplicateAssetTitle}
+                validation={previewData.validation}
               />
 
               {previewData.hasConflict ? (

@@ -198,3 +198,14 @@ export async function findAssetsByTagId(tagId: string) {
     .where(eq(assetTags.tagId, tagId));
   return result.map((r) => r.assets);
 }
+
+export async function findAssetsByExactTitle(title: string) {
+  return db.query.assets.findMany({
+    where: and(eq(assets.title, title), isNull(assets.deletedAt)),
+    columns: {
+      id: true,
+      title: true,
+      type: true,
+    },
+  });
+}

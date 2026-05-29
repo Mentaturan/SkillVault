@@ -4,6 +4,7 @@ import { createContentHash } from "@/lib/hash";
 import { findAssetById, findAssetBySyncId, findAssetByContentHash } from "@/server/queries/asset-queries";
 import { createNewAsset, updateExistingAsset } from "@/server/services/asset-service";
 import type { ImportConflictStrategy, ExportPreset } from "@/lib/constants";
+import { validateParsedImport } from "@/server/services/validation-service";
 
 export async function exportAssetToMarkdown(assetId: string, preset?: ExportPreset) {
   const asset = await findAssetById(assetId);
@@ -33,6 +34,7 @@ export async function parseMarkdownForPreview(markdown: string) {
 
   const contentHash = createContentHash(content);
   const duplicateByContent = await findAssetByContentHash(contentHash);
+  const validation = await validateParsedImport(markdown, result.data);
 
   return {
     data: {
@@ -43,6 +45,7 @@ export async function parseMarkdownForPreview(markdown: string) {
       conflictAssetTitle: conflictAsset?.title ?? null,
       hasContentDuplicate: !!duplicateByContent,
       contentDuplicateAssetTitle: duplicateByContent?.title ?? null,
+      validation,
     },
   };
 }

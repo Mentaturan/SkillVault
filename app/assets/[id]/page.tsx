@@ -8,6 +8,7 @@ import { VariableCopyPanel } from "@/components/assets/variable-copy-panel";
 import { getAssetById } from "@/server/services/asset-service";
 import { getVersionsByAssetId } from "@/server/services/version-service";
 import { extractVariables } from "@/lib/variables";
+import { ValidationPanel } from "@/components/validation/validation-panel";
 import {
   ArchiveButton,
   DeleteButton,
@@ -25,6 +26,7 @@ import {
 import { ArrowLeft, Edit, History, Pin } from "lucide-react";
 import { findCollectionsByAssetId } from "@/server/queries/collection-queries";
 import { findProjectsByAssetId } from "@/server/queries/project-queries";
+import { validateExistingAsset } from "@/server/services/validation-service";
 
 interface AssetDetailPageProps {
   params: Promise<{ id: string }>;
@@ -44,6 +46,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
   const variables = extractVariables(asset.content);
   const linkedCollections = await findCollectionsByAssetId(asset.id);
   const linkedProjects = await findProjectsByAssetId(asset.id);
+  const validation = await validateExistingAsset(asset.id);
 
   return (
     <div className="space-y-6">
@@ -135,6 +138,8 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
       </Card>
 
       <VariableCopyPanel content={asset.content} variables={variables} />
+
+      <ValidationPanel result={validation} />
 
       {tags.length > 0 && (
         <Card>
