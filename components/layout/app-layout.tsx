@@ -8,9 +8,10 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   FileText,
+  FolderOpen,
+  Plus,
   Import,
   Settings,
-  Plus,
   Menu,
   X,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 const NAV_ITEMS: Array<{ href: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { href: "/", label: "仪表盘", icon: LayoutDashboard, exact: true },
   { href: "/assets", label: "资产库", icon: FileText },
+  { href: "/collections", label: "集合", icon: FolderOpen },
   { href: "/assets/new", label: "新建资产", icon: Plus },
   { href: "/import", label: "导入", icon: Import },
   { href: "/settings", label: "设置", icon: Settings },

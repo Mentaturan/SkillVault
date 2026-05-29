@@ -11,6 +11,7 @@ import {
   TARGET_TOOLS,
 } from "@/lib/constants";
 import { Plus } from "lucide-react";
+import { BatchExportButton } from "@/components/assets/batch-export-button";
 
 interface AssetsPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -74,12 +75,15 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
             管理可复用的 AI 工作流资产
           </p>
         </div>
-        <Button asChild>
-          <Link href="/assets/new">
-            <Plus className="mr-2 h-4 w-4" />
-            新建资产
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <BatchExportButton assetIds={assets.map((a) => a.id)} />
+          <Button asChild>
+            <Link href="/assets/new">
+              <Plus className="mr-2 h-4 w-4" />
+              新建资产
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <AssetFilters filters={filters} tags={tags} />

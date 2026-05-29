@@ -76,6 +76,11 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
               导出
             </Link>
           </Button>
+          <Button asChild variant="outline">
+            <Link href={`/assets/${asset.id}/test-cases`}>
+              测试用例
+            </Link>
+          </Button>
           {asset.status !== "archived" && (
             <ArchiveButton id={asset.id} />
           )}

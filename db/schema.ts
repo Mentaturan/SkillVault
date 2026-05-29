@@ -178,6 +178,7 @@ export const assetsRelations = relations(assets, ({ many }) => ({
   assetVersions: many(assetVersions),
   assetTags: many(assetTags),
   testCases: many(testCases),
+  collectionAssets: many(collectionAssets),
 }));
 
 export const assetVersionsRelations = relations(assetVersions, ({ one }) => ({
@@ -199,6 +200,21 @@ export const assetTagsRelations = relations(assetTags, ({ one }) => ({
   tag: one(tags, {
     fields: [assetTags.tagId],
     references: [tags.id],
+  }),
+}));
+
+export const collectionsRelations = relations(collections, ({ many }) => ({
+  collectionAssets: many(collectionAssets),
+}));
+
+export const collectionAssetsRelations = relations(collectionAssets, ({ one }) => ({
+  collection: one(collections, {
+    fields: [collectionAssets.collectionId],
+    references: [collections.id],
+  }),
+  asset: one(assets, {
+    fields: [collectionAssets.assetId],
+    references: [assets.id],
   }),
 }));
 
