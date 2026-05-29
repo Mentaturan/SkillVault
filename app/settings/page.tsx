@@ -58,9 +58,14 @@ export default function SettingsPage() {
           <p>
             导出当前本地库的完整备份 bundle，包含 Markdown 资产、版本历史、标签、集合、项目成员关系和校验信息。
           </p>
-          <Button asChild>
-            <a href="/api/backup/export">导出完整备份</a>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild>
+              <a href="/api/backup/export">导出完整备份</a>
+            </Button>
+            <Button variant="outline" asChild>
+              <a href="/restore">进入恢复页</a>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 

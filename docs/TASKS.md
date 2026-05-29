@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.3 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
+Local milestone state: v0.4 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
 
 Implemented locally:
 
@@ -23,6 +23,7 @@ Implemented locally:
 - Built-in starter templates.
 - Project workspaces, project-asset association, project detail views, and local directory scanning for AI config files.
 - Settings and diagnostics for local database path and record counts.
+- Full backup export bundle, restore preview and restore execution, checksum validation, and fresh-database restore smoke verification.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -31,7 +32,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: v0.4 backup, restore, and integrity. This is the highest-value next step because the product is local-first and now has enough data creation paths that data loss prevention matters more than additional surface area.
+Next development focus: v0.5 local folder library and tool deployment. Backup and restore are now in place, so the next practical step is controlled deployment into real tool directories with preview, conflict preservation, and drift visibility.
 
 ## Product Positioning
 
@@ -245,7 +246,7 @@ Exit criteria:
 
 ## v0.4 - Backup, Restore, and Integrity
 
-Status: next.
+Status: complete.
 
 Goal: make local data loss and accidental overwrite unlikely.
 
@@ -272,16 +273,16 @@ Tasks:
 - [x] Include assets as Markdown using `syncId`, not local `id`.
 - [x] Include versions in a deterministic manifest section or sidecar file.
 - [x] Include collection and project membership without requiring local IDs.
-- [ ] Add restore parser with Zod validation.
-- [ ] Add restore preview page showing create/overwrite/copy/skip candidates.
-- [ ] Add restore conflict options: skip, overwrite by `syncId`, copy with new `syncId`.
-- [ ] Add checksum mismatch warnings.
-- [ ] Add fresh-database restore smoke fixture.
+- [x] Add restore parser with Zod validation.
+- [x] Add restore preview page showing create/overwrite/copy/skip candidates.
+- [x] Add restore conflict options: skip, overwrite by `syncId`, copy with new `syncId`.
+- [x] Add checksum mismatch warnings.
+- [x] Add fresh-database restore smoke fixture.
 - [x] Add diagnostics for migration state, database path, entity counts, and last backup timestamp if available.
-- [ ] Document backup and restore in `README.md`.
-- [ ] Run `npm run typecheck`.
-- [ ] Run `npm run lint`.
-- [ ] Run `npm run build`.
+- [x] Document backup and restore in `README.md`.
+- [x] Run `npm run typecheck`.
+- [x] Run `npm run lint`.
+- [x] Run `npm run build`.
 
 Exit criteria:
 

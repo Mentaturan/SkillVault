@@ -1,6 +1,15 @@
 import { z } from "zod";
 
 import { createContentHash } from "@/lib/hash";
+import {
+  ASSET_SOURCES,
+  ASSET_STATUSES,
+  ASSET_TYPES,
+  EXPORT_PRESETS,
+  TARGET_TOOLS,
+  TEST_CASE_KINDS,
+  VISIBILITIES,
+} from "@/lib/constants";
 
 export const BACKUP_BUNDLE_FORMAT = "skillvault-backup";
 export const BACKUP_SCHEMA_VERSION = 1;
@@ -22,7 +31,7 @@ export const backupAssetVersionSchema = z.object({
 });
 
 export const backupTestCaseSchema = z.object({
-  kind: z.enum(["test_case", "run_log"]),
+  kind: z.enum(TEST_CASE_KINDS),
   title: z.string().min(1),
   input: z.string(),
   expectedOutput: z.string().nullable(),
@@ -43,15 +52,16 @@ export const backupAssetSchema = z.object({
   metadata: z.object({
     slug: z.string().min(1),
     title: z.string().min(1),
-    type: z.string().min(1),
-    targetTool: z.string().min(1),
-    exportPreset: z.string().min(1),
+    type: z.enum(ASSET_TYPES),
+    targetTool: z.enum(TARGET_TOOLS),
+    exportPreset: z.enum(EXPORT_PRESETS),
     description: z.string().nullable(),
     scenario: z.string().nullable(),
-    status: z.string().min(1),
+    status: z.enum(ASSET_STATUSES),
+    contentHash: z.string().min(1),
     rating: z.number().int().nullable(),
-    visibility: z.string().min(1),
-    source: z.string().min(1),
+    visibility: z.enum(VISIBILITIES),
+    source: z.enum(ASSET_SOURCES),
     sourceUrl: z.string().nullable(),
     pinned: z.boolean(),
     createdAt: z.number().int().nonnegative(),
@@ -131,9 +141,45 @@ export const backupMetadataSchema = z.object({
   migrationMarker: z.string().min(1),
 });
 
+export const restorePreviewAssetSchema = z.object({
+  syncId: z.string().min(1),
+  title: z.string().min(1),
+  action: z.enum(["create", "overwrite", "copy", "skip"]),
+  targetAssetId: z.string().nullable(),
+  targetAssetTitle: z.string().nullable(),
+  warnings: z.array(z.string()),
+});
+
+export const restorePreviewGroupSchema = z.object({
+  name: z.string().min(1),
+  action: z.enum(["create", "update"]),
+  warnings: z.array(z.string()),
+});
+
+export const restorePreviewSchema = z.object({
+  manifest: backupManifestSchema,
+  checksumValid: z.boolean(),
+  checksumWarning: z.string().nullable(),
+  errors: z.array(z.string()),
+  summary: z.object({
+    createAssets: z.number().int().nonnegative(),
+    overwriteAssets: z.number().int().nonnegative(),
+    copyAssets: z.number().int().nonnegative(),
+    skipAssets: z.number().int().nonnegative(),
+    updateCollections: z.number().int().nonnegative(),
+    createCollections: z.number().int().nonnegative(),
+    updateProjects: z.number().int().nonnegative(),
+    createProjects: z.number().int().nonnegative(),
+  }),
+  assets: z.array(restorePreviewAssetSchema),
+  collections: z.array(restorePreviewGroupSchema),
+  projects: z.array(restorePreviewGroupSchema),
+});
+
 export type BackupData = z.infer<typeof backupDataSchema>;
 export type BackupBundle = z.infer<typeof backupBundleSchema>;
 export type BackupMetadata = z.infer<typeof backupMetadataSchema>;
+export type RestorePreview = z.infer<typeof restorePreviewSchema>;
 
 function canonicalize(value: unknown): unknown {
   if (Array.isArray(value)) {

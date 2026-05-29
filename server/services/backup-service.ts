@@ -99,6 +99,7 @@ export async function exportBackupBundle() {
         description: asset.description,
         scenario: asset.scenario,
         status: asset.status,
+        contentHash: asset.contentHash,
         rating: asset.rating,
         visibility: asset.visibility,
         source: asset.source,

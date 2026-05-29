@@ -142,6 +142,19 @@ export const IMPORT_CONFLICT_STRATEGIES = [
 ] as const;
 export type ImportConflictStrategy = (typeof IMPORT_CONFLICT_STRATEGIES)[number];
 
+export const RESTORE_CONFLICT_STRATEGIES = [
+  "skip",
+  "overwrite",
+  "copy",
+] as const;
+export type RestoreConflictStrategy = (typeof RESTORE_CONFLICT_STRATEGIES)[number];
+
+export const RESTORE_CONFLICT_STRATEGY_LABELS: Record<RestoreConflictStrategy, string> = {
+  skip: "跳过冲突项",
+  overwrite: "按 syncId 覆盖",
+  copy: "复制为新 syncId",
+};
+
 export const DEFAULT_ASSET_VALUES = {
   type: "chat_prompt",
   targetTool: "general",
