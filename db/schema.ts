@@ -172,6 +172,36 @@ export const testCases = sqliteTable(
   }),
 );
 
+import { relations } from "drizzle-orm";
+
+export const assetsRelations = relations(assets, ({ many }) => ({
+  assetVersions: many(assetVersions),
+  assetTags: many(assetTags),
+  testCases: many(testCases),
+}));
+
+export const assetVersionsRelations = relations(assetVersions, ({ one }) => ({
+  asset: one(assets, {
+    fields: [assetVersions.assetId],
+    references: [assets.id],
+  }),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  assetTags: many(assetTags),
+}));
+
+export const assetTagsRelations = relations(assetTags, ({ one }) => ({
+  asset: one(assets, {
+    fields: [assetTags.assetId],
+    references: [assets.id],
+  }),
+  tag: one(tags, {
+    fields: [assetTags.tagId],
+    references: [tags.id],
+  }),
+}));
+
 export type Asset = typeof assets.$inferSelect;
 export type NewAsset = typeof assets.$inferInsert;
 export type AssetVersion = typeof assetVersions.$inferSelect;

@@ -8,6 +8,16 @@ It is not a SaaS, prompt market, AI chat tool, RAG system, sync service, browser
 
 SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Windsurf rules, AGENTS.md, CLAUDE.md, AI chat prompts, image prompts, reply templates, copywriting templates, code review rules, file workflows, SOPs, checklists, and reusable prompts/skills/rules extracted from AI conversations.
 
+## Product Principles
+
+- Local-first beats cloud convenience.
+- SQLite is the primary database; Markdown is the exchange format.
+- The app should stay useful for one person managing a small, high-value library.
+- Prefer complete workflows over broad but shallow feature coverage.
+- Prefer deterministic parsing, validation, and checks before adding AI-assisted behavior.
+- Treat data loss prevention as a core product feature.
+- Keep the UI practical and dense enough for repeated use.
+
 ## Technical Stack
 
 - Next.js App Router.
@@ -27,6 +37,7 @@ SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Wi
 - Markdown is an exchange format, not the primary database.
 - Drizzle TypeScript schema is the database source of truth.
 - v0.1-alpha has no login, no sync, no AI API, and no cloud integration.
+- Later roadmap experiments must not weaken alpha data safety.
 
 ## Layering Rules
 
@@ -38,10 +49,8 @@ SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Wi
 - Markdown parsing/rendering belongs in `lib/markdown` or `server/services/markdown-service.ts`.
 - Variable parsing/rendering belongs in `lib/variables` or `server/services/variable-service.ts`.
 - Enum values and defaults belong in `lib/constants.ts`.
-
-## Forbidden in v0.1-alpha
-
-Do not implement login, user accounts, cloud sync, OAuth, iCloud API, OneDrive API, GitHub OAuth, Skill markets, third-party Skill downloads, AI prompt optimization, browser plugins, OCR capture, multi-model chat, RAG, team features, comments, likes, payments, complex charts, Monaco, CodeMirror, rich text editing, complex diff, zip export, Electron, Tauri, mobile app publishing, cloud deployment adaptation, multi-user permissions, public sharing, template stores, or remote curated libraries.
+- Database schema changes belong in `db/schema.ts` and Drizzle migrations.
+- Shared utilities belong in `lib/`, not page files.
 
 ## Version Rules
 
@@ -51,10 +60,53 @@ Do not implement login, user accounts, cloud sync, OAuth, iCloud API, OneDrive A
 - Rollback writes old content to the asset and creates a new version.
 - Rollback note format: `Rollback to version X`.
 - Versions are never deleted.
+- Version history must remain readable after import, export, rollback, and restore workflows.
+
+## Markdown Rules
+
+- Export uses `syncId`, not local `id`.
+- Export filename format is `{slug}.{syncId}.md`.
+- Frontmatter is allowed for structured metadata.
+- Plain Markdown body remains the asset content.
+- Import conflict strategies are `overwrite`, `copy`, and `cancel`.
+- Do not implement automatic merge or complex diff in v0.1-alpha.
+
+## Roadmap Discipline
+
+Use `docs/TASKS.md` as the source of truth for development order.
+
+Do not skip unfinished v0.1-alpha acceptance work to implement later roadmap items. If a later feature seems useful, record it in the relevant future phase instead of implementing it immediately.
+
+Before adding a new feature, classify it as one of:
+
+- v0.1-alpha acceptance work.
+- v0.1-beta organization/evaluation work.
+- Future roadmap work.
+- Parked backlog or forbidden scope.
+
+If a feature crosses roadmap boundaries, implement the smaller alpha-safe subset first.
+
+## Forbidden in v0.1-alpha
+
+Do not implement login, user accounts, cloud sync, OAuth, iCloud API, OneDrive API, GitHub OAuth, Skill markets, third-party Skill downloads, AI prompt optimization, browser plugins, OCR capture, multi-model chat, RAG, team features, comments, likes, payments, complex charts, Monaco, CodeMirror, rich text editing, complex diff, zip export, Electron, Tauri, mobile app publishing, cloud deployment adaptation, multi-user permissions, public sharing, template stores, or remote curated libraries.
+
+## Long-Term Roadmap Guardrails
+
+- v0.1-alpha: complete core CRUD, search/filter/sort, copy, variables, versions, rollback, Markdown import/export, mobile usability, and verification.
+- v0.1-beta: collections, manual test cases, run logs, dashboard, built-in templates, export preset improvements, batch export, and experimental folder import.
+- v0.2: backup, restore, PWA comfort, and stronger import/export reliability.
+- v0.3: capture inbox, simple text diff, usage metadata, and optional desktop wrapper feasibility.
+- v0.4: local Markdown folder sync experiment with conflict copy preservation.
+- v0.5: tool-specific generation templates and AGENTS.md composition.
+- v0.6: curated library browsing and manual import while staying local-first.
+- v0.7: deterministic prompt lint, rule checks, health scoring, and maintenance queue.
+- v0.8: review cadence, archive workflow, duplicate detection, and lifecycle hygiene.
+- v0.9: migration hardening, data repair tools, packaging decision, and upgrade documentation.
+- v1.0: stable local release for personal use.
 
 ## Test and Build Commands
 
-Use the package scripts once the project is initialized:
+Use the package scripts after implementation changes:
 
 ```bash
 npm run typecheck
@@ -62,7 +114,7 @@ npm run lint
 npm run build
 ```
 
-Use Drizzle migration scripts once they exist:
+Use Drizzle migration scripts after schema changes:
 
 ```bash
 npm run db:generate
@@ -71,7 +123,7 @@ npm run db:migrate
 
 ## v0.1-alpha Acceptance
 
-- Create, edit, archive, soft delete, search, filter, sort, and tag assets.
+- Create, edit, archive, soft delete, restore, search, filter, sort, and tag assets.
 - Copy raw content and rendered variable-filled content.
 - Auto-create initial and changed-content versions.
 - Metadata-only edits do not create versions.
@@ -82,88 +134,50 @@ npm run db:migrate
 - Restarting the local server does not lose data.
 - Typecheck, lint, and build pass.
 
-## Development Roadmap
+## Development Order
 
-### v0.1-beta
+Follow this order until v0.1-alpha is complete:
 
-- Collection management (group assets into collections).
-- Manual TestCase and run log records.
-- Dashboard statistics.
-- Built-in template library.
-- AGENTS.md, CLAUDE.md, Codex Skill, and image prompt export template improvements.
-- Batch Markdown export.
-- Experimental Markdown folder import.
+1. Finish and verify Asset CRUD.
+2. Finish tag binding and display.
+3. Implement search, filters, and sorting.
+4. Implement copy raw content.
+5. Implement variable extraction and rendered copy.
+6. Complete version creation rules.
+7. Implement version history.
+8. Implement rollback.
+9. Implement Markdown render.
+10. Implement Markdown export.
+11. Implement Markdown parse.
+12. Implement Markdown import preview and conflict handling.
+13. Implement Settings page.
+14. Adapt list, form, and detail pages for mobile browser use.
+15. Add seed/demo data.
+16. Run typecheck, lint, and build.
+17. Smoke test the full loop with real assets.
+18. Update README and docs to match the delivered behavior.
 
-### v0.2
+## UI Guidance
 
-- PWA experience enhancements.
-- Batch Markdown export.
-- Markdown folder import.
-- Basic backup and restore.
+- Build the usable app, not a landing page.
+- Keep layouts quiet, utilitarian, and optimized for scanning.
+- Use cards for repeated asset items, not for every page section.
+- Prefer plain controls and readable forms.
+- Use icon buttons where the meaning is familiar.
+- Make mobile views usable for search and copy.
+- Do not introduce rich text, Monaco, CodeMirror, or complex visual dashboards in alpha.
 
-### v0.3
+## Data Safety Rules
 
-- Tauri desktop app experiment.
-- Capture Inbox for manual asset collection.
-- Simple text diff.
+- Never silently overwrite imported content.
+- Never hard-delete versions.
+- Soft delete assets before any permanent deletion feature is considered.
+- Backup and restore work belongs to v0.2 unless a minimal alpha-safe export is needed.
+- Any sync experiment must preserve conflict copies and provide a dry-run preview.
 
-### v0.4
+## Documentation Rules
 
-- Markdown folder two-way sync.
-- GitHub repository sync experiment.
-- Conflict copy preservation.
-
-### v0.5
-
-- Codex Skill template enhancements.
-- Claude Code / CLAUDE.md templates.
-- AGENTS.md composition generation.
-- Cursor Rules templates.
-- Skill Pack packaging.
-
-### v0.6
-
-- Curated library browsing.
-- Manual import from curated Skills.
-- Source tracking.
-- Curated library update checks.
-
-### v0.7
-
-- Prompt lint.
-- Rule checks.
-- Asset health scoring.
-
-## Development Order (v0.1-alpha)
-
-1. Initialize Next.js project.
-2. Configure TypeScript, Tailwind, shadcn/ui.
-3. Configure SQLite + Drizzle.
-4. Define constants.
-5. Define Drizzle schema.
-6. Configure migration.
-7. Define Zod validators.
-8. Implement hash, slug, time utilities.
-9. Implement Asset CRUD service.
-10. Implement Asset CRUD actions.
-11. Implement basic layout and navigation.
-12. Implement Asset List.
-13. Implement Asset Form.
-14. Implement Asset Detail.
-15. Implement Tag creation and binding.
-16. Implement search, filters, sorting.
-17. Implement copy content.
-18. Implement variable extraction and rendered copy.
-19. Implement version creation rules.
-20. Implement version list.
-21. Implement version rollback.
-22. Implement Markdown render.
-23. Implement Markdown export.
-24. Implement Markdown parse.
-25. Implement Markdown import.
-26. Implement Settings page.
-27. Mobile browser adaptation.
-28. Add seed/demo data.
-29. Run typecheck, lint, build.
-30. Write README and docs.
-31. Smoke test full loop with real assets.
+- `README.md` is for human project orientation and local usage.
+- `docs/TASKS.md` is the detailed development plan and source of truth for phase status.
+- `AGENTS.md` is for AI coding rules and architectural boundaries.
+- Keep these documents consistent when scope, roadmap, or acceptance criteria change.

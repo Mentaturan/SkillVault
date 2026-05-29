@@ -13,12 +13,16 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.4",
     "@tanstack/react-table": "latest",
     "better-sqlite3": "latest",
     "class-variance-authority": "latest",
     "clsx": "latest",
     "drizzle-orm": "latest",
     "lucide-react": "latest",
+    "nanoid": "^5.1.11",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
