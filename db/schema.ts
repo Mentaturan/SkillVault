@@ -172,6 +172,36 @@ export const testCases = sqliteTable(
   }),
 );
 
+export const projects = sqliteTable("projects", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  path: text("path"),
+  icon: text("icon"),
+  color: text("color"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const projectAssets = sqliteTable(
+  "project_assets",
+  {
+    projectId: text("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    assetId: text("asset_id")
+      .notNull()
+      .references(() => assets.id, { onDelete: "cascade" }),
+    orderIndex: integer("order_index").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.projectId, table.assetId] }),
+    projectIdIndex: index("project_assets_project_id_idx").on(table.projectId),
+    assetIdIndex: index("project_assets_asset_id_idx").on(table.assetId),
+  }),
+);
+
 import { relations } from "drizzle-orm";
 
 export const assetsRelations = relations(assets, ({ many }) => ({
@@ -218,6 +248,21 @@ export const collectionAssetsRelations = relations(collectionAssets, ({ one }) =
   }),
 }));
 
+export const projectsRelations = relations(projects, ({ many }) => ({
+  projectAssets: many(projectAssets),
+}));
+
+export const projectAssetsRelations = relations(projectAssets, ({ one }) => ({
+  project: one(projects, {
+    fields: [projectAssets.projectId],
+    references: [projects.id],
+  }),
+  asset: one(assets, {
+    fields: [projectAssets.assetId],
+    references: [assets.id],
+  }),
+}));
+
 export type Asset = typeof assets.$inferSelect;
 export type NewAsset = typeof assets.$inferInsert;
 export type AssetVersion = typeof assetVersions.$inferSelect;
@@ -232,3 +277,7 @@ export type CollectionAsset = typeof collectionAssets.$inferSelect;
 export type NewCollectionAsset = typeof collectionAssets.$inferInsert;
 export type TestCase = typeof testCases.$inferSelect;
 export type NewTestCase = typeof testCases.$inferInsert;
+export type Project = typeof projects.$inferSelect;
+export type NewProject = typeof projects.$inferInsert;
+export type ProjectAsset = typeof projectAssets.$inferSelect;
+export type NewProjectAsset = typeof projectAssets.$inferInsert;

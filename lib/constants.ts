@@ -1,5 +1,5 @@
 export const APP_NAME = "SkillVault";
-export const APP_VERSION = "0.2.0";
+export const APP_VERSION = "0.3.0";
 
 export const ASSET_TYPES = [
   "agent_skill",
@@ -174,5 +174,6 @@ export const PAGE_ROUTES = {
   newAsset: "/assets/new",
   import: "/import",
   collections: "/collections",
+  projects: "/projects",
   settings: "/settings",
 } as const;

@@ -8,6 +8,13 @@
       "when": 1780059810678,
       "tag": "0000_awesome_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1780077591744,
+      "tag": "0001_fair_sentinels",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,7 @@
 import { isNull, desc, sql } from "drizzle-orm";
 
 import { db } from "@/db";
-import { assets, collections } from "@/db/schema";
+import { assets, collections, projects } from "@/db/schema";
 
 export async function getDashboardData() {
   const [assetCount] = await db
@@ -12,6 +12,10 @@ export async function getDashboardData() {
   const [collectionCount] = await db
     .select({ count: sql<number>`count(*)` })
     .from(collections);
+
+  const [projectCount] = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(projects);
 
   const recentAssets = await db.query.assets.findMany({
     where: isNull(assets.deletedAt),
@@ -29,6 +33,7 @@ export async function getDashboardData() {
   return {
     assetCount: assetCount.count,
     collectionCount: collectionCount.count,
+    projectCount: projectCount.count,
     recentAssets,
   };
 }

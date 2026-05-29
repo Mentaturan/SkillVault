@@ -37,9 +37,9 @@ Official Agent Skills specification published by Anthropic. Defines a standard f
 
 ## Current Phase
 
-v0.2: complete. Tool-specific Export Templates, SKILL.md Support, built-in templates, and folder import are all implemented.
+v0.3: complete. Project Workspace Scanner implemented with project CRUD, directory scanning, and project-asset association.
 
-v0.3 development: next. Project Workspace Scanner is the next priority.
+v0.4 development: next. Backup, Restore, and Offline Comfort.
 
 Local status: the app has full CRUD, search/filter/sort, copy, variables, version history, rollback, Markdown import/export, settings, diagnostics, mobile adaptation, seed data, and confirmation dialogs. Collection CRUD, test cases, run logs, and dashboard are implemented. All verification commands pass.
 
@@ -378,12 +378,12 @@ Primary themes:
 
 Tasks:
 
-- [ ] Define project workspace data model.
-- [ ] Add project CRUD.
-- [ ] Support associating assets with projects.
-- [ ] Add local directory scanner for detecting existing AI config files (AGENTS.md, CLAUDE.md, .cursor/rules, etc.).
-- [ ] Add project-scoped asset view.
-- [ ] Add project dashboard with relevant asset counts and status.
+- [x] Define project workspace data model.
+- [x] Add project CRUD.
+- [x] Support associating assets with projects.
+- [x] Add local directory scanner for detecting existing AI config files (AGENTS.md, CLAUDE.md, .cursor/rules, etc.).
+- [x] Add project-scoped asset view.
+- [x] Add project dashboard with relevant asset counts and status.
 
 Exit criteria:
 
