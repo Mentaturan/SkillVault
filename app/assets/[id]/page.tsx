@@ -21,7 +21,7 @@ import {
   TARGET_TOOL_LABELS,
   VISIBILITY_LABELS,
 } from "@/lib/constants";
-import { Edit, History, Pin } from "lucide-react";
+import { ArrowLeft, Edit, History, Pin } from "lucide-react";
 
 interface AssetDetailPageProps {
   params: Promise<{ id: string }>;
@@ -42,6 +42,13 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
 
   return (
     <div className="space-y-6">
+      <Button asChild variant="ghost" size="sm" className="-ml-3 mb-2">
+        <Link href="/assets">
+          <ArrowLeft className="h-4 w-4" />
+          返回资产库
+        </Link>
+      </Button>
+
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2">

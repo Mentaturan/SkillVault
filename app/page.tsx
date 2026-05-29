@@ -4,7 +4,7 @@ import { APP_NAME, APP_VERSION } from "@/lib/constants";
 
 export default function DashboardPage() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-4 py-8 sm:px-6">
+    <div className="space-y-8">
       <section className="space-y-3">
         <p className="text-sm text-muted-foreground">{APP_VERSION}</p>
         <h1 className="text-3xl font-semibold tracking-normal">{APP_NAME}</h1>
@@ -24,6 +24,6 @@ export default function DashboardPage() {
           设置
         </Link>
       </nav>
-    </main>
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { APP_NAME } from "@/lib/constants";
+import { AppLayout } from "@/components/layout/app-layout";
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        <AppLayout>{children}</AppLayout>
+      </body>
     </html>
   );
 }

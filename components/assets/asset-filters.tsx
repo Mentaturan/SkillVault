@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -46,11 +48,36 @@ interface AssetFiltersProps {
 const ALL_VALUE = "_all";
 
 export function AssetFilters({ filters, tags }: AssetFiltersProps) {
+  const router = useRouter();
+
+  function buildQuery(updates: Partial<AssetFilterValues>) {
+    const params = new URLSearchParams();
+
+    const merged = { ...filters, ...updates };
+
+    if (merged.search) params.set("q", merged.search);
+    if (merged.type) params.set("type", merged.type);
+    if (merged.targetTool) params.set("targetTool", merged.targetTool);
+    if (merged.status) params.set("status", merged.status);
+    if (merged.tag) params.set("tag", merged.tag);
+    if (merged.includeArchived) params.set("includeArchived", "true");
+    if (merged.includeDeleted) params.set("includeDeleted", "true");
+    if (merged.sortBy) params.set("sortBy", merged.sortBy);
+
+    return params.toString();
+  }
+
+  function applyFilters(updates: Partial<AssetFilterValues> = {}) {
+    const qs = buildQuery(updates);
+    router.push(qs ? `/assets?${qs}` : "/assets");
+  }
+
+  function clearFilters() {
+    router.push("/assets");
+  }
+
   return (
-    <form
-      action="/assets"
-      className="space-y-3 rounded-md border bg-background p-3"
-    >
+    <div className="space-y-3 rounded-md border bg-background p-3">
       <div className="grid gap-3 md:grid-cols-[minmax(180px,1.4fr)_repeat(4,minmax(130px,1fr))_auto]">
         <div className="space-y-1.5">
           <Label htmlFor="q">搜索</Label>
@@ -62,13 +89,23 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
               defaultValue={filters.search ?? ""}
               placeholder="标题、内容、标签"
               className="pl-8"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  applyFilters({ search: (e.target as HTMLInputElement).value || undefined });
+                }
+              }}
             />
           </div>
         </div>
 
         <div className="space-y-1.5">
           <Label>类型</Label>
-          <Select name="type" defaultValue={filters.type ?? ALL_VALUE}>
+          <Select
+            defaultValue={filters.type ?? ALL_VALUE}
+            onValueChange={(v) =>
+              applyFilters({ type: v === ALL_VALUE ? undefined : (v as AssetType) })
+            }
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -86,8 +123,10 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
         <div className="space-y-1.5">
           <Label>工具</Label>
           <Select
-            name="targetTool"
             defaultValue={filters.targetTool ?? ALL_VALUE}
+            onValueChange={(v) =>
+              applyFilters({ targetTool: v === ALL_VALUE ? undefined : (v as TargetTool) })
+            }
           >
             <SelectTrigger>
               <SelectValue />
@@ -105,7 +144,12 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
         <div className="space-y-1.5">
           <Label>状态</Label>
-          <Select name="status" defaultValue={filters.status ?? ALL_VALUE}>
+          <Select
+            defaultValue={filters.status ?? ALL_VALUE}
+            onValueChange={(v) =>
+              applyFilters({ status: v === ALL_VALUE ? undefined : (v as AssetStatus) })
+            }
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -122,7 +166,12 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
         <div className="space-y-1.5">
           <Label>标签</Label>
-          <Select name="tag" defaultValue={filters.tag ?? ALL_VALUE}>
+          <Select
+            defaultValue={filters.tag ?? ALL_VALUE}
+            onValueChange={(v) =>
+              applyFilters({ tag: v === ALL_VALUE ? undefined : v })
+            }
+          >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -139,7 +188,12 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
         <div className="space-y-1.5">
           <Label>排序</Label>
-          <Select name="sortBy" defaultValue={filters.sortBy ?? "updatedAt_desc"}>
+          <Select
+            defaultValue={filters.sortBy ?? "updatedAt_desc"}
+            onValueChange={(v) =>
+              applyFilters({ sortBy: v as SortOption })
+            }
+          >
             <SelectTrigger className="md:w-[130px]">
               <SelectValue />
             </SelectTrigger>
@@ -159,9 +213,10 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
-              name="includeArchived"
-              value="true"
-              defaultChecked={filters.includeArchived}
+              checked={filters.includeArchived ?? false}
+              onChange={(e) =>
+                applyFilters({ includeArchived: e.target.checked || undefined })
+              }
               className="h-4 w-4 rounded border-gray-300"
             />
             显示归档
@@ -169,9 +224,10 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
-              name="includeDeleted"
-              value="true"
-              defaultChecked={filters.includeDeleted}
+              checked={filters.includeDeleted ?? false}
+              onChange={(e) =>
+                applyFilters({ includeDeleted: e.target.checked || undefined })
+              }
               className="h-4 w-4 rounded border-gray-300"
             />
             显示删除
@@ -179,12 +235,19 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
         </div>
 
         <div className="flex gap-2">
-          <Button asChild variant="outline">
-            <Link href="/assets">清空</Link>
+          <Button variant="outline" onClick={clearFilters}>
+            清空
           </Button>
-          <Button type="submit">应用</Button>
+          <Button
+            onClick={() => {
+              const searchInput = document.getElementById("q") as HTMLInputElement | null;
+              applyFilters({ search: searchInput?.value || undefined });
+            }}
+          >
+            应用
+          </Button>
         </div>
       </div>
-    </form>
+    </div>
   );
 }

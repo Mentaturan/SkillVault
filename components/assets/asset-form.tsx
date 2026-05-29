@@ -31,6 +31,8 @@ import {
 } from "@/lib/constants";
 import type { Asset, Tag } from "@/db/schema";
 
+type FieldErrors = Record<string, string[] | undefined>;
+
 interface AssetFormProps {
   asset?: Asset & { assetTags?: { tag: Tag }[] };
   isEditing?: boolean;
@@ -40,6 +42,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const existingTags =
     asset?.assetTags?.map((at) => at.tag.name).join(", ") ?? "";
@@ -47,6 +50,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setError(null);
+    setFieldErrors({});
 
     try {
       const result =
@@ -58,13 +62,27 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         router.push("/assets");
         router.refresh();
       } else {
-        setError("保存资产失败");
+        if (result.error && typeof result.error === "object") {
+          setFieldErrors(result.error as FieldErrors);
+          setError("请检查表单中的错误");
+        } else {
+          setError(
+            typeof result.error === "string"
+              ? result.error
+              : "保存资产失败",
+          );
+        }
       }
     } catch {
       setError("发生了意外错误");
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function fieldError(name: string): string | undefined {
+    const messages = fieldErrors[name];
+    return messages?.[0];
   }
 
   return (
@@ -83,7 +101,11 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           defaultValue={asset?.title}
           required
           maxLength={200}
+          aria-invalid={!!fieldError("title")}
         />
+        {fieldError("title") && (
+          <p className="text-sm text-destructive">{fieldError("title")}</p>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -104,6 +126,9 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
               ))}
             </SelectContent>
           </Select>
+          {fieldError("type") && (
+            <p className="text-sm text-destructive">{fieldError("type")}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -125,6 +150,9 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
               ))}
             </SelectContent>
           </Select>
+          {fieldError("targetTool") && (
+            <p className="text-sm text-destructive">{fieldError("targetTool")}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -146,6 +174,9 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
               ))}
             </SelectContent>
           </Select>
+          {fieldError("exportPreset") && (
+            <p className="text-sm text-destructive">{fieldError("exportPreset")}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -239,7 +270,11 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           required
           rows={10}
           className="font-mono"
+          aria-invalid={!!fieldError("content")}
         />
+        {fieldError("content") && (
+          <p className="text-sm text-destructive">{fieldError("content")}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -260,7 +295,11 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           type="url"
           defaultValue={asset?.sourceUrl ?? ""}
           maxLength={500}
+          aria-invalid={!!fieldError("sourceUrl")}
         />
+        {fieldError("sourceUrl") && (
+          <p className="text-sm text-destructive">{fieldError("sourceUrl")}</p>
+        )}
       </div>
 
       <div className="flex items-center gap-2">

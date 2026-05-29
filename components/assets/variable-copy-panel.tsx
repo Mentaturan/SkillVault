@@ -16,6 +16,7 @@ interface VariableCopyPanelProps {
 export function VariableCopyPanel({ content, variables }: VariableCopyPanelProps) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const missingVariables = useMemo(
     () => getMissingVariables(variables, values),
     [variables, values],
@@ -30,9 +31,15 @@ export function VariableCopyPanel({ content, variables }: VariableCopyPanelProps
       return;
     }
 
-    await navigator.clipboard.writeText(renderVariables(content, values));
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard.writeText(renderVariables(content, values));
+      setCopyError(false);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopyError(true);
+      window.setTimeout(() => setCopyError(false), 2000);
+    }
   }
 
   return (
@@ -74,8 +81,14 @@ export function VariableCopyPanel({ content, variables }: VariableCopyPanelProps
         onClick={handleCopy}
         disabled={missingVariables.length > 0}
       >
-        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        {copied ? "已复制" : "复制渲染内容"}
+        {copyError ? (
+          <Copy className="h-4 w-4" />
+        ) : copied ? (
+          <Check className="h-4 w-4" />
+        ) : (
+          <Copy className="h-4 w-4" />
+        )}
+        {copyError ? "复制失败" : copied ? "已复制" : "复制渲染内容"}
       </Button>
     </div>
   );

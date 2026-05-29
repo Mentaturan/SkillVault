@@ -21,17 +21,30 @@ export function CopyContentButton({
   size = "sm",
 }: CopyContentButtonProps) {
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   async function handleCopy() {
-    await navigator.clipboard.writeText(content);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopyError(false);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopyError(true);
+      window.setTimeout(() => setCopyError(false), 2000);
+    }
   }
 
   return (
     <Button type="button" variant={variant} size={size} onClick={handleCopy}>
-      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-      {copied ? copiedLabel : label}
+      {copyError ? (
+        <Copy className="h-4 w-4" />
+      ) : copied ? (
+        <Check className="h-4 w-4" />
+      ) : (
+        <Copy className="h-4 w-4" />
+      )}
+      {copyError ? "复制失败" : copied ? copiedLabel : label}
     </Button>
   );
 }
