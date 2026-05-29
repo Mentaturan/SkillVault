@@ -3,8 +3,11 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyContentButton } from "@/components/assets/copy-content-button";
+import { VariableCopyPanel } from "@/components/assets/variable-copy-panel";
 import { getAssetById } from "@/server/services/asset-service";
 import { getVersionsByAssetId } from "@/server/services/version-service";
+import { extractVariables } from "@/lib/variables";
 import {
   ArchiveButton,
   DeleteButton,
@@ -35,6 +38,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
   const versions = await getVersionsByAssetId(asset.id);
   const assetTags = asset.assetTags as Array<{ tag: { id: string; name: string } }> | undefined;
   const tags = assetTags?.map((at) => at.tag) ?? [];
+  const variables = extractVariables(asset.content);
 
   return (
     <div className="space-y-6">
@@ -95,7 +99,10 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">内容</CardTitle>
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-sm">内容</CardTitle>
+            <CopyContentButton content={asset.content} />
+          </div>
         </CardHeader>
         <CardContent>
           <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 text-sm">
@@ -103,6 +110,8 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
           </pre>
         </CardContent>
       </Card>
+
+      <VariableCopyPanel content={asset.content} variables={variables} />
 
       {tags.length > 0 && (
         <Card>

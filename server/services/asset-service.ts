@@ -12,7 +12,11 @@ import {
   archiveAsset,
 } from "@/server/queries/asset-queries";
 import { syncAssetTags } from "@/server/services/tag-service";
-import { createInitialVersion } from "@/server/services/version-service";
+import {
+  createInitialVersion,
+  createNewVersion,
+  getVersionById,
+} from "@/server/services/version-service";
 import type { CreateAssetInput, UpdateAssetInput } from "@/lib/validators/asset";
 
 export async function getAssetById(id: string) {
@@ -104,7 +108,6 @@ export async function updateExistingAsset(input: UpdateAssetInput) {
   const asset = await updateAsset(input.id, updates);
 
   if (contentChanged) {
-    const { createNewVersion } = await import("@/server/services/version-service");
     await createNewVersion({
       assetId: asset.id,
       titleSnapshot: asset.title,
@@ -116,6 +119,33 @@ export async function updateExistingAsset(input: UpdateAssetInput) {
   if (input.tagNames !== undefined) {
     await syncAssetTags(asset.id, input.tagNames);
   }
+
+  return asset;
+}
+
+export async function rollbackAssetToVersion(assetId: string, versionId: string) {
+  const existing = await findAssetById(assetId);
+  if (!existing) {
+    throw new Error("资产不存在");
+  }
+
+  const version = await getVersionById(versionId);
+  if (!version || version.assetId !== assetId) {
+    throw new Error("版本不存在");
+  }
+
+  const asset = await updateAsset(assetId, {
+    content: version.contentSnapshot,
+    contentHash: version.contentHash,
+  });
+
+  await createNewVersion({
+    assetId: asset.id,
+    titleSnapshot: asset.title,
+    contentSnapshot: asset.content,
+    contentHash: asset.contentHash,
+    changeNote: `Rollback to version ${version.version}`,
+  });
 
   return asset;
 }

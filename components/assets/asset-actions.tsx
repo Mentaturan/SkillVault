@@ -7,6 +7,7 @@ import {
   archiveAssetAction,
   deleteAssetAction,
   restoreAssetAction,
+  rollbackAssetAction,
 } from "@/app/assets/actions";
 import { Archive, Trash2, RotateCcw } from "lucide-react";
 
@@ -75,6 +76,43 @@ export function RestoreButton({ id }: ActionButtonProps) {
     <Button variant="outline" onClick={handleRestore} disabled={isLoading}>
       <RotateCcw className="mr-2 h-4 w-4" />
       恢复
+    </Button>
+  );
+}
+
+interface RollbackButtonProps extends ActionButtonProps {
+  versionId: string;
+  version: number;
+  disabled?: boolean;
+}
+
+export function RollbackButton({
+  id,
+  versionId,
+  version,
+  disabled = false,
+}: RollbackButtonProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleRollback() {
+    if (!confirm(`确定要回滚到版本 ${version} 吗？`)) return;
+    setIsLoading(true);
+    const result = await rollbackAssetAction(id, versionId);
+    if (result.success) {
+      router.refresh();
+    }
+    setIsLoading(false);
+  }
+
+  return (
+    <Button
+      variant="outline"
+      onClick={handleRollback}
+      disabled={disabled || isLoading}
+    >
+      <RotateCcw className="mr-2 h-4 w-4" />
+      回滚
     </Button>
   );
 }

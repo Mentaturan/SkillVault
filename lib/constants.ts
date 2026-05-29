@@ -127,6 +127,14 @@ export const SORT_OPTIONS = [
 ] as const;
 export type SortOption = (typeof SORT_OPTIONS)[number];
 
+export const SORT_OPTION_LABELS: Record<SortOption, string> = {
+  updatedAt_desc: "最近更新",
+  createdAt_desc: "最新创建",
+  rating_desc: "评分最高",
+  title_asc: "标题 A-Z",
+  lastUsedAt_desc: "最近使用",
+};
+
 export const IMPORT_CONFLICT_STRATEGIES = [
   "overwrite",
   "copy",

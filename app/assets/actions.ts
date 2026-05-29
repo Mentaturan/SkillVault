@@ -6,6 +6,7 @@ import {
   createNewAsset,
   deleteExistingAsset,
   restoreExistingAsset,
+  rollbackAssetToVersion,
   updateExistingAsset,
 } from "@/server/services/asset-service";
 import {
@@ -115,6 +116,21 @@ export async function restoreAssetAction(id: string) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "恢复资产失败",
+    };
+  }
+}
+
+export async function rollbackAssetAction(id: string, versionId: string) {
+  try {
+    await rollbackAssetToVersion(id, versionId);
+    revalidatePath("/assets");
+    revalidatePath(`/assets/${id}`);
+    revalidatePath(`/assets/${id}/versions`);
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "回滚资产失败",
     };
   }
 }

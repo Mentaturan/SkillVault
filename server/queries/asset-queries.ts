@@ -1,7 +1,7 @@
-import { eq, isNull, and, desc, asc, like, or } from "drizzle-orm";
+import { eq, isNull, and, desc, asc, like, or, inArray } from "drizzle-orm";
 
 import { db } from "@/db";
-import { assets, assetTags } from "@/db/schema";
+import { assets, assetTags, tags } from "@/db/schema";
 import type { NewAsset } from "@/db/schema";
 import type {
   AssetStatus,
@@ -28,6 +28,7 @@ export async function findAllAssets(options?: {
   type?: AssetType;
   targetTool?: TargetTool;
   search?: string;
+  tag?: string;
   includeDeleted?: boolean;
   includeArchived?: boolean;
   sortBy?: SortOption;
@@ -38,15 +39,8 @@ export async function findAllAssets(options?: {
     conditions.push(isNull(assets.deletedAt));
   }
 
-  if (!options?.includeArchived) {
-    conditions.push(
-      or(
-        isNull(assets.status),
-        eq(assets.status, "draft"),
-        eq(assets.status, "active"),
-        eq(assets.status, "deprecated"),
-      ),
-    );
+  if (!options?.includeArchived && options?.status !== "archived") {
+    conditions.push(or(eq(assets.status, "draft"), eq(assets.status, "active"), eq(assets.status, "deprecated")));
   }
 
   if (options?.status) {
@@ -61,14 +55,43 @@ export async function findAllAssets(options?: {
     conditions.push(eq(assets.targetTool, options.targetTool));
   }
 
-  if (options?.search) {
-    const searchPattern = `%${options.search}%`;
+  if (options?.tag) {
+    const taggedAssetIds = await db
+      .select({ assetId: assetTags.assetId })
+      .from(assetTags)
+      .innerJoin(tags, eq(assetTags.tagId, tags.id))
+      .where(eq(tags.name, options.tag));
+
+    if (taggedAssetIds.length === 0) {
+      return [];
+    }
+
+    conditions.push(inArray(assets.id, taggedAssetIds.map((row) => row.assetId)));
+  }
+
+  const search = options?.search?.trim();
+  if (search) {
+    const searchPattern = `%${search}%`;
+    const matchingTaggedAssetIds = await db
+      .select({ assetId: assetTags.assetId })
+      .from(assetTags)
+      .innerJoin(tags, eq(assetTags.tagId, tags.id))
+      .where(like(tags.name, searchPattern));
+    const tagSearchCondition =
+      matchingTaggedAssetIds.length > 0
+        ? inArray(
+            assets.id,
+            Array.from(new Set(matchingTaggedAssetIds.map((row) => row.assetId))),
+          )
+        : undefined;
+
     conditions.push(
       or(
         like(assets.title, searchPattern),
         like(assets.description, searchPattern),
         like(assets.scenario, searchPattern),
         like(assets.content, searchPattern),
+        ...(tagSearchCondition ? [tagSearchCondition] : []),
       ),
     );
   }
@@ -95,7 +118,7 @@ export async function findAllAssets(options?: {
 
   return db.query.assets.findMany({
     where,
-    orderBy,
+    orderBy: [desc(assets.pinned), orderBy],
     with: {
       assetTags: {
         with: {

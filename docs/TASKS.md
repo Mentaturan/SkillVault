@@ -146,7 +146,7 @@ Progress:
 
 ## Phase 4 - Search, Filter, Copy, Variables, Versions
 
-Status: next active phase.
+Status: implemented locally; needs browser smoke test with real assets.
 
 Output:
 
@@ -172,15 +172,15 @@ Acceptance:
 
 Tasks:
 
-- [ ] Add list query options for search, filters, tags, archived, deleted, and sort.
-- [ ] Add URL-backed search and filter controls to `/assets`.
-- [ ] Add compact mobile-friendly filter layout.
-- [ ] Implement raw copy control on asset cards and detail page.
-- [ ] Add variable parser in `lib/variables`.
-- [ ] Add rendered-copy UI for assets containing variables.
-- [ ] Add version list query and service.
-- [ ] Build version history section on asset detail page.
-- [ ] Add rollback Server Action.
+- [x] Add list query options for search, filters, tags, archived, deleted, and sort.
+- [x] Add URL-backed search and filter controls to `/assets`.
+- [x] Add compact mobile-friendly filter layout.
+- [x] Implement raw copy control on asset cards and detail page.
+- [x] Add variable parser in `lib/variables`.
+- [x] Add rendered-copy UI for assets containing variables.
+- [x] Add version list query and service.
+- [x] Build version history section on asset detail page.
+- [x] Add rollback Server Action.
 - [ ] Smoke test metadata-only edit versus content edit.
 
 ## Phase 5 - Markdown Import and Export

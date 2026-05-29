@@ -1,7 +1,6 @@
 import { eq, and } from "drizzle-orm";
 import { db } from "@/db";
 import { tags, assetTags } from "@/db/schema";
-import type { Tag, NewTag } from "@/db/schema";
 
 export async function findTagById(id: string) {
   return db.query.tags.findFirst({

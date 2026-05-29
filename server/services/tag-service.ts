@@ -5,10 +5,15 @@ import {
   bindTagToAsset,
   unbindTagFromAsset,
   unbindAllTagsFromAsset,
+  findAllTags,
 } from "@/server/queries/tag-queries";
 
 export async function getTagsByAssetId(assetId: string) {
   return findTagsByAssetId(assetId);
+}
+
+export async function getAllTags() {
+  return findAllTags();
 }
 
 export async function addTagToAsset(assetId: string, tagName: string) {
