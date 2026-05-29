@@ -1,576 +1,507 @@
-# SkillVault Task Plan
+# SkillVault Development Plan
 
-This file is the project execution plan. Keep `README.md` focused on user-facing orientation and keep `AGENTS.md` focused on rules for AI coding agents.
+This file is the source of truth for product scope, phase order, and acceptance status. Keep `README.md` focused on human orientation and keep `AGENTS.md` focused on coding rules for AI agents.
 
-## Product Direction
+## Current Status
 
-SkillVault is a local-first personal workflow asset manager for 20-50 high-value reusable AI assets. The core job is to help one person collect, organize, reuse, version, import, and export prompts, skills, rules, workflows, SOPs, and templates.
+Date of review: 2026-05-30.
 
-The product should stay small, inspectable, and durable. It should prefer local SQLite, plain Markdown exchange, predictable UI, and explicit version history over cloud accounts, marketplaces, sync platforms, or AI automation.
+Repository: `Mentaturan/SkillVault`.
 
-## Competitive Analysis
+Local milestone state: v0.3 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
 
-A survey of existing tools in the AI workflow asset space, conducted to inform roadmap priorities.
+Implemented locally:
 
-### PromptHub (790+ stars)
+- Asset CRUD, archive, soft delete, restore, tags, search, filters, sorting, pinning, and duplicate content checks.
+- Raw content copy and rendered variable copy with `{{variable_name}}` placeholders.
+- Version history, content-hash version creation, metadata-only edit handling, and rollback.
+- Markdown import/export with `syncId` conflict handling and overwrite/copy/cancel strategies.
+- Tool-specific export presets for generic Markdown, Codex Skill, AGENTS.md, CLAUDE.md, Cursor Rules, and plain text.
+- Collections, collection membership, collection ordering, batch export, and collection export.
+- Manual test cases attached to assets and optionally versions.
+- Dashboard counts and recent activity.
+- Built-in starter templates.
+- Project workspaces, project-asset association, project detail views, and local directory scanning for AI config files.
+- Settings and diagnostics for local database path and record counts.
+- Basic mobile usability for view, search, and copy flows.
 
-Full-featured prompt management platform. Skill store with one-click distribution to 15+ platforms (ChatGPT, Claude, Gemini, Cursor, etc.). Rules management for AI coding tools. Project-level workspace for organizing prompts by project. AI-powered testing and evaluation. WebDAV sync. CLI tool. Client-side encryption. The strongest competitor in breadth and distribution reach.
+Known local caveats:
 
-### Prompt-Tools
+- `gh` is not installed in the local shell, so GitHub CLI workflows cannot be assumed.
+- `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
+- There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Simpler Tauri desktop app focused on Prompt CRUD. Local-first with SQLite storage. Minimal feature set but demonstrates that a lightweight local tool can serve the same audience SkillVault targets.
+Next development focus: v0.4 backup, restore, and integrity. This is the highest-value next step because the product is local-first and now has enough data creation paths that data loss prevention matters more than additional surface area.
 
-### Skills Desktop
+## Product Positioning
 
-Dedicated SKILL.md manager. Treats SKILL.md as a first-class format rather than a generic Markdown file. Validates structure and provides tooling around the SKILL.md specification.
+SkillVault is a local-first personal AI workflow asset manager for a small, high-value library of 20-50 reusable assets. It manages prompts, agent skills, project rules, AGENTS.md and CLAUDE.md snippets, image prompts, reply templates, workflows, SOPs, checklists, and reusable rules extracted from AI conversations.
 
-### Anthropic Skills (agentskills.io)
+It is not a SaaS, public prompt market, AI chat app, RAG system, team collaboration app, sync service, browser extension, cloud deployment target, or full desktop/mobile product in the current roadmap.
 
-Official Agent Skills specification published by Anthropic. Defines a standard format for AI agent skills with metadata, triggers, and instructions. SKILL.md is becoming a de facto standard for interoperable skill definitions across AI coding tools.
+SQLite is the primary database. Markdown and folder formats are exchange formats. Future filesystem workflows must protect the SQLite source of truth until a phase explicitly changes that architecture.
 
-### Key Insights
+## External Research Snapshot
 
-- Tool-specific export and distribution is the biggest competitive differentiator. PromptHub's one-click distribution to 15+ platforms is its most cited feature. SkillVault should prioritize making it easy to produce correct, ready-to-use files for each target tool.
-- SKILL.md is becoming a standard format. Anthropic's official specification and Skills Desktop's dedicated tooling both validate this. SkillVault should support SKILL.md as a first-class import and export format.
-- Project-level workspace organization (PromptHub) is useful for users who manage assets across multiple projects. This is a natural extension of SkillVault's collection system.
-- Local-first with SQLite (Prompt-Tools) validates SkillVault's architecture choice. The gap is in tool-specific output quality, not storage approach.
+Research date: 2026-05-30. These links are planning inputs, not implementation dependencies.
 
-## Current Phase
+- `skills-manage`: <https://github.com/iamzhihuix/skills-manage>
+  - Strong signal for cross-tool skill management. It uses a central local skill library, symlinks to platform directories, collections, GitHub import, marketplace browsing, scan/discover, search at scale, SQLite, and explicit privacy notes.
+  - Relevant to SkillVault: project/tool deployment views, local path scanning, import preview, and support for many AI coding tools.
+  - Do not copy: marketplace-first direction, AI explanation generation, credentials stored in app settings, and desktop packaging before data safety work is complete.
 
-v0.3: complete. Project Workspace Scanner implemented with project CRUD, directory scanning, and project-asset association.
+- `Skillful`: <https://github.com/Mastermindzh/skillful> and <https://skillful.md/>
+  - Strong signal for filesystem-owned workflows. Skills, agents, supporting files, screenshots, scripts, examples, installs, repairs, imports, and exports stay as readable local folders.
+  - Relevant to SkillVault: support files beside an asset, install/repair status, offline source-of-truth clarity, and import links.
+  - Do not copy yet: full desktop release complexity and unsigned binary support burden.
 
-v0.4 development: next. Backup, Restore, and Offline Comfort.
+- `prompt-manager`: <https://github.com/n-WN/prompt-manager>
+  - Strong signal for extracting useful prompts from existing AI coding assistant logs. It parses Claude Code, Cursor, Codex, Aider, Gemini, and Amp data, builds a local index, supports full-text search, incremental sync, favorites, and copying.
+  - Relevant to SkillVault: capture inbox and local deterministic extraction from conversation history should be a future phase.
+  - Do not copy yet: direct parsing of every vendor log format before backup/restore and import validation are stable.
 
-Local status: the app has full CRUD, search/filter/sort, copy, variables, version history, rollback, Markdown import/export, settings, diagnostics, mobile adaptation, seed data, and confirmation dialogs. Collection CRUD, test cases, run logs, and dashboard are implemented. All verification commands pass.
+- `PromptHub Desktop`: <https://github.com/ZSeven-W/prompt-hub-desktop>
+  - Similar local-first prompt library with SQLite, folders/tags, search, revisions, variable fill, and JSON import/export.
+  - Relevant to SkillVault: validates the existing local-first CRUD/version/copy direction.
+  - Gap for SkillVault: SkillVault should win on multi-tool asset formats and safety, not generic prompt CRUD.
 
-GitHub status: no repository publishing task is tracked here until a remote and authentication are available.
+- `PromptShelf`: <https://promptshelf.dev/>
+  - Shows demand for auto versioning, diff views, tags/search, placeholder quick-fill, dark mode, and MCP access from Claude Desktop.
+  - Relevant to SkillVault: diff and use-from-agent workflows are useful.
+  - Do not copy for alpha/beta: cloud sync, Google sign-in, hosted MCP, and account-based flows.
+
+- `promptops`: <https://github.com/llmhq-hub/promptops>
+  - Git-native prompt management for production workflows. Important ideas are immutable snapshots, deploy logs, version-aware tests, and provenance.
+  - Relevant to SkillVault: version provenance, test history, and export manifests.
+  - Do not copy: production SDK and runtime LLM integration are outside personal-library scope.
+
+- `skills install/sync from lock file` issue: <https://github.com/vercel-labs/skills/issues/283>
+  - Clear user need for reproducible restore from a lock file, missing-only reinstall, dry-run, and setup of a new machine.
+  - Relevant to SkillVault: backup manifests and future local deployment manifests should be restorable and dry-run friendly.
+
+- Hermes configurable skill write directory issue: <https://github.com/NousResearch/hermes-agent/issues/4381>
+  - Clear user need to control where new or edited skills are written when external directories or vault-backed paths exist.
+  - Relevant to SkillVault: future deployment and folder sync must make target paths explicit and never silently shadow a source.
+
+- `skill-validator`: <https://github.com/agent-ecosystem/skill-validator>
+  - Strong signal for deterministic validation, pre-commit hooks, platform-specific skill directories, and quality checks.
+  - Relevant to SkillVault: validate SKILL.md frontmatter, required fields, body density, malformed metadata, and dangerous content before import or deployment.
+
+- SKILL.md supply-chain risk paper: <https://arxiv.org/abs/2605.11418>
+  - Research signal that natural-language skill metadata affects discovery, selection, and governance, so SKILL.md is operational text, not passive documentation.
+  - Relevant to SkillVault: add local validation and warnings before adding remote import, curated browsing, or install-to-tool workflows.
+
+- `skillsmgr`, `skills-supply`, and `asm`:
+  - <https://github.com/jtianling/skills-manager>
+  - <https://github.com/803/skills-supply>
+  - <https://github.com/luongnv89/asm>
+  - Strong signals for manifests, registries, dependency resolution, pinned refs, security audit, quality scoring, and cross-agent deployment.
+  - Relevant to SkillVault: pinned source metadata, manifest validation, dry-run import, and security checks.
+  - Do not copy now: public registry, publishing workflow, dependency resolver, and team distribution.
+
+## Demand Analysis
+
+External demand points:
+
+- People want one source of truth for skills and prompts across Claude Code, Codex, Cursor, Windsurf, Copilot, Gemini CLI, Trae, and other tools.
+- Users need reproducible local state: backup, restore, lock files, manifests, missing-only restore, checksums, and dry-run previews.
+- Users are collecting useful assets from live AI work, not only writing them from scratch.
+- SKILL.md and AGENTS.md-style assets need validation because small metadata changes can affect whether an agent loads or trusts them.
+- Users care about install status: what is in the library, what is deployed to a tool, what is broken, and what has drifted.
+- There is visible interest in marketplaces and registries, but for SkillVault this should remain a future manual-import workflow, not a product identity.
+
+Personal product fit:
+
+- The user's likely library size is small enough for a dense local UI and SQLite, not an enterprise LLMOps system.
+- The product should help preserve personally useful workflows extracted from repeated AI usage.
+- The next painful failure mode is data loss or irreversible overwrite, not lack of AI automation.
+- Tool-specific output quality matters more than public sharing.
+- A local folder or Obsidian-style vault can be useful as an exchange and backup layer, but SQLite should remain primary until folder sync has a tested conflict model.
+
+Roadmap conclusion:
+
+1. Finish backup/restore/integrity before adding more import and deployment paths.
+2. Then add local folder and tool deployment workflows with dry-run, conflict copies, and explicit target paths.
+3. Then add deterministic validation and security warnings for SKILL.md, AGENTS.md, CLAUDE.md, Cursor rules, and imported Markdown.
+4. Then add capture inbox and local conversation-log extraction.
+5. Delay public curated libraries, registries, AI APIs, and desktop packaging until the personal local workflow is reliable.
 
 ## Planning Rules
 
-- v0.1-alpha takes priority over every later roadmap item.
-- Do not add cloud, login, OAuth, remote sync, AI APIs, marketplace features, or desktop/mobile packaging before the roadmap explicitly reaches those phases.
-- Each phase must end with typecheck, lint, build, and a manual smoke test.
-- Database changes must go through Drizzle schema and migrations.
-- Markdown remains an exchange format. SQLite remains the source of truth.
-- Prefer one complete workflow over many half-built pages.
+- Do not implement a future phase while the current phase has blocking acceptance work.
+- Every write-like workflow must have preview or confirmation when data could be overwritten, shadowed, deleted, restored, rolled back, imported, exported, or deployed.
+- All schema changes must be made in `db/schema.ts` and Drizzle migrations.
+- Pages must not contain database logic. Server Actions validate, call services, catch errors, and revalidate paths. Services own business rules. Queries own database access.
+- Import/export, backup/restore, and folder sync must be tested with real local fixtures.
+- Do not add login, cloud sync, OAuth, SaaS deployment assumptions, AI APIs, remote marketplaces, public sharing, team features, payments, rich text editors, RAG, or chat surfaces unless a later phase explicitly allows the smallest safe subset.
+- Prefer deterministic parsing and validation before AI-assisted behavior.
+- If a useful external feature conflicts with local-first scope, record it in the future backlog rather than implementing it.
 
-## v0.1-alpha Acceptance
-
-- Create, edit, archive, soft delete, restore, search, filter, sort, and tag assets.
-- Copy raw content and copy rendered variable-filled content.
-- Auto-create version 1 for every new asset.
-- Create a new version only when content hash changes.
-- Metadata-only edits do not create a version.
-- View version history and roll back old versions.
-- Import and export Markdown.
-- Avoid duplicate creation on existing `syncId` import.
-- Mobile browser can view, search, and copy.
-- Restarting the local server does not lose data.
-- `npm run typecheck`, `npm run lint`, and `npm run build` pass.
-
-## Alpha Risk Gates
-
-These are not optional polish items. They block v0.1-alpha completion because they protect the local-first promise.
-
-- No destructive import path can proceed without a preview and an explicit user choice.
-- Rollback, import overwrite, archive, soft delete, and restore must leave a readable audit trail or visible status change.
-- Export and import must be tested as a round trip on real sample assets, not just unit-tested in isolation.
-- Duplicate handling must be deterministic. `syncId` conflicts are mandatory to resolve explicitly, and exact-content duplicates should be detectable before silent duplicate creation.
-- A restart and migration check must confirm that local SQLite data remains intact after normal development workflows.
-
-## Phase 1 - Specification and Skeleton
+## v0.1-alpha - Core Local Library
 
 Status: complete.
 
-Output:
+Goal: make a localhost-only app that can safely store, edit, search, version, copy, import, and export personal AI workflow assets.
 
-- Project positioning and non-goals.
-- `docs/TASKS.md`.
-- `AGENTS.md`.
-- `db/schema.ts` draft.
-- `lib/constants.ts` draft.
-- Base directory structure.
+Completed:
 
-Acceptance:
+- [x] Project positioning and architecture rules.
+- [x] Next.js App Router, TypeScript strict, Tailwind, shadcn/ui, SQLite, Drizzle, Zod.
+- [x] Asset CRUD.
+- [x] Tags and tag binding.
+- [x] Archive, soft delete, and restore.
+- [x] Search, filters, sorting, and pinned ordering.
+- [x] Raw copy.
+- [x] Variable extraction and rendered copy.
+- [x] Version 1 creation on new asset.
+- [x] New version on content hash change.
+- [x] No new version for metadata-only edits.
+- [x] Version history.
+- [x] Rollback with `Rollback to version X` note.
+- [x] Markdown render and export.
+- [x] Markdown parse and import preview.
+- [x] `syncId` conflict handling with overwrite/copy/cancel.
+- [x] Settings and diagnostics.
+- [x] Mobile-readable list/detail/copy paths.
+- [x] Seed/demo data.
+- [x] Manual smoke checklist.
+- [x] README update for alpha behavior.
 
-- Scope is limited to local-first v0.1-alpha.
-- Non-goals are explicit.
-- Schema covers alpha entities and reserved beta entities.
-- Constants centralize enum values and defaults.
-- No unsupported product direction is introduced.
+Exit criteria:
 
-Progress:
-
-- [x] Create base directory structure.
-- [x] Create task tracker.
-- [x] Create project agent rules.
-- [x] Create Drizzle schema draft.
-- [x] Create constants draft.
-- [x] Confirm local-first project direction.
-
-## Phase 2 - Project Initialization
-
-Status: complete locally.
-
-Output:
-
-- Next.js App Router project files.
-- TypeScript strict configuration.
-- Tailwind CSS configuration.
-- shadcn/ui baseline.
-- Drizzle and SQLite setup.
-- Migration command setup.
-
-Acceptance:
-
-- Local dev server can start.
-- TypeScript configuration is strict.
-- Tailwind styles load.
-- Drizzle can generate migrations from `db/schema.ts`.
-
-Progress:
-
-- [x] Initialize Next.js.
-- [x] Configure TypeScript.
-- [x] Configure Tailwind.
-- [x] Configure shadcn/ui.
-- [x] Configure SQLite and Drizzle.
-- [x] Add migration scripts.
-- [x] Add base app layout.
-
-## Phase 3 - Core Data and CRUD
-
-Status: complete.
-
-Output:
-
-- Zod validators.
-- Hash, slug, ID, and time utilities.
-- Asset, tag, and version queries.
-- Asset CRUD services and actions.
-- Basic layout and navigation.
-- Asset list, form, detail, create, and edit pages.
-- Archive, soft delete, and restore actions.
-
-Acceptance:
-
-- Asset create, edit, archive, soft delete, and restore work.
-- Tags can be created and bound to assets.
-- Server Actions validate input and call services.
-- Services own business rules.
-- React components do not contain database logic.
-- New asset creates version 1.
-- Content edits create a new version.
-- Metadata-only edits do not create a version.
-
-Progress:
-
-- [x] Add validators.
-- [x] Add utility functions.
-- [x] Add asset queries.
-- [x] Add tag queries.
-- [x] Add version queries.
-- [x] Add asset service.
-- [x] Add tag service.
-- [x] Add version service.
-- [x] Add asset actions.
-- [x] Build layout.
-- [x] Build asset list.
-- [x] Build asset form.
-- [x] Build asset detail.
-- [x] Build create and edit routes.
-- [x] Add archive, delete, and restore actions.
-- [x] Verify CRUD in browser with a real local database.
-- [x] Fix any CRUD, tag, or version edge cases found during smoke test.
-
-## Phase 4 - Search, Filter, Copy, Variables, Versions
-
-Status: complete.
-
-Output:
-
-- Asset search input.
-- Type, target tool, status, tag, archived, and deleted filters.
-- Sort controls.
-- Copy raw content button.
-- Variable extraction and rendered copy flow.
-- Version history UI.
-- Rollback action.
-
-Acceptance:
-
-- Default list hides deleted assets and archived assets unless filtered.
-- Pinned assets sort before unpinned assets.
-- Search covers title, description, scenario, content, and tag names.
-- Filters can be combined.
-- Exact duplicate content can be detected deterministically during create/import flows.
-- Variable placeholders use `{{variable_name}}`.
-- Rendered copy replaces variables as plain text.
-- Missing variable values are visible before copy.
-- Rollback writes old content to the asset and creates a new version.
-- Rollback version note uses `Rollback to version X`.
-
-Tasks:
-
-- [x] Add list query options for search, filters, tags, archived, deleted, and sort.
-- [x] Add URL-backed search and filter controls to `/assets`.
-- [x] Add compact mobile-friendly filter layout.
-- [x] Implement raw copy control on asset cards and detail page.
-- [x] Add variable parser in `lib/variables`.
-- [x] Add rendered-copy UI for assets containing variables.
-- [x] Add version list query and service.
-- [x] Build version history section on asset detail page.
-- [x] Add rollback Server Action.
-- [x] Add exact-duplicate detection using content hash for create/import guardrails.
-- [x] Smoke test metadata-only edit versus content edit.
-
-## Phase 5 - Markdown Import and Export
-
-Status: complete.
-
-Output:
-
-- Markdown renderer.
-- Single-asset Markdown export.
-- Markdown parser.
-- Import preview.
-- Import conflict handling.
-
-Acceptance:
-
-- Markdown export uses `syncId`, not local `id`.
-- Export filename is `{slug}.{syncId}.md`.
-- Plain text Markdown import works.
-- Frontmatter Markdown import works.
-- Existing `syncId` import requires overwrite, copy, or cancel.
-- Overwrite updates the existing asset and respects version rules.
-- Copy creates a new asset with a new local `id` and new `syncId`.
-- Import preview shows whether the incoming file is new, overwrite-targeted, or a duplicate candidate before mutation.
-- No automatic merge or complex diff is implemented.
-
-Tasks:
-
-- [x] Define Markdown frontmatter shape.
-- [x] Implement Markdown render in `lib/markdown` or `server/services/markdown-service.ts`.
-- [x] Implement single-asset export route or action.
-- [x] Implement Markdown parse.
-- [x] Build import page with paste/upload input.
-- [x] Build import preview.
-- [x] Implement `syncId` conflict detection.
-- [x] Surface duplicate-candidate warnings for matching content hash or close metadata matches.
-- [x] Implement overwrite, copy, and cancel strategies.
-- [x] Add import/export smoke fixtures.
-- [x] Run round-trip tests for export -> import overwrite and export -> import copy flows.
-
-## Phase 6 - Alpha Polish, Verification, and Docs
-
-Status: complete.
-
-Output:
-
-- Settings page.
-- Basic mobile adaptation.
-- Demo seed data.
-- Basic diagnostics or integrity status view.
-- Updated README.
-- Passing verification commands.
-- Real asset workflow smoke test.
-
-Acceptance:
-
-- Mobile browser can view, search, and copy assets.
-- Data persists after service restart.
-- Empty states are useful but not marketing-heavy.
-- The app can show basic local diagnostics such as database path, migration state, and record counts.
-- README states that v0.1-alpha is localhost-only and not SaaS.
-- Full local workflow works with at least five real assets.
-
-Tasks:
-
-- [x] Build settings page with database path and project metadata.
-- [x] Add mobile layout adaptations for list, form, and detail pages.
-- [x] Add basic diagnostics page or settings panel section for database path, migration version, and entity counts.
-- [x] Add seed/demo data script.
-- [x] Add confirmations or explicit review states for destructive and overwrite-style actions.
-- [x] Write a manual alpha smoke checklist covering CRUD, versions, rollback, import/export, archive/delete/restore, and restart persistence.
-- [x] Update README after alpha features are complete.
-- [x] Run `npm run typecheck`.
-- [x] Run `npm run lint`.
-- [x] Run `npm run build`.
-- [x] Restart local server and verify data persistence.
-- [x] Smoke test create, edit, copy, version, rollback, export, import, archive, delete, and restore.
+- [x] Restarting the local server does not lose SQLite data.
+- [x] Duplicate creation on existing `syncId` import is avoided.
+- [x] Destructive or overwrite-like actions are explicit.
+- [x] `npm run typecheck`, `npm run lint`, and `npm run build` passed at phase completion.
 
 ## v0.1-beta - Organization and Evaluation
 
-Goal: make SkillVault useful for maintaining a small personal library over time, not just storing records.
+Status: complete.
 
-Primary themes:
+Goal: make the library maintainable over time, not just a CRUD database.
 
-- Collections.
-- Manual test cases and run logs.
-- Dashboard.
-- Built-in starter templates.
-- Better export presets.
-- Batch Markdown export.
-- Experimental Markdown folder import.
+Completed:
 
-Tasks:
-
-- [x] Implement collection CRUD.
-- [x] Support adding and removing assets from collections.
-- [x] Support collection ordering.
-- [x] Implement manual test cases and run logs.
-- [x] Attach test cases to assets and optionally to asset versions.
-- [x] Add basic dashboard counts and recent activity.
-- [x] Add local built-in templates for common asset types.
-- [x] Improve AGENTS.md export template.
-- [x] Improve CLAUDE.md export template.
-- [x] Improve Codex Skill export template.
-- [x] Improve image prompt export template.
-- [x] Implement batch Markdown export without zip dependency if a folder-style export is enough.
-- [x] Experiment with folder import and document limitations.
+- [x] Collection CRUD.
+- [x] Add/remove assets from collections.
+- [x] Collection ordering.
+- [x] Manual test cases.
+- [x] Test cases attach to assets and optionally versions.
+- [x] Basic dashboard counts and recent activity.
+- [x] Built-in starter templates.
+- [x] Better export templates for AGENTS.md, CLAUDE.md, Codex Skill, and image prompts.
+- [x] Batch Markdown export.
+- [x] Experimental folder import.
 
 Exit criteria:
 
-- A user can group assets by purpose.
-- A user can record whether an asset worked in a real task.
-- A user can export multiple assets without repeating manual steps.
+- [x] A user can group assets by purpose.
+- [x] A user can record whether an asset worked in a real task.
+- [x] A user can export multiple assets without repeating manual steps.
 
-## v0.2 - Tool-specific Export Templates and SKILL.md Support
+## v0.2 - Tool-Specific Asset Formats
 
-Goal: make SkillVault the best tool for producing correct, ready-to-use files for each target AI coding tool. This is the most impactful competitive differentiator identified in the competitive analysis.
+Status: complete.
 
-Primary themes:
+Goal: make SkillVault useful for producing correct ready-to-use files for AI coding tools.
 
-- Tool-specific export presets with correct formatting.
-- SKILL.md first-class import and export.
-- Built-in starter templates.
-- Folder import experiment.
+Completed:
 
-Tasks:
-
-- [x] Implement AGENTS.md export preset.
-- [x] Implement CLAUDE.md export preset.
-- [x] Implement Codex Skill SKILL.md export preset.
-- [x] Implement Cursor Rules export preset.
-- [x] Add SKILL.md format import detection.
-- [x] Add SKILL.md format export.
-- [x] Add preset-specific export API route.
-- [x] Add built-in starter templates.
-- [x] Experiment with folder import.
+- [x] AGENTS.md export preset.
+- [x] CLAUDE.md export preset.
+- [x] Codex Skill `SKILL.md` export preset.
+- [x] Cursor Rules export preset.
+- [x] SKILL.md import detection.
+- [x] SKILL.md export.
+- [x] Preset-specific export API route.
+- [x] Built-in starter templates.
+- [x] Folder import experiment.
 
 Exit criteria:
 
-- A user can export an asset as a correctly formatted AGENTS.md, CLAUDE.md, Codex Skill SKILL.md, or Cursor Rules file.
-- A user can import a SKILL.md file and have it detected and parsed correctly.
-- Export presets produce files that work directly in the target tool without manual editing.
+- [x] A user can export an asset as AGENTS.md, CLAUDE.md, Codex Skill SKILL.md, or Cursor Rules without manual reformatting.
+- [x] SKILL.md files can be detected and parsed.
 
 ## v0.3 - Project Workspace Scanner
 
-Goal: support project-level organization of assets, inspired by PromptHub's project workspace feature. Allow users to scan a local project directory and associate assets with specific projects.
+Status: complete.
 
-Primary themes:
+Goal: connect assets to real local projects and detect existing AI configuration files.
 
-- Project workspace concept.
-- Local directory scanning.
-- Project-asset association.
-- Project-scoped views.
+Completed:
 
-Tasks:
-
-- [x] Define project workspace data model.
-- [x] Add project CRUD.
-- [x] Support associating assets with projects.
-- [x] Add local directory scanner for detecting existing AI config files (AGENTS.md, CLAUDE.md, .cursor/rules, etc.).
-- [x] Add project-scoped asset view.
-- [x] Add project dashboard with relevant asset counts and status.
+- [x] Project workspace data model.
+- [x] Project CRUD.
+- [x] Project-asset association.
+- [x] Local directory scanner for AI config files such as AGENTS.md, CLAUDE.md, and `.cursor/rules`.
+- [x] Project-scoped asset view.
+- [x] Project dashboard counts and status.
 
 Exit criteria:
 
-- A user can create a project and associate assets with it.
-- A user can scan a local directory and detect existing AI configuration files.
-- A user can view all assets relevant to a specific project.
+- [x] A user can create a project and associate assets with it.
+- [x] A user can scan a local directory and detect existing AI configuration files.
+- [x] A user can view assets relevant to a project.
 
-## v0.4 - Backup, Restore, and Offline Comfort
+## v0.4 - Backup, Restore, and Integrity
 
-Goal: reduce local data-loss risk while keeping the product local-first.
+Status: next.
 
-Primary themes:
+Goal: make local data loss and accidental overwrite unlikely.
 
-- Basic backup and restore.
-- PWA comfort improvements.
-- Stronger Markdown folder import.
-- Import/export reliability.
+Why now:
 
-Tasks:
-
-- [ ] Add export-all backup as Markdown plus metadata manifest.
-- [ ] Add restore-from-backup preview.
-- [ ] Add restore conflict options.
-- [ ] Add PWA manifest.
-- [ ] Add offline-friendly static shell where practical.
-- [ ] Improve folder import conflict detection.
-- [ ] Add checksum or manifest validation for backups.
-
-Exit criteria:
-
-- A user can back up the library and restore it into a fresh local database.
-- Backup and restore behavior is understandable before any destructive operation.
-
-## v0.5 - Capture Inbox and Version Diff
-
-Goal: make it easier to collect useful assets from daily AI work and compare changes.
-
-Primary themes:
-
-- Capture Inbox.
-- Simple text diff.
-- Usage metadata.
-- Optional desktop wrapper experiment.
-
-Tasks:
-
-- [ ] Add Capture Inbox for manual paste/save.
-- [ ] Support converting inbox items into assets.
-- [ ] Add simple side-by-side text diff for versions.
-- [ ] Track `lastUsedAt` from copy actions.
-- [ ] Add basic stale asset indicators.
-- [ ] Run a Tauri feasibility experiment without committing to desktop distribution.
-
-Exit criteria:
-
-- A user can quickly capture rough material and later refine it into assets.
-- A user can compare two versions without leaving the app.
-
-## v0.6 - Curated Library, Still Local-First
-
-Goal: support manual discovery and import of recommended assets without becoming a marketplace.
-
-Primary themes:
-
-- Curated library browsing.
-- Manual import from curated assets.
-- Source tracking.
-- Update checks.
-
-Tasks:
-
-- [ ] Define curated library metadata.
-- [ ] Browse curated assets from a bundled or configured source.
-- [ ] Import curated assets manually.
-- [ ] Track source and source URL.
-- [ ] Check whether imported curated assets have newer versions.
-- [ ] Keep all imported content local after import.
-
-Exit criteria:
-
-- A user can inspect and manually import curated assets.
-- The product still has no accounts, payments, ratings, comments, or public sharing.
-
-## v0.7 - Asset Quality Tools
-
-Goal: help the user keep assets clear, complete, and reusable.
-
-Primary themes:
-
-- Prompt lint.
-- Rule checks.
-- Asset health scoring.
-- Maintenance queue.
-
-Tasks:
-
-- [ ] Add deterministic lint checks for missing title, weak scenario, missing variables, and unclear placeholders.
-- [ ] Add rule checks for contradictory metadata and malformed export presets.
-- [ ] Add asset health score from deterministic signals.
-- [ ] Add maintenance queue for stale, low-rated, or incomplete assets.
-- [ ] Add opt-in AI-assisted suggestions only if a future roadmap phase explicitly allows AI APIs.
-
-Exit criteria:
-
-- A user can identify assets that need cleanup without relying on AI calls.
-
-## v0.8 - Knowledge Hygiene and Review Loops
-
-Goal: make SkillVault a reliable personal operating library, not a dumping ground.
-
-Primary themes:
-
-- Review cadence.
-- Archive workflow.
-- Duplicate detection.
-- Better lifecycle metadata.
-
-Tasks:
-
-- [ ] Add review due dates.
-- [ ] Add asset lifecycle filters.
-- [ ] Add deterministic duplicate candidates by title, slug, and content hash similarity.
-- [ ] Add archive review page.
-- [ ] Add bulk metadata edit for selected assets.
-
-Exit criteria:
-
-- A user can keep a 20-50 asset library tidy without heavy manual auditing.
-
-## v0.9 - Packaging and Migration Hardening
-
-Goal: prepare the app for long-term local use and safer upgrades.
-
-Primary themes:
-
-- Migration reliability.
-- Data repair tools.
-- Packaging decisions.
-- Documentation hardening.
-
-Tasks:
-
-- [ ] Add migration smoke tests.
-- [ ] Add database integrity check page or script.
-- [ ] Add repair scripts for common local data issues.
-- [ ] Decide whether Tauri packaging should proceed or remain an experiment.
-- [ ] Write migration notes for upgrading from earlier alpha/beta versions.
-
-Exit criteria:
-
-- A user can upgrade local data with lower risk.
-- Packaging direction is explicit.
-
-## v1.0 - Stable Local Release
-
-Goal: mark SkillVault stable for personal local use.
+- The app already has enough entities and import paths to make loss or corruption costly.
+- External tools show demand for reproducible restore and lock/manifest-driven setup.
+- Local-first trust depends on backup being boring and inspectable.
 
 Scope:
 
-- Local-first web app.
-- SQLite source of truth.
-- Reliable Markdown import/export.
-- Reliable backup and restore.
-- Clear versioning and rollback.
-- Practical asset organization.
-- Documented migration path.
+- Export-all backup as a folder or file bundle containing Markdown assets plus a manifest.
+- Restore preview before mutation.
+- Conflict handling for `syncId`, slug/title collisions, and content-hash duplicates.
+- Checksum validation.
+- Database integrity diagnostics.
+- A fresh-database restore smoke test.
 
-Non-scope:
+Tasks:
 
-- SaaS deployment.
-- Multi-user collaboration.
-- Cloud sync.
-- Marketplace.
-- AI prompt optimization service.
-- Public sharing platform.
+- [ ] Define backup manifest schema in `lib/markdown` or `lib/backup`.
+- [ ] Include app version, schema/migration marker, export timestamp, asset count, version count, tag count, collection count, project count, and checksums.
+- [ ] Implement export-all backup route or Server Action.
+- [ ] Include assets as Markdown using `syncId`, not local `id`.
+- [ ] Include versions in a deterministic manifest section or sidecar file.
+- [ ] Include collection and project membership without requiring local IDs.
+- [ ] Add restore parser with Zod validation.
+- [ ] Add restore preview page showing create/overwrite/copy/skip candidates.
+- [ ] Add restore conflict options: skip, overwrite by `syncId`, copy with new `syncId`.
+- [ ] Add checksum mismatch warnings.
+- [ ] Add fresh-database restore smoke fixture.
+- [ ] Add diagnostics for migration state, database path, entity counts, and last backup timestamp if available.
+- [ ] Document backup and restore in `README.md`.
+- [ ] Run `npm run typecheck`.
+- [ ] Run `npm run lint`.
+- [ ] Run `npm run build`.
 
 Exit criteria:
 
-- All v0.1-alpha acceptance items remain passing.
-- Backup and restore are tested against a fresh database.
-- Upgrade from the previous version is documented.
-- The README describes exact supported use cases and non-goals.
-- The app is usable for the maintainer's real asset library for at least two weeks without data loss.
+- A user can export a complete local backup.
+- A user can restore that backup into a fresh SQLite database.
+- Restore never mutates data before preview and explicit confirmation.
+- Version history remains readable after restore.
+- A checksum mismatch blocks or clearly warns before restore.
+
+## v0.5 - Local Folder Library and Tool Deployment
+
+Status: planned.
+
+Goal: bridge SkillVault's database library with folder-based AI tool ecosystems while avoiding drift and silent overwrites.
+
+Why:
+
+- Skills tools increasingly use one local source of truth with per-tool install links or copies.
+- Users need to know what is deployed where and whether it is stale.
+- Project scans are already present, so the next useful step is controlled deployment.
+
+Scope:
+
+- Configure local target directories for supported tools.
+- Dry-run deploy from an asset to a selected target path.
+- Show planned filename, existing file status, conflict risk, and rollback copy path.
+- Support install status per asset/tool/project.
+- Preserve conflict copies before overwrite.
+- Use copy first; symlink support can be optional and must be explicit.
+
+Tasks:
+
+- [ ] Add target directory settings for Codex, Claude Code, Cursor, Windsurf, Trae, and generic folder targets.
+- [ ] Add a deployment preview service that renders the exact target file content.
+- [ ] Add file existence and content-hash checks before write.
+- [ ] Add conflict copy preservation for existing target files.
+- [ ] Add deployment result records or metadata sufficient to show installed/stale/broken status.
+- [ ] Add project-level deploy from project assets.
+- [ ] Add repair action for missing or drifted target files.
+- [ ] Add documentation for copy vs symlink behavior.
+
+Exit criteria:
+
+- A user can deploy a selected asset to a local tool directory after preview.
+- Existing files are never silently overwritten.
+- The app can show whether deployed content matches the current asset.
+
+## v0.6 - Deterministic Validation and Safety Checks
+
+Status: planned.
+
+Goal: prevent malformed or risky assets from drifting into the library or target tool directories.
+
+Why:
+
+- SKILL.md metadata and instructions affect discovery and agent behavior.
+- Remote import and tool deployment are unsafe without validation.
+- Deterministic validation fits the product better than AI prompt optimization.
+
+Scope:
+
+- SKILL.md frontmatter validation.
+- AGENTS.md and CLAUDE.md structural checks.
+- Cursor rule metadata checks.
+- Variable placeholder validation.
+- Dangerous pattern warnings for imported or deployable assets.
+- Health score based only on deterministic signals.
+
+Tasks:
+
+- [ ] Add reusable validation result types.
+- [ ] Validate required SKILL.md fields such as `name` and `description`.
+- [ ] Warn for empty body, weak body length, malformed YAML, duplicate names, and unsupported metadata.
+- [ ] Warn for suspicious patterns such as hardcoded secrets, hidden instructions, obfuscated text, pipe-to-shell snippets, and remote script install commands.
+- [ ] Validate variables against `{{variable_name}}` syntax and missing rendered values.
+- [ ] Add validation badges to asset detail and import preview.
+- [ ] Add a maintenance queue for invalid or risky assets.
+- [ ] Add tests for valid, malformed, and suspicious fixtures.
+
+Exit criteria:
+
+- A user can see validation issues before import, export, or deployment.
+- Validation is deterministic and can run without network or AI APIs.
+
+## v0.7 - Capture Inbox and Local Conversation Mining
+
+Status: planned.
+
+Goal: make it easy to turn daily AI usage into reusable assets.
+
+Why:
+
+- Personal libraries grow from repeated conversations, not from blank forms.
+- Local AI assistant logs contain useful prompts, system rules, workflows, and reply templates.
+- Deterministic extraction and manual review are safer than automatic AI summarization.
+
+Scope:
+
+- Manual capture inbox.
+- Convert inbox item to asset.
+- Optional local scan of supported conversation directories.
+- Candidate extraction preview.
+- Favorites and source links back to local files where practical.
+
+Tasks:
+
+- [ ] Add capture inbox table and service.
+- [ ] Add manual paste-to-inbox page.
+- [ ] Add convert-to-asset workflow.
+- [ ] Track source type, source path, source timestamp, and extraction note.
+- [ ] Add deterministic importers for one source first, likely Codex session rollouts or Claude Code JSONL.
+- [ ] Add incremental scan with changed-file detection.
+- [ ] Add candidate review UI before creating assets.
+- [ ] Keep raw conversation content out of asset content unless user explicitly selects it.
+
+Exit criteria:
+
+- A user can capture rough material quickly.
+- A user can promote a reviewed candidate into a normal versioned asset.
+- No conversation log scan creates assets without preview.
+
+## v0.8 - Diff, Test Runs, and Use History
+
+Status: planned.
+
+Goal: help maintain quality after assets are used repeatedly.
+
+Scope:
+
+- Side-by-side text diff for versions.
+- Run log records linked to test cases.
+- Copy/use history via `lastUsedAt`.
+- Model/tool compatibility notes.
+- Review cadence and stale asset indicators.
+
+Tasks:
+
+- [ ] Add simple text diff for asset versions.
+- [ ] Add run log entity if the current test case model is not enough.
+- [ ] Track copy events enough to update `lastUsedAt`.
+- [ ] Add filters for stale, recently used, never used, low-rated, and untested assets.
+- [ ] Add model/tool compatibility fields only if they improve filtering without bloating forms.
+- [ ] Add review due date and review queue.
+
+Exit criteria:
+
+- A user can compare versions without leaving the app.
+- A user can tell which assets are used, stale, or untested.
+
+## v0.9 - Import Sources, Curated Assets, and Git-Friendly Exchange
+
+Status: planned.
+
+Goal: support manual discovery and import while staying local-first.
+
+Scope:
+
+- Manual GitHub URL import for public Markdown/SKILL.md assets.
+- Pinned source metadata.
+- Dry-run import from repository archive or raw file.
+- Optional curated local bundle.
+- No accounts, no marketplace, no payments, no public sharing.
+
+Tasks:
+
+- [ ] Define source metadata for imported assets: source URL, ref, path, imported at, and checksum.
+- [ ] Add raw GitHub file import with preview and validation.
+- [ ] Add repository archive import only after path filtering and file count limits are in place.
+- [ ] Add update check that compares known source checksum without auto-overwriting.
+- [ ] Add bundled curated examples as local data, not remote marketplace content.
+- [ ] Add source filter and source detail on asset pages.
+
+Exit criteria:
+
+- A user can manually import a remote asset after preview.
+- Imported assets remain local after import.
+- Update checks do not mutate content automatically.
+
+## v1.0 - Stable Personal Local Release
+
+Status: future.
+
+Goal: a stable local release for one person managing a durable personal AI workflow library.
+
+Required scope:
+
+- SQLite-backed local storage.
+- Backup and restore tested against a fresh database.
+- Markdown import/export and tool-specific exports.
+- Version history, rollback, validation, and conflict handling.
+- Collections, projects, tags, search, filters, copy, variables, and mobile usability.
+- Local folder deployment with dry-run and conflict preservation.
+- Documentation for install, upgrade, backup, restore, and supported scope.
+
+Non-scope:
+
+- SaaS.
+- Login or user accounts.
+- Cloud sync.
+- OAuth.
+- Team collaboration.
+- Public sharing.
+- Marketplace.
+- Payments.
+- AI prompt optimization service.
+- RAG or chat app.
+- Browser extension.
+- Mobile app publishing.
+
+Exit criteria:
+
+- All prior phase verification commands pass.
+- Restore from backup works into a fresh database.
+- A real personal library can be used for two weeks without data loss.
+- README and AGENTS.md match delivered behavior.
+- Migration and upgrade notes exist.
 
 ## Recurring Verification Checklist
 
-Run this checklist before marking any phase complete:
+Run this before marking any phase complete:
 
 - [ ] `npm run typecheck`
 - [ ] `npm run lint`
@@ -586,10 +517,11 @@ Run this checklist before marking any phase complete:
 - [ ] Import Markdown.
 - [ ] Archive, soft delete, and restore.
 - [ ] Restart server and verify data persists.
+- [ ] If the phase changes import/export/backup/deploy behavior, run a round-trip fixture.
 
 ## Backlog Parking Lot
 
-These ideas are explicitly parked until a roadmap phase accepts them:
+Do not implement these until a roadmap phase explicitly accepts them:
 
 - Login and user accounts.
 - Cloud sync.
@@ -605,4 +537,7 @@ These ideas are explicitly parked until a roadmap phase accepts them:
 - Comments, likes, payments, or social features.
 - Monaco, CodeMirror, or rich text editing.
 - Complex visual analytics.
-- Electron or mobile app publishing.
+- Electron, Tauri, or mobile app publishing.
+- Public registry publishing.
+- Automatic dependency resolver for third-party skills.
+- Hosted MCP access to the library.

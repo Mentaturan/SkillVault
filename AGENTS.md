@@ -2,21 +2,36 @@
 
 ## Project Positioning
 
-SkillVault is a local-first personal AI workflow asset manager for 20-50 reusable AI workflow assets. v0.1-alpha is a localhost Next.js web app with local SQLite storage and Markdown import/export.
+SkillVault is a local-first personal AI workflow asset manager for a small, high-value library of 20-50 reusable assets.
 
-It is not a SaaS, prompt market, AI chat tool, RAG system, sync service, browser extension, or desktop/mobile app.
+It manages Codex Skills, Trae Solo Skills, Claude Code rules, Cursor and Windsurf rules, AGENTS.md, CLAUDE.md, AI chat prompts, image prompts, reply templates, copywriting templates, code review rules, file workflows, SOPs, checklists, and reusable prompts, skills, and rules extracted from AI conversations.
 
-SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Windsurf rules, AGENTS.md, CLAUDE.md, AI chat prompts, image prompts, reply templates, copywriting templates, code review rules, file workflows, SOPs, checklists, and reusable prompts/skills/rules extracted from AI conversations.
+It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration platform, cloud sync service, browser extension, hosted MCP service, or desktop/mobile product in the current implementation.
+
+## Current Implementation State
+
+Use `docs/TASKS.md` as the source of truth.
+
+As of the current plan, v0.3 is implemented locally:
+
+- v0.1-alpha core asset library is complete.
+- v0.1-beta organization and evaluation is complete.
+- v0.2 tool-specific export and SKILL.md support is complete.
+- v0.3 project workspace scanner is complete.
+- v0.4 backup, restore, and integrity is the next development phase.
+
+The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
 
 ## Product Principles
 
 - Local-first beats cloud convenience.
-- SQLite is the primary database; Markdown is the exchange format.
-- The app should stay useful for one person managing a small, high-value library.
-- Prefer complete workflows over broad but shallow feature coverage.
-- Prefer deterministic parsing, validation, and checks before adding AI-assisted behavior.
-- Treat data loss prevention as a core product feature.
-- Keep the UI practical and dense enough for repeated use.
+- SQLite is the primary database.
+- Markdown, folder exports, and tool-specific files are exchange formats unless a future phase explicitly changes this.
+- The app should stay useful for one person managing a small personal library.
+- Complete workflows are better than broad, shallow feature coverage.
+- Deterministic parsing, validation, preview, and checks come before AI-assisted behavior.
+- Data loss prevention is a core product feature.
+- The UI should be practical, dense, and optimized for repeated use.
 
 ## Technical Stack
 
@@ -34,10 +49,12 @@ SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Wi
 
 - SQLite is stored in the local server environment.
 - Do not assume cloud deployment can persist SQLite.
-- Markdown is an exchange format, not the primary database.
 - Drizzle TypeScript schema is the database source of truth.
-- v0.1-alpha has no login, no sync, no AI API, and no cloud integration.
-- Later roadmap experiments must not weaken alpha data safety.
+- Database schema changes belong in `db/schema.ts` and Drizzle migrations.
+- Markdown parsing/rendering belongs in `lib/markdown` or `server/services/markdown-service.ts`.
+- Variable parsing/rendering belongs in `lib/variables` or `server/services/variable-service.ts`.
+- Future backup code should live under `lib/backup`, `server/services/backup-service.ts`, or equivalent service/query boundaries.
+- Future validation code should live under `lib/validation` or a service module, not in React components.
 
 ## Layering Rules
 
@@ -46,11 +63,20 @@ SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Wi
 - Server Actions validate input with Zod, call services, catch errors, return clear results, and revalidate paths.
 - Services own business rules.
 - Queries own database access.
-- Markdown parsing/rendering belongs in `lib/markdown` or `server/services/markdown-service.ts`.
-- Variable parsing/rendering belongs in `lib/variables` or `server/services/variable-service.ts`.
 - Enum values and defaults belong in `lib/constants.ts`.
-- Database schema changes belong in `db/schema.ts` and Drizzle migrations.
 - Shared utilities belong in `lib/`, not page files.
+- Filesystem writes must go through services and must have preview or confirmation when overwrite, restore, deploy, import, or delete behavior is involved.
+
+## Data Safety Rules
+
+- Never silently overwrite imported, restored, deployed, or synced content.
+- Never hard-delete versions.
+- Soft delete assets before any permanent deletion feature is considered.
+- Rollback writes old content to the asset and creates a new version.
+- Backup and restore are v0.4 priority work and must not be bypassed for broader future features.
+- Restore must preview mutations before writing.
+- Folder sync or tool deployment must preserve conflict copies and provide dry-run previews.
+- Remote import must validate and preview before creating or updating assets.
 
 ## Version Rules
 
@@ -60,53 +86,92 @@ SkillVault manages: Codex Skills, Trae Solo Skills, Claude Code rules, Cursor/Wi
 - Rollback writes old content to the asset and creates a new version.
 - Rollback note format: `Rollback to version X`.
 - Versions are never deleted.
-- Version history must remain readable after import, export, rollback, and restore workflows.
+- Version history must remain readable after import, export, rollback, backup, restore, and deployment workflows.
 
-## Markdown Rules
+## Markdown and Format Rules
 
 - Export uses `syncId`, not local `id`.
-- Export filename format is `{slug}.{syncId}.md`.
+- Export filename format is `{slug}.{syncId}.md` unless a preset requires a target-specific name.
 - Frontmatter is allowed for structured metadata.
 - Plain Markdown body remains the asset content.
 - Import conflict strategies are `overwrite`, `copy`, and `cancel`.
-- Do not implement automatic merge or complex diff in v0.1-alpha.
+- Do not implement automatic merge or complex diff until the roadmap reaches that phase.
+- SKILL.md, AGENTS.md, CLAUDE.md, and Cursor Rules exports should be deterministic and usable without manual formatting cleanup.
 
 ## Roadmap Discipline
 
-Use `docs/TASKS.md` as the source of truth for development order.
-
-Do not skip unfinished v0.1-alpha acceptance work to implement later roadmap items. If a later feature seems useful, record it in the relevant future phase instead of implementing it immediately.
-
 Before adding a new feature, classify it as one of:
 
-- v0.1-alpha acceptance work.
-- v0.1-beta organization/evaluation work.
-- Future roadmap work.
-- Parked backlog or forbidden scope.
+- Current-phase acceptance work.
+- Later roadmap work.
+- Parked backlog.
+- Forbidden scope.
 
-If a feature crosses roadmap boundaries, implement the smaller alpha-safe subset first.
+Current phase order:
 
-## Forbidden in v0.1-alpha
+1. v0.4 backup, restore, and integrity.
+2. v0.5 local folder library and tool deployment.
+3. v0.6 deterministic validation and safety checks.
+4. v0.7 capture inbox and local conversation mining.
+5. v0.8 diff, test runs, and use history.
+6. v0.9 import sources, curated assets, and Git-friendly exchange.
+7. v1.0 stable personal local release.
 
-Do not implement login, user accounts, cloud sync, OAuth, iCloud API, OneDrive API, GitHub OAuth, Skill markets, third-party Skill downloads, AI prompt optimization, browser plugins, OCR capture, multi-model chat, RAG, team features, comments, likes, payments, complex charts, Monaco, CodeMirror, rich text editing, complex diff, zip export, Electron, Tauri, mobile app publishing, cloud deployment adaptation, multi-user permissions, public sharing, template stores, or remote curated libraries.
+If a feature crosses phase boundaries, implement the smallest current-phase-safe subset first.
 
-## Long-Term Roadmap Guardrails
+## External Research Guardrails
 
-- v0.1-alpha: complete core CRUD, search/filter/sort, copy, variables, versions, rollback, Markdown import/export, mobile usability, and verification.
-- v0.1-beta: collections, manual test cases, run logs, dashboard, built-in templates, export preset improvements, batch export, and experimental folder import.
-- v0.2: backup, restore, PWA comfort, and stronger import/export reliability.
-- v0.3: capture inbox, simple text diff, usage metadata, and optional desktop wrapper feasibility.
-- v0.4: local Markdown folder sync experiment with conflict copy preservation.
-- v0.5: tool-specific generation templates and AGENTS.md composition.
-- v0.6: curated library browsing and manual import while staying local-first.
-- v0.7: deterministic prompt lint, rule checks, health scoring, and maintenance queue.
-- v0.8: review cadence, archive workflow, duplicate detection, and lifecycle hygiene.
-- v0.9: migration hardening, data repair tools, packaging decision, and upgrade documentation.
-- v1.0: stable local release for personal use.
+Recent related tools show demand for multi-tool skill management, restore manifests, source pinning, validation, security checks, and conversation-log capture. These are roadmap inputs, not permission to expand scope immediately.
+
+Apply these constraints:
+
+- Cross-tool deployment must wait until backup/restore is reliable.
+- GitHub or remote imports must be manual, previewed, validated, and local after import.
+- Registry, marketplace, publishing, payment, social, and public sharing features remain out of scope.
+- AI-generated explanations, prompt optimization, and model-run evaluation remain out of scope until explicitly added to a later phase.
+- Skill validation should be deterministic first because SKILL.md metadata affects discovery and agent behavior.
+
+## Forbidden Until Explicitly Replanned
+
+Do not implement:
+
+- Login or user accounts.
+- Cloud sync.
+- OAuth.
+- iCloud API, OneDrive API, or GitHub OAuth.
+- Skill markets, public registries, or third-party skill downloads as an automatic flow.
+- AI prompt optimization.
+- Browser plugins.
+- OCR capture.
+- Multi-model chat.
+- RAG.
+- Team features.
+- Comments, likes, payments, or social features.
+- Monaco, CodeMirror, or rich text editing.
+- Complex visual dashboards.
+- Hosted MCP service.
+- Electron, Tauri, or mobile app publishing.
+- Cloud deployment adaptation.
+- Multi-user permissions.
+- Public sharing.
+- Template stores or remote curated libraries.
+
+Future phases may allow small manual-import subsets, but only with local-first preview, validation, and conflict handling.
+
+## UI Guidance
+
+- Build the usable app, not a landing page.
+- Keep layouts quiet, utilitarian, and optimized for scanning.
+- Use cards for repeated asset items, not every page section.
+- Prefer plain controls and readable forms.
+- Use familiar icon buttons where meaning is clear.
+- Make mobile views usable for search and copy.
+- Do not introduce rich text, Monaco, CodeMirror, or complex visual dashboards.
+- Avoid marketing-style hero sections inside the product.
 
 ## Test and Build Commands
 
-Use the package scripts after implementation changes:
+Use these after implementation changes:
 
 ```bash
 npm run typecheck
@@ -121,63 +186,12 @@ npm run db:generate
 npm run db:migrate
 ```
 
-## v0.1-alpha Acceptance
-
-- Create, edit, archive, soft delete, restore, search, filter, sort, and tag assets.
-- Copy raw content and rendered variable-filled content.
-- Auto-create initial and changed-content versions.
-- Metadata-only edits do not create versions.
-- View version history and roll back old versions.
-- Import and export Markdown.
-- Avoid duplicate creation on existing `syncId` import.
-- Mobile browser can view, search, and copy.
-- Restarting the local server does not lose data.
-- Typecheck, lint, and build pass.
-
-## Development Order
-
-Follow this order until v0.1-alpha is complete:
-
-1. Finish and verify Asset CRUD.
-2. Finish tag binding and display.
-3. Implement search, filters, and sorting.
-4. Implement copy raw content.
-5. Implement variable extraction and rendered copy.
-6. Complete version creation rules.
-7. Implement version history.
-8. Implement rollback.
-9. Implement Markdown render.
-10. Implement Markdown export.
-11. Implement Markdown parse.
-12. Implement Markdown import preview and conflict handling.
-13. Implement Settings page.
-14. Adapt list, form, and detail pages for mobile browser use.
-15. Add seed/demo data.
-16. Run typecheck, lint, and build.
-17. Smoke test the full loop with real assets.
-18. Update README and docs to match the delivered behavior.
-
-## UI Guidance
-
-- Build the usable app, not a landing page.
-- Keep layouts quiet, utilitarian, and optimized for scanning.
-- Use cards for repeated asset items, not for every page section.
-- Prefer plain controls and readable forms.
-- Use icon buttons where the meaning is familiar.
-- Make mobile views usable for search and copy.
-- Do not introduce rich text, Monaco, CodeMirror, or complex visual dashboards in alpha.
-
-## Data Safety Rules
-
-- Never silently overwrite imported content.
-- Never hard-delete versions.
-- Soft delete assets before any permanent deletion feature is considered.
-- Backup and restore work belongs to v0.2 unless a minimal alpha-safe export is needed.
-- Any sync experiment must preserve conflict copies and provide a dry-run preview.
+For documentation-only changes, these commands are optional. State clearly if they were not run.
 
 ## Documentation Rules
 
-- `README.md` is for human project orientation and local usage.
+- `README.md` is for human project orientation, local usage, current status, and roadmap summary.
 - `docs/TASKS.md` is the detailed development plan and source of truth for phase status.
 - `AGENTS.md` is for AI coding rules and architectural boundaries.
-- Keep these documents consistent when scope, roadmap, or acceptance criteria change.
+- Keep all three documents consistent when scope, roadmap, or acceptance criteria change.
+- If the user says `READ.md`, update `README.md` unless a real `READ.md` file exists.

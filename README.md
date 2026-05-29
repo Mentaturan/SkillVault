@@ -2,30 +2,49 @@
 
 SkillVault 是一个本地优先的个人 AI 工作流资产管理器，适合维护 20-50 个真正会重复使用的高价值资产。
 
-它用于管理提示词、Agent 技能、项目规则、回复模板、图像提示词、工作流、SOP、检查清单，以及从 AI 对话中沉淀出来的可复用材料。
+它用于管理提示词、Agent 技能、项目规则、AGENTS.md、CLAUDE.md、Cursor/Windsurf 规则、回复模板、图像提示词、工作流、SOP、检查清单，以及从 AI 对话中沉淀出来的可复用材料。
 
 ## 当前状态
 
-项目版本为 `v0.1.0-alpha`。这是一个 localhost-only 的本地应用，不是 SaaS 服务。
+代码功能已经推进到本地路线图的 v0.3：项目工作区扫描已实现。`package.json` 仍显示 `0.1.0-alpha`，这代表发布版本号尚未重切，不代表代码功能只停留在 alpha。
 
-v0.1-alpha 核心功能已实现：
+当前已实现：
 
-- 资产 CRUD（创建、编辑、归档、软删除、恢复）
+- 资产 CRUD：创建、编辑、归档、软删除、恢复
 - 标签绑定和显示
-- 搜索、筛选和排序
+- 搜索、筛选、排序、置顶和重复内容检测
 - 复制原始内容和变量填充后的渲染内容
-- 版本历史和回滚
-- Markdown 导入和导出（含 syncId 冲突检测和 overwrite/copy/cancel 策略）
-- 设置页面
-- 移动端浏览器适配
+- 版本历史、内容变更自动建版本、元数据修改不建版本、回滚
+- Markdown 导入和导出
+- `syncId` 冲突检测和 overwrite/copy/cancel 策略
+- Codex Skill、AGENTS.md、CLAUDE.md、Cursor Rules 等导出预设
+- 集合管理、集合排序、集合导出和批量导出
+- 手动测试用例
+- 内置模板
+- 仪表盘和设置诊断
+- 项目工作区、项目资产关联、项目视图和本地 AI 配置文件扫描
+- 移动端浏览器的基础查看、搜索和复制体验
+
+下一阶段是 v0.4：备份、恢复和数据完整性。
 
 ## 产品范围
 
-SkillVault 是一个运行在 localhost 的 Web 应用，使用本地 SQLite 存储。它面向单人使用，用来维护一个实用的小型 AI 工作流资产库。
+SkillVault 是一个运行在 localhost 的本地 Web 应用，使用本地 SQLite 存储。它面向单人使用，用来维护一个实用的小型 AI 工作流资产库。
 
-SQLite 是主数据库。Markdown 是导入、导出、备份类流程和工具特定文件的交换格式。
+SQLite 是主数据库。Markdown、文件夹和工具特定文件是导入、导出、备份、部署或交换格式。
 
-SkillVault 不是 SaaS、提示词市场、AI 聊天工具、RAG 系统、同步服务、浏览器插件或多人协作工具。
+SkillVault 不是 SaaS、提示词市场、AI 聊天工具、RAG 系统、同步服务、浏览器插件、团队协作工具、云端应用或移动端 App。
+
+## 为什么这样规划
+
+近期同类开源项目和需求显示，AI 技能/提示词管理的真实痛点主要集中在四类：
+
+- 多工具统一管理：Claude Code、Codex、Cursor、Windsurf、Copilot、Gemini CLI 等工具都有自己的技能或规则目录。
+- 可恢复的本地状态：用户需要备份、恢复、manifest、lock file、dry-run 和缺失项重装。
+- 导入前校验：SKILL.md 的元数据和正文会影响 agent 如何发现、选择和信任技能。
+- 从真实 AI 使用中捕获资产：很多有价值的提示词和流程来自日常对话记录，而不是从空白表单开始写。
+
+SkillVault 的取舍是先把个人本地库做稳：先备份恢复，再做本地文件夹/工具部署，再做确定性校验，再做对话捕获。云同步、市场、AI 优化、公共分享和团队协作继续延后。
 
 ## 技术栈
 
@@ -61,13 +80,15 @@ http://localhost:3000
 
 ## 验证命令
 
-每个阶段完成前运行：
+实现功能后运行：
 
 ```bash
 npm run typecheck
 npm run lint
 npm run build
 ```
+
+文档-only 修改可以不跑这些命令，但提交说明里需要写明。
 
 ## 数据库
 
@@ -142,7 +163,7 @@ SkillVault 当前支持这些资产类型：
 
 ## 导出预设
 
-导出预设决定 Markdown 输出格式：
+导出预设决定输出格式：
 
 - 通用 Markdown
 - Codex Skill Markdown
@@ -161,58 +182,69 @@ SkillVault 当前支持这些资产类型：
 
 ## 路线图摘要
 
-### v0.1-alpha
+### 已完成：v0.1-alpha
 
-完成本地核心资产管理：CRUD、标签、搜索/筛选/排序、复制、变量、版本、回滚、Markdown 导入导出、设置页、移动端浏览器支持和验证。
+本地核心资产管理：CRUD、标签、搜索、筛选、排序、复制、变量、版本、回滚、Markdown 导入导出、设置页、移动端浏览器支持和基础验证。
 
-### v0.1-beta
+### 已完成：v0.1-beta
 
-集合管理、手动测试用例、运行记录、仪表盘统计、内置模板、导出预设增强、批量 Markdown 导出和实验性文件夹导入。
+集合、手动测试用例、仪表盘、内置模板、导出预设增强、批量导出和实验性文件夹导入。
 
-### v0.2
+### 已完成：v0.2
 
-备份与恢复、PWA 使用体验、文件夹导入增强，以及更可靠的导入导出流程。
+面向具体工具的导出模板和 SKILL.md 支持，包括 Codex Skill、AGENTS.md、CLAUDE.md、Cursor Rules 等格式。
 
-### v0.3
+### 已完成：v0.3
 
-捕获收件箱、简单文本差异对比、复制使用记录、过期资产提示，以及 Tauri 可行性实验。
+项目工作区扫描：项目 CRUD、项目资产关联、本地目录扫描、项目范围视图和项目统计。
 
-### v0.4
+### 下一步：v0.4
 
-本地 Markdown 文件夹双向同步实验、dry-run 预览、冲突副本保留，以及可选的 Git 仓库工作流实验。
+备份、恢复和数据完整性：完整备份 manifest、恢复预览、冲突策略、checksum 校验、fresh database 恢复烟测和更强诊断。
 
 ### v0.5
 
-Codex Skill 模板、Claude Code 和 CLAUDE.md 模板、AGENTS.md 组合生成、Cursor Rules 模板和 Skill Pack 打包。
+本地文件夹库和工具部署：配置工具目录、部署 dry-run、冲突副本保留、部署状态、项目级部署和修复。
 
 ### v0.6
 
-精选库浏览、手动导入精选资产、来源追踪和更新检查，同时保持本地优先。
+确定性校验和安全检查：SKILL.md frontmatter、AGENTS.md/CLAUDE.md 结构、变量占位符、危险模式、导入前警告和维护队列。
 
 ### v0.7
 
-确定性的提示词 lint、规则检查、资产健康评分和维护队列。
+捕获收件箱和本地对话挖掘：手动捕获、候选资产预览、从 Codex/Claude Code 等本地记录中提取可复用片段。
 
 ### v0.8
 
-定期复查、归档流程、重复检测、生命周期筛选和批量元数据编辑。
+版本 diff、测试运行和使用历史：文本差异、运行记录、复制使用时间、过期资产和复查队列。
 
 ### v0.9
 
-迁移加固、数据完整性检查、修复工具、打包方向决策和升级文档。
+手动远程导入和 Git 友好交换：GitHub 原始文件导入、source metadata、固定 ref、更新检查和本地精选示例。不会变成市场。
 
 ### v1.0
 
-稳定的个人本地版本，具备可靠 SQLite 存储、Markdown 导入导出、备份恢复、版本、回滚、组织管理和迁移文档。
+稳定的个人本地版本：可靠 SQLite、备份恢复、版本回滚、组织管理、工具部署、导入导出、校验和升级文档。
 
 详细开发计划见 `docs/TASKS.md`。
 
-## v0.1-alpha 暂不包含
+## 暂不包含
 
-v0.1-alpha 不包含登录、用户账户、云同步、OAuth、iCloud API、OneDrive API、GitHub OAuth、技能市场、第三方技能下载、AI 提示词优化、浏览器插件、OCR 捕获、多模型聊天、RAG、团队功能、评论、点赞、支付、复杂图表、Monaco、CodeMirror、富文本编辑、复杂 diff、zip 导出、Electron、Tauri、移动 App 发布、云部署适配、多用户权限、公开分享、模板商店或远程精选库。
+当前路线图不包含登录、用户账户、云同步、OAuth、iCloud API、OneDrive API、GitHub OAuth、技能市场、自动第三方技能下载、AI 提示词优化、浏览器插件、OCR 捕获、多模型聊天、RAG、团队功能、评论、点赞、支付、复杂图表、Monaco、CodeMirror、富文本编辑、复杂 diff、zip 导出、Electron、Tauri、移动 App 发布、云部署适配、多用户权限、公开分享、模板商店、公共注册表发布或托管 MCP 服务。
+
+## 调研参考
+
+- skills-manage: <https://github.com/iamzhihuix/skills-manage>
+- Skillful: <https://github.com/Mastermindzh/skillful>
+- prompt-manager: <https://github.com/n-WN/prompt-manager>
+- promptops: <https://github.com/llmhq-hub/promptops>
+- Vercel skills lock file restore issue: <https://github.com/vercel-labs/skills/issues/283>
+- Hermes external skill write directory issue: <https://github.com/NousResearch/hermes-agent/issues/4381>
+- skill-validator: <https://github.com/agent-ecosystem/skill-validator>
+- SKILL.md supply-chain risk paper: <https://arxiv.org/abs/2605.11418>
 
 ## 项目文档
 
-- `README.md`：项目概览、本地运行方式和路线图摘要。
+- `README.md`：项目概览、本地运行方式、当前状态和路线图摘要。
 - `docs/TASKS.md`：详细开发计划和阶段状态。
 - `AGENTS.md`：AI 编码 Agent 在本仓库工作的规则。
