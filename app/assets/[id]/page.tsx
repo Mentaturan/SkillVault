@@ -13,6 +13,7 @@ import {
   DeleteButton,
   RestoreButton,
 } from "@/components/assets/asset-actions";
+import { ExportPresetMenu } from "@/components/assets/export-preset-menu";
 import {
   ASSET_SOURCE_LABELS,
   ASSET_STATUS_LABELS,
@@ -21,7 +22,7 @@ import {
   TARGET_TOOL_LABELS,
   VISIBILITY_LABELS,
 } from "@/lib/constants";
-import { ArrowLeft, Download, Edit, History, Pin } from "lucide-react";
+import { ArrowLeft, Edit, History, Pin } from "lucide-react";
 
 interface AssetDetailPageProps {
   params: Promise<{ id: string }>;
@@ -70,12 +71,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
               编辑
             </Link>
           </Button>
-          <Button asChild variant="outline">
-            <Link href={`/api/assets/${asset.id}/export`}>
-              <Download className="mr-2 h-4 w-4" />
-              导出
-            </Link>
-          </Button>
+          <ExportPresetMenu assetId={asset.id} currentPreset={asset.exportPreset} />
           <Button asChild variant="outline">
             <Link href={`/assets/${asset.id}/test-cases`}>
               测试用例

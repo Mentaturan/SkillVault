@@ -37,9 +37,9 @@ Official Agent Skills specification published by Anthropic. Defines a standard f
 
 ## Current Phase
 
-v0.1-beta: completing remaining items (built-in templates, export preset improvements, folder import experiment).
+v0.2: complete. Tool-specific Export Templates, SKILL.md Support, built-in templates, and folder import are all implemented.
 
-v0.2 development: starting. Tool-specific Export Templates and SKILL.md Support is the next priority, based on competitive analysis findings.
+v0.3 development: next. Project Workspace Scanner is the next priority.
 
 Local status: the app has full CRUD, search/filter/sort, copy, variables, version history, rollback, Markdown import/export, settings, diagnostics, mobile adaptation, seed data, and confirmation dialogs. Collection CRUD, test cases, run logs, and dashboard are implemented. All verification commands pass.
 
@@ -322,13 +322,13 @@ Tasks:
 - [x] Implement manual test cases and run logs.
 - [x] Attach test cases to assets and optionally to asset versions.
 - [x] Add basic dashboard counts and recent activity.
-- [ ] Add local built-in templates for common asset types.
-- [ ] Improve AGENTS.md export template.
-- [ ] Improve CLAUDE.md export template.
-- [ ] Improve Codex Skill export template.
-- [ ] Improve image prompt export template.
-- [ ] Implement batch Markdown export without zip dependency if a folder-style export is enough.
-- [ ] Experiment with folder import and document limitations.
+- [x] Add local built-in templates for common asset types.
+- [x] Improve AGENTS.md export template.
+- [x] Improve CLAUDE.md export template.
+- [x] Improve Codex Skill export template.
+- [x] Improve image prompt export template.
+- [x] Implement batch Markdown export without zip dependency if a folder-style export is enough.
+- [x] Experiment with folder import and document limitations.
 
 Exit criteria:
 
@@ -349,15 +349,15 @@ Primary themes:
 
 Tasks:
 
-- [ ] Implement AGENTS.md export preset.
-- [ ] Implement CLAUDE.md export preset.
-- [ ] Implement Codex Skill SKILL.md export preset.
-- [ ] Implement Cursor Rules export preset.
-- [ ] Add SKILL.md format import detection.
-- [ ] Add SKILL.md format export.
-- [ ] Add preset-specific export API route.
-- [ ] Add built-in starter templates.
-- [ ] Experiment with folder import.
+- [x] Implement AGENTS.md export preset.
+- [x] Implement CLAUDE.md export preset.
+- [x] Implement Codex Skill SKILL.md export preset.
+- [x] Implement Cursor Rules export preset.
+- [x] Add SKILL.md format import detection.
+- [x] Add SKILL.md format export.
+- [x] Add preset-specific export API route.
+- [x] Add built-in starter templates.
+- [x] Experiment with folder import.
 
 Exit criteria:
 
