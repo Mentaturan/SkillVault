@@ -218,6 +218,17 @@ export const assetVersionsRelations = relations(assetVersions, ({ one }) => ({
   }),
 }));
 
+export const testCasesRelations = relations(testCases, ({ one }) => ({
+  asset: one(assets, {
+    fields: [testCases.assetId],
+    references: [assets.id],
+  }),
+  assetVersion: one(assetVersions, {
+    fields: [testCases.assetVersionId],
+    references: [assetVersions.id],
+  }),
+}));
+
 export const tagsRelations = relations(tags, ({ many }) => ({
   assetTags: many(assetTags),
 }));

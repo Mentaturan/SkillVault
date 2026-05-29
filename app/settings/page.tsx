@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { APP_NAME, APP_VERSION } from "@/lib/constants";
 import { dbPath } from "@/db";
 import { DiagnosticsPanel } from "@/components/settings/diagnostics-panel";
@@ -46,6 +47,20 @@ export default function SettingsPage() {
           <p>
             当前版本不支持登录、云同步、多用户或远程访问。重启本地服务器不会丢失数据。
           </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>备份</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <p>
+            导出当前本地库的完整备份 bundle，包含 Markdown 资产、版本历史、标签、集合、项目成员关系和校验信息。
+          </p>
+          <Button asChild>
+            <a href="/api/backup/export">导出完整备份</a>
+          </Button>
         </CardContent>
       </Card>
 

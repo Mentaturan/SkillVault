@@ -266,18 +266,18 @@ Scope:
 
 Tasks:
 
-- [ ] Define backup manifest schema in `lib/markdown` or `lib/backup`.
-- [ ] Include app version, schema/migration marker, export timestamp, asset count, version count, tag count, collection count, project count, and checksums.
-- [ ] Implement export-all backup route or Server Action.
-- [ ] Include assets as Markdown using `syncId`, not local `id`.
-- [ ] Include versions in a deterministic manifest section or sidecar file.
-- [ ] Include collection and project membership without requiring local IDs.
+- [x] Define backup manifest schema in `lib/markdown` or `lib/backup`.
+- [x] Include app version, schema/migration marker, export timestamp, asset count, version count, tag count, collection count, project count, and checksums.
+- [x] Implement export-all backup route or Server Action.
+- [x] Include assets as Markdown using `syncId`, not local `id`.
+- [x] Include versions in a deterministic manifest section or sidecar file.
+- [x] Include collection and project membership without requiring local IDs.
 - [ ] Add restore parser with Zod validation.
 - [ ] Add restore preview page showing create/overwrite/copy/skip candidates.
 - [ ] Add restore conflict options: skip, overwrite by `syncId`, copy with new `syncId`.
 - [ ] Add checksum mismatch warnings.
 - [ ] Add fresh-database restore smoke fixture.
-- [ ] Add diagnostics for migration state, database path, entity counts, and last backup timestamp if available.
+- [x] Add diagnostics for migration state, database path, entity counts, and last backup timestamp if available.
 - [ ] Document backup and restore in `README.md`.
 - [ ] Run `npm run typecheck`.
 - [ ] Run `npm run lint`.

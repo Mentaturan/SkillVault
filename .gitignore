@@ -8,6 +8,7 @@ coverage
 .env*.local
 *.sqlite
 *.sqlite3
+data/skillvault-backup-meta.json
 local.db
 tsconfig.tsbuildinfo
 .DS_Store

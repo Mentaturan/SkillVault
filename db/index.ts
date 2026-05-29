@@ -12,4 +12,4 @@ mkdirSync(dirname(dbPath), { recursive: true });
 const sqlite = new Database(dbPath);
 
 export const db = drizzle(sqlite, { schema });
-export { dbPath };
+export { dbPath, sqlite };

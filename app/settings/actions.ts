@@ -1,7 +1,7 @@
 "use server";
 
-import { getEntityCounts } from "@/server/queries/diagnostic-queries";
+import { getDiagnosticsSnapshot } from "@/server/services/diagnostics-service";
 
 export async function getDiagnosticsAction() {
-  return getEntityCounts();
+  return getDiagnosticsSnapshot();
 }
