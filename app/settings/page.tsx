@@ -3,8 +3,12 @@ import { Button } from "@/components/ui/button";
 import { APP_NAME, APP_VERSION } from "@/lib/constants";
 import { dbPath } from "@/db";
 import { DiagnosticsPanel } from "@/components/settings/diagnostics-panel";
+import { DeploymentTargetSettings } from "@/components/settings/deployment-target-settings";
+import { getDeploymentTargets } from "@/server/services/deployment-service";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const deploymentTargets = await getDeploymentTargets();
+
   return (
     <div className="space-y-6">
       <div>
@@ -66,6 +70,15 @@ export default function SettingsPage() {
               <a href="/restore">进入恢复页</a>
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>部署目录</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <DeploymentTargetSettings initialTargets={deploymentTargets} />
         </CardContent>
       </Card>
 

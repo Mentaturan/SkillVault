@@ -118,6 +118,60 @@ export const VISIBILITY_LABELS: Record<Visibility, string> = {
 export const TEST_CASE_KINDS = ["test_case", "run_log"] as const;
 export type TestCaseKind = (typeof TEST_CASE_KINDS)[number];
 
+export const DEPLOYMENT_TARGET_KEYS = [
+  "codex",
+  "claude_code",
+  "cursor",
+  "windsurf",
+  "trae",
+  "generic_folder",
+] as const;
+export type DeploymentTargetKey = (typeof DEPLOYMENT_TARGET_KEYS)[number];
+
+export const DEPLOYMENT_TARGET_LABELS: Record<DeploymentTargetKey, string> = {
+  codex: "Codex",
+  claude_code: "Claude Code",
+  cursor: "Cursor",
+  windsurf: "Windsurf",
+  trae: "Trae",
+  generic_folder: "通用目录",
+};
+
+export const DEPLOYMENT_TARGET_DESCRIPTIONS: Record<DeploymentTargetKey, string> = {
+  codex: "部署到本地 Codex 规则或技能目录。",
+  claude_code: "部署到本地 Claude Code 规则目录。",
+  cursor: "部署到本地 Cursor rules 目录。",
+  windsurf: "部署到本地 Windsurf 规则目录。",
+  trae: "部署到本地 Trae 规则目录。",
+  generic_folder: "部署到任意自定义本地目录。",
+};
+
+export const DEPLOYMENT_TARGET_PATH_PLACEHOLDERS: Record<DeploymentTargetKey, string> = {
+  codex: "/absolute/path/to/codex",
+  claude_code: "/absolute/path/to/claude-code",
+  cursor: "/absolute/path/to/cursor-rules",
+  windsurf: "/absolute/path/to/windsurf",
+  trae: "/absolute/path/to/trae",
+  generic_folder: "/absolute/path/to/folder",
+};
+
+export const DEPLOYMENT_STATUSES = [
+  "not_deployed",
+  "installed",
+  "stale",
+  "missing",
+  "broken",
+] as const;
+export type DeploymentStatus = (typeof DEPLOYMENT_STATUSES)[number];
+
+export const DEPLOYMENT_STATUS_LABELS: Record<DeploymentStatus, string> = {
+  not_deployed: "未部署",
+  installed: "已部署",
+  stale: "已过期",
+  missing: "目标文件缺失",
+  broken: "目标文件漂移",
+};
+
 export const SORT_OPTIONS = [
   "updatedAt_desc",
   "createdAt_desc",
@@ -188,5 +242,6 @@ export const PAGE_ROUTES = {
   import: "/import",
   collections: "/collections",
   projects: "/projects",
+  restore: "/restore",
   settings: "/settings",
 } as const;

@@ -77,6 +77,11 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
           </Button>
           <ExportPresetMenu assetId={asset.id} currentPreset={asset.exportPreset} />
           <Button asChild variant="outline">
+            <Link href={`/assets/${asset.id}/deploy`}>
+              部署
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
             <Link href={`/assets/${asset.id}/test-cases`}>
               测试用例
             </Link>

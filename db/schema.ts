@@ -12,6 +12,7 @@ import {
   ASSET_SOURCES,
   ASSET_STATUSES,
   ASSET_TYPES,
+  DEPLOYMENT_TARGET_KEYS,
   EXPORT_PRESETS,
   TARGET_TOOLS,
   TEST_CASE_KINDS,
@@ -202,6 +203,51 @@ export const projectAssets = sqliteTable(
   }),
 );
 
+export const deploymentTargets = sqliteTable(
+  "deployment_targets",
+  {
+    id: text("id").primaryKey(),
+    key: text("key", { enum: DEPLOYMENT_TARGET_KEYS }).notNull(),
+    path: text("path"),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(false),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => ({
+    keyUnique: uniqueIndex("deployment_targets_key_unique").on(table.key),
+  }),
+);
+
+export const deploymentRecords = sqliteTable(
+  "deployment_records",
+  {
+    id: text("id").primaryKey(),
+    assetId: text("asset_id")
+      .notNull()
+      .references(() => assets.id, { onDelete: "cascade" }),
+    deploymentTargetId: text("deployment_target_id")
+      .notNull()
+      .references(() => deploymentTargets.id, { onDelete: "cascade" }),
+    targetDirectoryPath: text("target_directory_path").notNull(),
+    targetFilePath: text("target_file_path").notNull(),
+    targetFilename: text("target_filename").notNull(),
+    deployedContentHash: text("deployed_content_hash").notNull(),
+    lastBackupPath: text("last_backup_path"),
+    lastDeployedAt: integer("last_deployed_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => ({
+    assetTargetUnique: uniqueIndex("deployment_records_asset_target_unique").on(
+      table.assetId,
+      table.deploymentTargetId,
+    ),
+    assetIdIndex: index("deployment_records_asset_id_idx").on(table.assetId),
+    targetIdIndex: index("deployment_records_target_id_idx").on(
+      table.deploymentTargetId,
+    ),
+  }),
+);
+
 import { relations } from "drizzle-orm";
 
 export const assetsRelations = relations(assets, ({ many }) => ({
@@ -209,6 +255,7 @@ export const assetsRelations = relations(assets, ({ many }) => ({
   assetTags: many(assetTags),
   testCases: many(testCases),
   collectionAssets: many(collectionAssets),
+  deploymentRecords: many(deploymentRecords),
 }));
 
 export const assetVersionsRelations = relations(assetVersions, ({ one }) => ({
@@ -274,6 +321,27 @@ export const projectAssetsRelations = relations(projectAssets, ({ one }) => ({
   }),
 }));
 
+export const deploymentTargetsRelations = relations(
+  deploymentTargets,
+  ({ many }) => ({
+    deploymentRecords: many(deploymentRecords),
+  }),
+);
+
+export const deploymentRecordsRelations = relations(
+  deploymentRecords,
+  ({ one }) => ({
+    asset: one(assets, {
+      fields: [deploymentRecords.assetId],
+      references: [assets.id],
+    }),
+    deploymentTarget: one(deploymentTargets, {
+      fields: [deploymentRecords.deploymentTargetId],
+      references: [deploymentTargets.id],
+    }),
+  }),
+);
+
 export type Asset = typeof assets.$inferSelect;
 export type NewAsset = typeof assets.$inferInsert;
 export type AssetVersion = typeof assetVersions.$inferSelect;
@@ -292,3 +360,7 @@ export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 export type ProjectAsset = typeof projectAssets.$inferSelect;
 export type NewProjectAsset = typeof projectAssets.$inferInsert;
+export type DeploymentTarget = typeof deploymentTargets.$inferSelect;
+export type NewDeploymentTarget = typeof deploymentTargets.$inferInsert;
+export type DeploymentRecord = typeof deploymentRecords.$inferSelect;
+export type NewDeploymentRecord = typeof deploymentRecords.$inferInsert;

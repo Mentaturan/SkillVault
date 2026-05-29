@@ -24,6 +24,7 @@ Implemented locally:
 - Project workspaces, project-asset association, project detail views, and local directory scanning for AI config files.
 - Settings and diagnostics for local database path and record counts.
 - Full backup export bundle, restore preview and restore execution, checksum validation, and fresh-database restore smoke verification.
+- Deployment target settings, asset-level deployment preview, copy-first deploy writes, conflict backup copies, and persisted deploy status metadata.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -32,7 +33,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: v0.5 local folder library and tool deployment. Backup and restore are now in place, so the next practical step is controlled deployment into real tool directories with preview, conflict preservation, and drift visibility.
+Next development focus: continue v0.5 local folder library and tool deployment with project-level deploy and repair actions. Backup and restore are now in place, and the single-asset deploy flow has landed.
 
 ## Product Positioning
 
@@ -294,7 +295,7 @@ Exit criteria:
 
 ## v0.5 - Local Folder Library and Tool Deployment
 
-Status: planned.
+Status: in progress.
 
 Goal: bridge SkillVault's database library with folder-based AI tool ecosystems while avoiding drift and silent overwrites.
 
@@ -315,11 +316,11 @@ Scope:
 
 Tasks:
 
-- [ ] Add target directory settings for Codex, Claude Code, Cursor, Windsurf, Trae, and generic folder targets.
-- [ ] Add a deployment preview service that renders the exact target file content.
-- [ ] Add file existence and content-hash checks before write.
-- [ ] Add conflict copy preservation for existing target files.
-- [ ] Add deployment result records or metadata sufficient to show installed/stale/broken status.
+- [x] Add target directory settings for Codex, Claude Code, Cursor, Windsurf, Trae, and generic folder targets.
+- [x] Add a deployment preview service that renders the exact target file content.
+- [x] Add file existence and content-hash checks before write.
+- [x] Add conflict copy preservation for existing target files.
+- [x] Add deployment result records or metadata sufficient to show installed/stale/broken status.
 - [ ] Add project-level deploy from project assets.
 - [ ] Add repair action for missing or drifted target files.
 - [ ] Add documentation for copy vs symlink behavior.

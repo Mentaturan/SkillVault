@@ -15,6 +15,13 @@
       "when": 1780077591744,
       "tag": "0001_fair_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1780084295661,
+      "tag": "0002_lucky_adam_destine",
+      "breakpoints": true
     }
   ]
 }
