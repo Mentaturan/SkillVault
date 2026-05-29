@@ -26,27 +26,27 @@ export function AppLayout({ children }: AppLayoutProps) {
         <nav className="flex-1 space-y-1 p-4">
           <NavLink href="/" exact>
             <LayoutDashboard className="h-4 w-4" />
-            Dashboard
+            仪表盘
           </NavLink>
           <NavLink href="/assets">
             <FileText className="h-4 w-4" />
-            Assets
+            资产库
           </NavLink>
           <NavLink href="/assets/new">
             <Plus className="h-4 w-4" />
-            New Asset
+            新建资产
           </NavLink>
           <NavLink href="/import">
             <Import className="h-4 w-4" />
-            Import
+            导入
           </NavLink>
           <NavLink href="/collections">
             <FolderOpen className="h-4 w-4" />
-            Collections
+            集合
           </NavLink>
           <NavLink href="/settings">
             <Settings className="h-4 w-4" />
-            Settings
+            设置
           </NavLink>
         </nav>
       </aside>

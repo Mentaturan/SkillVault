@@ -19,7 +19,7 @@ export function ArchiveButton({ id }: ActionButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleArchive() {
-    if (!confirm("Are you sure you want to archive this asset?")) return;
+    if (!confirm("确定要归档这个资产吗？")) return;
     setIsLoading(true);
     const result = await archiveAssetAction(id);
     if (result.success) {
@@ -31,7 +31,7 @@ export function ArchiveButton({ id }: ActionButtonProps) {
   return (
     <Button variant="outline" onClick={handleArchive} disabled={isLoading}>
       <Archive className="mr-2 h-4 w-4" />
-      Archive
+      归档
     </Button>
   );
 }
@@ -41,7 +41,7 @@ export function DeleteButton({ id }: ActionButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleDelete() {
-    if (!confirm("Are you sure you want to delete this asset?")) return;
+    if (!confirm("确定要删除这个资产吗？")) return;
     setIsLoading(true);
     const result = await deleteAssetAction(id);
     if (result.success) {
@@ -53,7 +53,7 @@ export function DeleteButton({ id }: ActionButtonProps) {
   return (
     <Button variant="destructive" onClick={handleDelete} disabled={isLoading}>
       <Trash2 className="mr-2 h-4 w-4" />
-      Delete
+      删除
     </Button>
   );
 }
@@ -74,7 +74,7 @@ export function RestoreButton({ id }: ActionButtonProps) {
   return (
     <Button variant="outline" onClick={handleRestore} disabled={isLoading}>
       <RotateCcw className="mr-2 h-4 w-4" />
-      Restore
+      恢复
     </Button>
   );
 }

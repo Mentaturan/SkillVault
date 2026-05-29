@@ -14,6 +14,18 @@ export const ASSET_TYPES = [
 ] as const;
 export type AssetType = (typeof ASSET_TYPES)[number];
 
+export const ASSET_TYPE_LABELS: Record<AssetType, string> = {
+  agent_skill: "Agent 技能",
+  system_rule: "系统规则",
+  chat_prompt: "聊天提示词",
+  image_prompt: "图像提示词",
+  reply_template: "回复模板",
+  workflow: "工作流",
+  checklist: "检查清单",
+  sop: "标准作业流程",
+  reference: "参考资料",
+};
+
 export const TARGET_TOOLS = [
   "codex",
   "trae_solo",
@@ -30,6 +42,21 @@ export const TARGET_TOOLS = [
 ] as const;
 export type TargetTool = (typeof TARGET_TOOLS)[number];
 
+export const TARGET_TOOL_LABELS: Record<TargetTool, string> = {
+  codex: "Codex",
+  trae_solo: "Trae Solo",
+  claude_code: "Claude Code",
+  chatgpt: "ChatGPT",
+  claude: "Claude",
+  gemini: "Gemini",
+  cursor: "Cursor",
+  midjourney: "Midjourney",
+  flux: "Flux",
+  stable_diffusion: "Stable Diffusion",
+  dalle: "DALL-E",
+  general: "通用",
+};
+
 export const EXPORT_PRESETS = [
   "general_markdown",
   "codex_skill_md",
@@ -40,6 +67,15 @@ export const EXPORT_PRESETS = [
 ] as const;
 export type ExportPreset = (typeof EXPORT_PRESETS)[number];
 
+export const EXPORT_PRESET_LABELS: Record<ExportPreset, string> = {
+  general_markdown: "通用 Markdown",
+  codex_skill_md: "Codex Skill Markdown",
+  agents_md: "AGENTS.md",
+  claude_md: "CLAUDE.md",
+  cursor_rules: "Cursor Rules",
+  plain_text: "纯文本",
+};
+
 export const ASSET_STATUSES = [
   "draft",
   "active",
@@ -47,6 +83,13 @@ export const ASSET_STATUSES = [
   "archived",
 ] as const;
 export type AssetStatus = (typeof ASSET_STATUSES)[number];
+
+export const ASSET_STATUS_LABELS: Record<AssetStatus, string> = {
+  draft: "草稿",
+  active: "启用",
+  deprecated: "已弃用",
+  archived: "已归档",
+};
 
 export const ASSET_SOURCES = [
   "self_created",
@@ -56,8 +99,21 @@ export const ASSET_SOURCES = [
 ] as const;
 export type AssetSource = (typeof ASSET_SOURCES)[number];
 
+export const ASSET_SOURCE_LABELS: Record<AssetSource, string> = {
+  self_created: "自建",
+  imported: "导入",
+  captured: "捕获",
+  downloaded: "下载",
+};
+
 export const VISIBILITIES = ["private", "unlisted", "public"] as const;
 export type Visibility = (typeof VISIBILITIES)[number];
+
+export const VISIBILITY_LABELS: Record<Visibility, string> = {
+  private: "私有",
+  unlisted: "未列出",
+  public: "公开",
+};
 
 export const TEST_CASE_KINDS = ["test_case", "run_log"] as const;
 export type TestCaseKind = (typeof TEST_CASE_KINDS)[number];

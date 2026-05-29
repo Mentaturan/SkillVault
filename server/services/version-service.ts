@@ -45,7 +45,7 @@ export async function createInitialVersion(input: CreateVersionInput) {
     titleSnapshot: input.titleSnapshot,
     contentSnapshot: input.contentSnapshot,
     contentHash: input.contentHash,
-    changeNote: "Initial version",
+    changeNote: "初始版本",
     createdAt: Date.now(),
   });
 }

@@ -6,7 +6,7 @@ import { APP_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: APP_NAME,
-  description: "Local-first AI workflow asset manager.",
+  description: "本地优先的 AI 工作流资产管理器。",
 };
 
 export default function RootLayout({

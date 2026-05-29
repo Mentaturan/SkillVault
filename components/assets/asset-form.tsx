@@ -22,6 +22,12 @@ import {
   ASSET_SOURCES,
   VISIBILITIES,
   DEFAULT_ASSET_VALUES,
+  ASSET_SOURCE_LABELS,
+  ASSET_STATUS_LABELS,
+  ASSET_TYPE_LABELS,
+  EXPORT_PRESET_LABELS,
+  TARGET_TOOL_LABELS,
+  VISIBILITY_LABELS,
 } from "@/lib/constants";
 import type { Asset, Tag } from "@/db/schema";
 
@@ -52,10 +58,10 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         router.push("/assets");
         router.refresh();
       } else {
-        setError("Failed to save asset");
+        setError("保存资产失败");
       }
     } catch {
-      setError("An unexpected error occurred");
+      setError("发生了意外错误");
     } finally {
       setIsSubmitting(false);
     }
@@ -70,7 +76,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="title">Title *</Label>
+        <Label htmlFor="title">标题 *</Label>
         <Input
           id="title"
           name="title"
@@ -82,7 +88,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="type">Type *</Label>
+          <Label htmlFor="type">类型 *</Label>
           <Select
             name="type"
             defaultValue={asset?.type ?? DEFAULT_ASSET_VALUES.type}
@@ -93,7 +99,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
             <SelectContent>
               {ASSET_TYPES.map((type) => (
                 <SelectItem key={type} value={type}>
-                  {type.replace(/_/g, " ")}
+                  {ASSET_TYPE_LABELS[type]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -101,7 +107,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="targetTool">Target Tool *</Label>
+          <Label htmlFor="targetTool">目标工具 *</Label>
           <Select
             name="targetTool"
             defaultValue={
@@ -114,7 +120,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
             <SelectContent>
               {TARGET_TOOLS.map((tool) => (
                 <SelectItem key={tool} value={tool}>
-                  {tool.replace(/_/g, " ")}
+                  {TARGET_TOOL_LABELS[tool]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -122,7 +128,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="exportPreset">Export Preset *</Label>
+          <Label htmlFor="exportPreset">导出预设 *</Label>
           <Select
             name="exportPreset"
             defaultValue={
@@ -135,7 +141,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
             <SelectContent>
               {EXPORT_PRESETS.map((preset) => (
                 <SelectItem key={preset} value={preset}>
-                  {preset.replace(/_/g, " ")}
+                  {EXPORT_PRESET_LABELS[preset]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -143,7 +149,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="status">状态</Label>
           <Select
             name="status"
             defaultValue={asset?.status ?? DEFAULT_ASSET_VALUES.status}
@@ -154,7 +160,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
             <SelectContent>
               {ASSET_STATUSES.map((status) => (
                 <SelectItem key={status} value={status}>
-                  {status}
+                  {ASSET_STATUS_LABELS[status]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -162,7 +168,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="visibility">Visibility</Label>
+          <Label htmlFor="visibility">可见性</Label>
           <Select
             name="visibility"
             defaultValue={
@@ -175,7 +181,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
             <SelectContent>
               {VISIBILITIES.map((v) => (
                 <SelectItem key={v} value={v}>
-                  {v}
+                  {VISIBILITY_LABELS[v]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -183,7 +189,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="source">Source</Label>
+          <Label htmlFor="source">来源</Label>
           <Select
             name="source"
             defaultValue={asset?.source ?? DEFAULT_ASSET_VALUES.source}
@@ -194,7 +200,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
             <SelectContent>
               {ASSET_SOURCES.map((s) => (
                 <SelectItem key={s} value={s}>
-                  {s.replace(/_/g, " ")}
+                  {ASSET_SOURCE_LABELS[s]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -203,7 +209,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">描述</Label>
         <Textarea
           id="description"
           name="description"
@@ -214,7 +220,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="scenario">Scenario</Label>
+        <Label htmlFor="scenario">使用场景</Label>
         <Textarea
           id="scenario"
           name="scenario"
@@ -225,7 +231,7 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="content">Content *</Label>
+        <Label htmlFor="content">内容 *</Label>
         <Textarea
           id="content"
           name="content"
@@ -237,17 +243,17 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tagNames">Tags (comma-separated)</Label>
+        <Label htmlFor="tagNames">标签（用逗号分隔）</Label>
         <Input
           id="tagNames"
           name="tagNames"
           defaultValue={existingTags}
-          placeholder="tag1, tag2, tag3"
+          placeholder="标签1, 标签2, 标签3"
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="sourceUrl">Source URL</Label>
+        <Label htmlFor="sourceUrl">来源链接</Label>
         <Input
           id="sourceUrl"
           name="sourceUrl"
@@ -266,19 +272,19 @@ export function AssetForm({ asset, isEditing = false }: AssetFormProps) {
           defaultChecked={asset?.pinned ?? false}
           className="h-4 w-4 rounded border-gray-300"
         />
-        <Label htmlFor="pinned">Pin this asset</Label>
+        <Label htmlFor="pinned">置顶这个资产</Label>
       </div>
 
       <div className="flex gap-4">
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
-            ? "Saving..."
+            ? "保存中..."
             : isEditing
-              ? "Update Asset"
-              : "Create Asset"}
+              ? "更新资产"
+              : "创建资产"}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancel
+          取消
         </Button>
       </div>
     </form>

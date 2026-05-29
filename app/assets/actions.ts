@@ -51,7 +51,7 @@ export async function createAssetAction(formData: FormData) {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to create asset",
+      error: error instanceof Error ? error.message : "创建资产失败",
     };
   }
 }
@@ -72,7 +72,7 @@ export async function updateAssetAction(id: string, formData: FormData) {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update asset",
+      error: error instanceof Error ? error.message : "更新资产失败",
     };
   }
 }
@@ -86,7 +86,7 @@ export async function archiveAssetAction(id: string) {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to archive asset",
+      error: error instanceof Error ? error.message : "归档资产失败",
     };
   }
 }
@@ -100,7 +100,7 @@ export async function deleteAssetAction(id: string) {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to delete asset",
+      error: error instanceof Error ? error.message : "删除资产失败",
     };
   }
 }
@@ -114,7 +114,7 @@ export async function restoreAssetAction(id: string) {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to restore asset",
+      error: error instanceof Error ? error.message : "恢复资产失败",
     };
   }
 }

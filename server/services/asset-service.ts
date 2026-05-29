@@ -69,7 +69,7 @@ export async function createNewAsset(input: CreateAssetInput) {
 export async function updateExistingAsset(input: UpdateAssetInput) {
   const existing = await findAssetById(input.id);
   if (!existing) {
-    throw new Error("Asset not found");
+    throw new Error("资产不存在");
   }
 
   const updates: Record<string, unknown> = {};
@@ -123,7 +123,7 @@ export async function updateExistingAsset(input: UpdateAssetInput) {
 export async function archiveExistingAsset(id: string) {
   const existing = await findAssetById(id);
   if (!existing) {
-    throw new Error("Asset not found");
+    throw new Error("资产不存在");
   }
   return archiveAsset(id);
 }
@@ -131,7 +131,7 @@ export async function archiveExistingAsset(id: string) {
 export async function deleteExistingAsset(id: string) {
   const existing = await findAssetById(id);
   if (!existing) {
-    throw new Error("Asset not found");
+    throw new Error("资产不存在");
   }
   return softDeleteAsset(id);
 }
@@ -139,7 +139,7 @@ export async function deleteExistingAsset(id: string) {
 export async function restoreExistingAsset(id: string) {
   const existing = await findAssetById(id);
   if (!existing) {
-    throw new Error("Asset not found");
+    throw new Error("资产不存在");
   }
   return restoreAsset(id);
 }

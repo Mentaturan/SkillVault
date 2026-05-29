@@ -17,9 +17,9 @@ export default async function EditAssetPage({ params }: EditAssetPageProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Edit Asset</h1>
+        <h1 className="text-2xl font-semibold">编辑资产</h1>
         <p className="text-sm text-muted-foreground">
-          Update asset: {asset.title}
+          正在编辑：{asset.title}
         </p>
       </div>
       <AssetForm asset={asset} isEditing />

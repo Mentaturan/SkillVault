@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pin } from "lucide-react";
 import type { Asset, Tag } from "@/db/schema";
+import { ASSET_STATUS_LABELS, ASSET_TYPE_LABELS } from "@/lib/constants";
 
 interface AssetCardProps {
   asset: Asset & {
@@ -22,8 +23,8 @@ export function AssetCard({ asset }: AssetCardProps) {
             {asset.pinned && <Pin className="h-4 w-4 shrink-0 text-primary" />}
           </div>
           <div className="flex flex-wrap gap-1">
-            <Badge variant="secondary">{asset.type}</Badge>
-            <Badge variant="outline">{asset.status}</Badge>
+            <Badge variant="secondary">{ASSET_TYPE_LABELS[asset.type]}</Badge>
+            <Badge variant="outline">{ASSET_STATUS_LABELS[asset.status]}</Badge>
           </div>
         </CardHeader>
         <CardContent>

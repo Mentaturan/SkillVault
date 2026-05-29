@@ -9,20 +9,19 @@ export default function DashboardPage() {
         <p className="text-sm text-muted-foreground">{APP_VERSION}</p>
         <h1 className="text-3xl font-semibold tracking-normal">{APP_NAME}</h1>
         <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-          Localhost-first AI workflow asset manager. Phase 2 only initializes the
-          runtime, styling, and database foundation.
+          本地优先的 AI 工作流资产管理器，用来维护提示词、技能、规则、模板和工作流。
         </p>
       </section>
 
       <nav className="grid gap-3 sm:grid-cols-3">
         <Link className="rounded-md border p-4 text-sm hover:bg-muted" href="/assets">
-          Assets
+          资产库
         </Link>
         <Link className="rounded-md border p-4 text-sm hover:bg-muted" href="/import">
-          Import
+          导入
         </Link>
         <Link className="rounded-md border p-4 text-sm hover:bg-muted" href="/settings">
-          Settings
+          设置
         </Link>
       </nav>
     </main>

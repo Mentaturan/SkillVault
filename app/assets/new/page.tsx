@@ -4,9 +4,9 @@ export default function NewAssetPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">New Asset</h1>
+        <h1 className="text-2xl font-semibold">新建资产</h1>
         <p className="text-sm text-muted-foreground">
-          Create a new AI workflow asset
+          创建一个新的 AI 工作流资产
         </p>
       </div>
       <AssetForm />

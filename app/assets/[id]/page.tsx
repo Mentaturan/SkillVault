@@ -10,6 +10,14 @@ import {
   DeleteButton,
   RestoreButton,
 } from "@/components/assets/asset-actions";
+import {
+  ASSET_SOURCE_LABELS,
+  ASSET_STATUS_LABELS,
+  ASSET_TYPE_LABELS,
+  EXPORT_PRESET_LABELS,
+  TARGET_TOOL_LABELS,
+  VISIBILITY_LABELS,
+} from "@/lib/constants";
 import { Edit, History, Pin } from "lucide-react";
 
 interface AssetDetailPageProps {
@@ -37,16 +45,18 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
             {asset.pinned && <Pin className="h-5 w-5 text-primary" />}
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
-            <Badge>{asset.type}</Badge>
-            <Badge variant="outline">{asset.status}</Badge>
-            <Badge variant="secondary">{asset.targetTool}</Badge>
+            <Badge>{ASSET_TYPE_LABELS[asset.type]}</Badge>
+            <Badge variant="outline">{ASSET_STATUS_LABELS[asset.status]}</Badge>
+            <Badge variant="secondary">
+              {TARGET_TOOL_LABELS[asset.targetTool]}
+            </Badge>
           </div>
         </div>
         <div className="flex gap-2">
           <Button asChild>
             <Link href={`/assets/${asset.id}/edit`}>
               <Edit className="mr-2 h-4 w-4" />
-              Edit
+              编辑
             </Link>
           </Button>
           {asset.status !== "archived" && (
@@ -64,7 +74,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
       {asset.description && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Description</CardTitle>
+            <CardTitle className="text-sm">描述</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm">{asset.description}</p>
@@ -75,7 +85,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
       {asset.scenario && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Scenario</CardTitle>
+            <CardTitle className="text-sm">使用场景</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm">{asset.scenario}</p>
@@ -85,7 +95,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Content</CardTitle>
+          <CardTitle className="text-sm">内容</CardTitle>
         </CardHeader>
         <CardContent>
           <pre className="whitespace-pre-wrap rounded-md bg-muted p-4 text-sm">
@@ -97,7 +107,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
       {tags.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Tags</CardTitle>
+            <CardTitle className="text-sm">标签</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -114,43 +124,43 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">Versions</CardTitle>
+            <CardTitle className="text-sm">版本</CardTitle>
             <Button asChild variant="ghost" size="sm">
               <Link href={`/assets/${asset.id}/versions`}>
                 <History className="mr-2 h-4 w-4" />
-                View History
+                查看历史
               </Link>
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            {versions.length} version{versions.length !== 1 ? "s" : ""}
+            共 {versions.length} 个版本
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Metadata</CardTitle>
+          <CardTitle className="text-sm">元数据</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className="grid gap-2 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-muted-foreground">Export Preset</dt>
-              <dd>{asset.exportPreset}</dd>
+              <dt className="text-muted-foreground">导出预设</dt>
+              <dd>{EXPORT_PRESET_LABELS[asset.exportPreset]}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Visibility</dt>
-              <dd>{asset.visibility}</dd>
+              <dt className="text-muted-foreground">可见性</dt>
+              <dd>{VISIBILITY_LABELS[asset.visibility]}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Source</dt>
-              <dd>{asset.source}</dd>
+              <dt className="text-muted-foreground">来源</dt>
+              <dd>{ASSET_SOURCE_LABELS[asset.source]}</dd>
             </div>
             {asset.sourceUrl && (
               <div>
-                <dt className="text-muted-foreground">Source URL</dt>
+                <dt className="text-muted-foreground">来源链接</dt>
                 <dd>
                   <a
                     href={asset.sourceUrl}
@@ -164,12 +174,12 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
               </div>
             )}
             <div>
-              <dt className="text-muted-foreground">Created</dt>
-              <dd>{new Date(asset.createdAt).toLocaleString()}</dd>
+              <dt className="text-muted-foreground">创建时间</dt>
+              <dd>{new Date(asset.createdAt).toLocaleString("zh-CN")}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Updated</dt>
-              <dd>{new Date(asset.updatedAt).toLocaleString()}</dd>
+              <dt className="text-muted-foreground">更新时间</dt>
+              <dd>{new Date(asset.updatedAt).toLocaleString("zh-CN")}</dd>
             </div>
           </dl>
         </CardContent>
