@@ -31,6 +31,7 @@ swiftc \
   macos/SkillVault/main.swift \
   macos/SkillVault/AppDelegate.swift \
   macos/SkillVault/ServerManager.swift \
+  macos/SkillVault/BonjourService.swift \
   -framework Cocoa -framework WebKit \
   -parse-as-library 2>/dev/null || \
 swiftc \
@@ -38,6 +39,7 @@ swiftc \
   macos/SkillVault/main.swift \
   macos/SkillVault/AppDelegate.swift \
   macos/SkillVault/ServerManager.swift \
+  macos/SkillVault/BonjourService.swift \
   -framework Cocoa -framework WebKit
 
 echo "Copying standalone server output..."
