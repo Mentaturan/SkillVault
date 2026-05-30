@@ -106,6 +106,34 @@ export const ASSET_SOURCE_LABELS: Record<AssetSource, string> = {
   downloaded: "下载",
 };
 
+export const CAPTURE_INBOX_SOURCE_TYPES = [
+  "manual",
+  "codex_rollout",
+  "claude_code_jsonl",
+] as const;
+export type CaptureInboxSourceType = (typeof CAPTURE_INBOX_SOURCE_TYPES)[number];
+
+export const CAPTURE_INBOX_SOURCE_TYPE_LABELS: Record<CaptureInboxSourceType, string> = {
+  manual: "手动粘贴",
+  codex_rollout: "Codex Rollout",
+  claude_code_jsonl: "Claude Code JSONL",
+};
+
+export const CAPTURE_INBOX_STATUSES = [
+  "pending",
+  "reviewed",
+  "converted",
+  "dismissed",
+] as const;
+export type CaptureInboxStatus = (typeof CAPTURE_INBOX_STATUSES)[number];
+
+export const CAPTURE_INBOX_STATUS_LABELS: Record<CaptureInboxStatus, string> = {
+  pending: "待处理",
+  reviewed: "已复核",
+  converted: "已转资产",
+  dismissed: "已忽略",
+};
+
 export const VISIBILITIES = ["private", "unlisted", "public"] as const;
 export type Visibility = (typeof VISIBILITIES)[number];
 

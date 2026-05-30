@@ -22,6 +22,13 @@
       "when": 1780084295661,
       "tag": "0002_lucky_adam_destine",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1780114346510,
+      "tag": "0003_sour_riptide",
+      "breakpoints": true
     }
   ]
 }

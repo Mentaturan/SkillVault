@@ -12,6 +12,8 @@ import {
   ASSET_SOURCES,
   ASSET_STATUSES,
   ASSET_TYPES,
+  CAPTURE_INBOX_SOURCE_TYPES,
+  CAPTURE_INBOX_STATUSES,
   DEPLOYMENT_TARGET_KEYS,
   EXPORT_PRESETS,
   TARGET_TOOLS,
@@ -248,6 +250,31 @@ export const deploymentRecords = sqliteTable(
   }),
 );
 
+export const captureInboxItems = sqliteTable(
+  "capture_inbox_items",
+  {
+    id: text("id").primaryKey(),
+    title: text("title").notNull(),
+    rawContent: text("raw_content").notNull(),
+    sourceType: text("source_type", { enum: CAPTURE_INBOX_SOURCE_TYPES }).notNull(),
+    sourcePath: text("source_path"),
+    sourceTimestamp: integer("source_timestamp"),
+    extractionNote: text("extraction_note"),
+    status: text("status", { enum: CAPTURE_INBOX_STATUSES }).notNull(),
+    convertedAssetId: text("converted_asset_id").references(() => assets.id, {
+      onDelete: "set null",
+    }),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => ({
+    sourceTypeIndex: index("capture_inbox_items_source_type_idx").on(table.sourceType),
+    statusIndex: index("capture_inbox_items_status_idx").on(table.status),
+    sourcePathIndex: index("capture_inbox_items_source_path_idx").on(table.sourcePath),
+    createdAtIndex: index("capture_inbox_items_created_at_idx").on(table.createdAt),
+  }),
+);
+
 import { relations } from "drizzle-orm";
 
 export const assetsRelations = relations(assets, ({ many }) => ({
@@ -256,6 +283,7 @@ export const assetsRelations = relations(assets, ({ many }) => ({
   testCases: many(testCases),
   collectionAssets: many(collectionAssets),
   deploymentRecords: many(deploymentRecords),
+  captureInboxItems: many(captureInboxItems),
 }));
 
 export const assetVersionsRelations = relations(assetVersions, ({ one }) => ({
@@ -342,6 +370,13 @@ export const deploymentRecordsRelations = relations(
   }),
 );
 
+export const captureInboxItemsRelations = relations(captureInboxItems, ({ one }) => ({
+  convertedAsset: one(assets, {
+    fields: [captureInboxItems.convertedAssetId],
+    references: [assets.id],
+  }),
+}));
+
 export type Asset = typeof assets.$inferSelect;
 export type NewAsset = typeof assets.$inferInsert;
 export type AssetVersion = typeof assetVersions.$inferSelect;
@@ -364,3 +399,5 @@ export type DeploymentTarget = typeof deploymentTargets.$inferSelect;
 export type NewDeploymentTarget = typeof deploymentTargets.$inferInsert;
 export type DeploymentRecord = typeof deploymentRecords.$inferSelect;
 export type NewDeploymentRecord = typeof deploymentRecords.$inferInsert;
+export type CaptureInboxItem = typeof captureInboxItems.$inferSelect;
+export type NewCaptureInboxItem = typeof captureInboxItems.$inferInsert;

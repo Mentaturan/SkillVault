@@ -372,7 +372,7 @@ Exit criteria:
 
 ## v0.7 - Capture Inbox and Local Conversation Mining
 
-Status: planned.
+Status: in progress.
 
 Goal: make it easy to turn daily AI usage into reusable assets.
 
@@ -392,7 +392,7 @@ Scope:
 
 Tasks:
 
-- [ ] Add capture inbox table and service.
+- [x] Add capture inbox table and service.
 - [ ] Add manual paste-to-inbox page.
 - [ ] Add convert-to-asset workflow.
 - [ ] Track source type, source path, source timestamp, and extraction note.
