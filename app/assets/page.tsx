@@ -5,6 +5,7 @@ import { AssetFilters, type AssetFilterValues } from "@/components/assets/asset-
 import { getAssets } from "@/server/services/asset-service";
 import { getAllTags } from "@/server/services/tag-service";
 import {
+  ASSET_STATE_FILTERS,
   ASSET_STATUSES,
   ASSET_TYPES,
   SORT_OPTIONS,
@@ -32,6 +33,7 @@ function parseFilters(
   params: Record<string, string | string[] | undefined>,
 ): AssetFilterValues {
   const search = getSingleParam(params, "q")?.trim() || undefined;
+  const stateFilter = getSingleParam(params, "stateFilter");
   const type = getSingleParam(params, "type");
   const targetTool = getSingleParam(params, "targetTool");
   const status = getSingleParam(params, "status");
@@ -40,6 +42,7 @@ function parseFilters(
 
   return {
     search,
+    stateFilter: ASSET_STATE_FILTERS.find((item) => item === stateFilter),
     type: ASSET_TYPES.find((item) => item === type),
     targetTool: TARGET_TOOLS.find((item) => item === targetTool),
     status: ASSET_STATUSES.find((item) => item === status),
@@ -55,6 +58,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
   const [assets, tags] = await Promise.all([
     getAssets({
       status: filters.status,
+      stateFilter: filters.stateFilter,
       type: filters.type,
       targetTool: filters.targetTool,
       search: filters.search,

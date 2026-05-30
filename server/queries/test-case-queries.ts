@@ -11,6 +11,11 @@ export async function findTestCasesByAssetId(assetId: string) {
   });
 }
 
+export async function findAssetIdsWithTestCases() {
+  const rows = await db.selectDistinct({ assetId: testCases.assetId }).from(testCases);
+  return rows.map((row) => row.assetId);
+}
+
 export async function findTestCaseById(id: string) {
   return db.query.testCases.findFirst({
     where: eq(testCases.id, id),

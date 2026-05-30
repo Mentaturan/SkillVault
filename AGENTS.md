@@ -41,6 +41,7 @@ Current v0.8 progress:
 - Raw copy and rendered copy now update `lastUsedAt` without mutating content versions.
 - Assets can carry a manual `reviewDueAt`, and a dedicated review queue page surfaces overdue and upcoming reviews.
 - Run logs stay in the existing test case model via `kind`, so v0.8 does not add a separate run-log entity.
+- Asset filters now cover stale, recently used, never used, low-rated, and untested views with explicit deterministic thresholds.
 
 ## Product Principles
 

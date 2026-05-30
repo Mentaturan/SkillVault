@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  ASSET_STATE_FILTER_LABELS,
+  ASSET_STATE_FILTERS,
   ASSET_STATUS_LABELS,
   ASSET_STATUSES,
   ASSET_TYPE_LABELS,
@@ -24,6 +26,7 @@ import {
   TARGET_TOOL_LABELS,
   TARGET_TOOLS,
   type AssetStatus,
+  type AssetStateFilter,
   type AssetType,
   type SortOption,
   type TargetTool,
@@ -32,6 +35,7 @@ import type { Tag } from "@/db/schema";
 
 export interface AssetFilterValues {
   search?: string;
+  stateFilter?: AssetStateFilter;
   type?: AssetType;
   targetTool?: TargetTool;
   status?: AssetStatus;
@@ -57,6 +61,7 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
     const merged = { ...filters, ...updates };
 
     if (merged.search) params.set("q", merged.search);
+    if (merged.stateFilter) params.set("stateFilter", merged.stateFilter);
     if (merged.type) params.set("type", merged.type);
     if (merged.targetTool) params.set("targetTool", merged.targetTool);
     if (merged.status) params.set("status", merged.status);
@@ -79,7 +84,7 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
   return (
     <div className="space-y-3 rounded-md border bg-background p-3">
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(180px,1.4fr)_repeat(4,minmax(130px,1fr))_auto]">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(180px,1.4fr)_repeat(5,minmax(130px,1fr))_auto]">
         <div className="space-y-1.5">
           <Label htmlFor="q">搜索</Label>
           <div className="relative">
@@ -97,6 +102,30 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
               }}
             />
           </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label>专项筛选</Label>
+          <Select
+            defaultValue={filters.stateFilter ?? ALL_VALUE}
+            onValueChange={(v) =>
+              applyFilters({
+                stateFilter: v === ALL_VALUE ? undefined : (v as AssetStateFilter),
+              })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_VALUE}>全部资产</SelectItem>
+              {ASSET_STATE_FILTERS.map((stateFilter) => (
+                <SelectItem key={stateFilter} value={stateFilter}>
+                  {ASSET_STATE_FILTER_LABELS[stateFilter]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-1.5">

@@ -36,7 +36,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.8 diff, test runs, and use history. Simple version diffing, copy-driven `lastUsedAt`, manual review due dates, and the shared run-log model are in place. The next slice should add asset filters for stale, recently used, never used, low-rated, and untested views.
+Next development focus: continue v0.8 diff, test runs, and use history. Version diffing, copy-driven `lastUsedAt`, manual review due dates, the shared run-log model, and asset state filters are in place. The next slice should decide whether model/tool compatibility fields materially improve filtering without bloating the form.
 
 ## Product Positioning
 
@@ -427,7 +427,7 @@ Tasks:
 - [x] Add simple text diff for asset versions.
 - [x] Keep run logs in the existing test case model; no separate v0.8 entity is needed.
 - [x] Track copy events enough to update `lastUsedAt`.
-- [ ] Add filters for stale, recently used, never used, low-rated, and untested assets.
+- [x] Add filters for stale, recently used, never used, low-rated, and untested assets.
 - [ ] Add model/tool compatibility fields only if they improve filtering without bloating forms.
 - [x] Add review due date and review queue.
 

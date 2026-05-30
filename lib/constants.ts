@@ -217,6 +217,23 @@ export const SORT_OPTION_LABELS: Record<SortOption, string> = {
   lastUsedAt_desc: "最近使用",
 };
 
+export const ASSET_STATE_FILTERS = [
+  "stale",
+  "recently_used",
+  "never_used",
+  "low_rated",
+  "untested",
+] as const;
+export type AssetStateFilter = (typeof ASSET_STATE_FILTERS)[number];
+
+export const ASSET_STATE_FILTER_LABELS: Record<AssetStateFilter, string> = {
+  stale: "复查已到期",
+  recently_used: "最近使用（30天）",
+  never_used: "从未使用",
+  low_rated: "低评分（1-2分）",
+  untested: "未测试",
+};
+
 export const IMPORT_CONFLICT_STRATEGIES = [
   "overwrite",
   "copy",

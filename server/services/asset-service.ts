@@ -14,19 +14,64 @@ import {
   archiveAsset,
 } from "@/server/queries/asset-queries";
 import { syncAssetTags } from "@/server/services/tag-service";
+import { findAssetIdsWithTestCases } from "@/server/queries/test-case-queries";
 import {
   createInitialVersion,
   createNewVersion,
   getVersionById,
 } from "@/server/services/version-service";
 import type { CreateAssetInput, UpdateAssetInput } from "@/lib/validators/asset";
+import type { AssetStateFilter } from "@/lib/constants";
+import type { FindAllAssetsOptions } from "@/server/queries/asset-queries";
 
 export async function getAssetById(id: string) {
   return findAssetById(id);
 }
 
-export async function getAssets(options?: Parameters<typeof findAllAssets>[0]) {
-  return findAllAssets(options);
+function startOfToday() {
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  return date.getTime();
+}
+
+async function filterAssetsByState<T extends Awaited<ReturnType<typeof findAllAssets>>>(
+  assets: T,
+  stateFilter: AssetStateFilter,
+) {
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const staleThreshold = startOfToday() + dayMs;
+
+  switch (stateFilter) {
+    case "stale":
+      return assets.filter(
+        (asset) => asset.reviewDueAt !== null && asset.reviewDueAt < staleThreshold,
+      ) as T;
+    case "recently_used":
+      return assets.filter(
+        (asset) => asset.lastUsedAt !== null && asset.lastUsedAt >= now - 30 * dayMs,
+      ) as T;
+    case "never_used":
+      return assets.filter((asset) => asset.lastUsedAt === null) as T;
+    case "low_rated":
+      return assets.filter((asset) => asset.rating !== null && asset.rating <= 2) as T;
+    case "untested": {
+      const testedAssetIds = new Set(await findAssetIdsWithTestCases());
+      return assets.filter((asset) => !testedAssetIds.has(asset.id)) as T;
+    }
+  }
+}
+
+export async function getAssets(
+  options?: FindAllAssetsOptions & { stateFilter?: AssetStateFilter },
+) {
+  const assets = await findAllAssets(options);
+
+  if (!options?.stateFilter) {
+    return assets;
+  }
+
+  return filterAssetsByState(assets, options.stateFilter);
 }
 
 export async function createNewAsset(input: CreateAssetInput) {

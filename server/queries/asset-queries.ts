@@ -10,6 +10,17 @@ import type {
   TargetTool,
 } from "@/lib/constants";
 
+export interface FindAllAssetsOptions {
+  status?: AssetStatus;
+  type?: AssetType;
+  targetTool?: TargetTool;
+  search?: string;
+  tag?: string;
+  includeDeleted?: boolean;
+  includeArchived?: boolean;
+  sortBy?: SortOption;
+}
+
 export async function findAssetBySyncId(syncId: string) {
   return db.query.assets.findFirst({
     where: eq(assets.syncId, syncId),
@@ -43,16 +54,7 @@ export async function findAssetById(id: string) {
   });
 }
 
-export async function findAllAssets(options?: {
-  status?: AssetStatus;
-  type?: AssetType;
-  targetTool?: TargetTool;
-  search?: string;
-  tag?: string;
-  includeDeleted?: boolean;
-  includeArchived?: boolean;
-  sortBy?: SortOption;
-}) {
+export async function findAllAssets(options?: FindAllAssetsOptions) {
   const conditions = [];
 
   if (!options?.includeDeleted) {
