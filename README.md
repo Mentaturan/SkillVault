@@ -135,6 +135,45 @@ npm run db:migrate
 
 数据库路径可通过环境变量 `SKILLVAULT_DB_PATH` 覆盖，默认为 `./data/skillvault.sqlite`。
 
+## macOS 应用
+
+SkillVault 可以打包为 macOS .app 应用，双击即可运行。
+
+### 打包
+
+```bash
+scripts/package-macos.sh
+```
+
+脚本会自动构建 Next.js standalone 输出、编译 Swift 启动器、组装 .app bundle，输出到 `dist/SkillVault.app` 和 `dist/SkillVault-macOS-v1.0.0.zip`。
+
+### 从源码更新
+
+```bash
+scripts/update-app.sh
+```
+
+自动执行 git pull → npm install → 打包。
+
+### 前置条件
+
+- macOS 13+
+- Node.js 20+
+- Xcode Command Line Tools（`xcode-select --install`）
+
+### 数据
+
+.app 使用独立数据库：`~/Library/Application Support/SkillVault/skillvault.sqlite`。开发模式的 `./data/skillvault.sqlite` 不受影响。可通过备份恢复迁移数据。
+
+### 发布
+
+推送 `v*` 格式的 tag 会触发 GitHub Actions 自动构建并创建 Release：
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
 ## 备份
 
 当前可在设置页直接导出完整备份，或访问：

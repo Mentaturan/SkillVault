@@ -156,7 +156,7 @@ Do not implement:
 - Monaco, CodeMirror, or rich text editing.
 - Complex visual dashboards.
 - Hosted MCP service.
-- Electron, Tauri, or mobile app publishing.
+- Electron, Tauri, or mobile app publishing. (A lightweight Swift WKWebView wrapper for macOS is allowed and implemented in `macos/SkillVault/`.)
 - Cloud deployment adaptation.
 - Multi-user permissions.
 - Public sharing.
@@ -201,3 +201,14 @@ For documentation-only changes, these commands are optional. State clearly if th
 - `AGENTS.md` is for AI coding rules and architectural boundaries.
 - Keep all three documents consistent when scope, roadmap, or acceptance criteria change.
 - If the user says `READ.md`, update `README.md` unless a real `READ.md` file exists.
+
+## macOS App Packaging Rules
+
+- The macOS .app is a lightweight Swift WKWebView wrapper around the Next.js standalone server.
+- Swift source code lives in `macos/SkillVault/`.
+- The packaging script is `scripts/package-macos.sh`.
+- The .app uses system Node.js; do not bundle Node.js in the .app.
+- The .app stores data in `~/Library/Application Support/SkillVault/`.
+- The .app is not an Electron or Tauri app; it is a native Swift wrapper.
+- Changes to the Swift launcher should be minimal and focused on window management and server lifecycle.
+- The packaging script must be idempotent.
