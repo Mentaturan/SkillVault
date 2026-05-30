@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  ASSET_SOURCE_FILTER_LABELS,
+  ASSET_SOURCE_FILTERS,
   ASSET_STATE_FILTER_LABELS,
   ASSET_STATE_FILTERS,
   ASSET_STATUS_LABELS,
@@ -25,6 +27,7 @@ import {
   SORT_OPTIONS,
   TARGET_TOOL_LABELS,
   TARGET_TOOLS,
+  type AssetSource,
   type AssetStatus,
   type AssetStateFilter,
   type AssetType,
@@ -38,6 +41,7 @@ export interface AssetFilterValues {
   stateFilter?: AssetStateFilter;
   type?: AssetType;
   targetTool?: TargetTool;
+  source?: AssetSource;
   status?: AssetStatus;
   tag?: string;
   includeArchived?: boolean;
@@ -64,6 +68,7 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
     if (merged.stateFilter) params.set("stateFilter", merged.stateFilter);
     if (merged.type) params.set("type", merged.type);
     if (merged.targetTool) params.set("targetTool", merged.targetTool);
+    if (merged.source) params.set("source", merged.source);
     if (merged.status) params.set("status", merged.status);
     if (merged.tag) params.set("tag", merged.tag);
     if (merged.includeArchived) params.set("includeArchived", "true");
@@ -188,6 +193,28 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
               {ASSET_STATUSES.map((status) => (
                 <SelectItem key={status} value={status}>
                   {ASSET_STATUS_LABELS[status]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1.5">
+          <Label>来源</Label>
+          <Select
+            defaultValue={filters.source ?? ALL_VALUE}
+            onValueChange={(v) =>
+              applyFilters({ source: v === ALL_VALUE ? undefined : (v as AssetSource) })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_VALUE}>全部来源</SelectItem>
+              {ASSET_SOURCE_FILTERS.map((source) => (
+                <SelectItem key={source} value={source}>
+                  {ASSET_SOURCE_FILTER_LABELS[source]}
                 </SelectItem>
               ))}
             </SelectContent>

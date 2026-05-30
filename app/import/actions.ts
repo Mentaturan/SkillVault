@@ -13,6 +13,11 @@ import {
   importGitHubMarkdownAsset,
   previewGitHubMarkdownImport,
 } from "@/server/services/github-import-service";
+import { getCuratedExampleContent, getCuratedExamples } from "@/lib/curated";
+import {
+  previewGitHubRepoImport,
+  importGitHubRepoAssets,
+} from "@/server/services/github-repo-import-service";
 
 export async function parseMarkdownAction(markdown: string) {
   try {
@@ -159,4 +164,90 @@ export async function importGitHubAction(
       error: error instanceof Error ? error.message : "GitHub 文件导入失败",
     };
   }
+}
+
+export async function previewGitHubRepoImportAction(
+  url: string,
+  ref: string,
+  pathFilter: string,
+) {
+  try {
+    const result = await previewGitHubRepoImport(url, ref, pathFilter);
+    return { success: true, data: result };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "GitHub 仓库预览失败",
+    };
+  }
+}
+
+export async function importGitHubRepoAssetsAction(
+  url: string,
+  ref: string,
+  selectedFiles: string[],
+  strategy: ImportConflictStrategy,
+) {
+  try {
+    const result = await importGitHubRepoAssets(url, ref, selectedFiles, strategy);
+    revalidatePath("/assets");
+    return { success: true, data: result };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "GitHub 仓库导入失败",
+    };
+  }
+}
+
+export async function getCuratedExamplesAction() {
+  try {
+    const examples = await getCuratedExamples();
+    return { success: true, data: examples };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "加载精选示例失败",
+    };
+  }
+}
+
+export async function importCuratedExamplesAction(
+  selectedFiles: string[],
+  strategy: ImportConflictStrategy,
+) {
+  const results: { filename: string; success: boolean; assetId?: string; error?: string }[] = [];
+
+  for (const filename of selectedFiles) {
+    try {
+      const raw = await getCuratedExampleContent(filename);
+      const parsed = parseMarkdownToAsset(raw);
+      if ("error" in parsed) {
+        results.push({ filename, success: false, error: parsed.error.message });
+        continue;
+      }
+
+      const result = await importMarkdownAsset(parsed.data, strategy, {
+        sourcePath: `curated:${filename}`,
+        sourceChecksum: createContentHash(raw),
+        sourceImportedAt: Date.now(),
+      });
+
+      if ("cancelled" in result) {
+        results.push({ filename, success: false, error: "导入已取消" });
+        continue;
+      }
+
+      results.push({ filename, success: true, assetId: result.asset.id });
+    } catch (error) {
+      results.push({
+        filename,
+        success: false,
+        error: error instanceof Error ? error.message : "导入失败",
+      });
+    }
+  }
+
+  revalidatePath("/assets");
+  return results;
 }

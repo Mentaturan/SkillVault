@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { assets, assetTags, tags } from "@/db/schema";
 import type { NewAsset } from "@/db/schema";
 import type {
+  AssetSource,
   AssetStatus,
   AssetType,
   SortOption,
@@ -14,6 +15,7 @@ export interface FindAllAssetsOptions {
   status?: AssetStatus;
   type?: AssetType;
   targetTool?: TargetTool;
+  source?: AssetSource;
   search?: string;
   tag?: string;
   includeDeleted?: boolean;
@@ -75,6 +77,10 @@ export async function findAllAssets(options?: FindAllAssetsOptions) {
 
   if (options?.targetTool) {
     conditions.push(eq(assets.targetTool, options.targetTool));
+  }
+
+  if (options?.source) {
+    conditions.push(eq(assets.source, options.source));
   }
 
   if (options?.tag) {

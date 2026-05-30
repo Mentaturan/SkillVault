@@ -6,6 +6,8 @@ import { MarkdownInput } from "@/components/import/markdown-input";
 import { ImportPreview } from "@/components/import/import-preview";
 import { ConflictResolver } from "@/components/import/conflict-resolver";
 import { FolderImport } from "@/components/import/folder-import";
+import { GitHubRepoImport } from "@/components/import/github-repo-import";
+import { CuratedExamples } from "@/components/import/curated-examples";
 import {
   importGitHubAction,
   importMarkdownAction,
@@ -31,7 +33,7 @@ interface PreviewData {
   validation: ValidationResult;
 }
 
-type ImportTab = "single" | "github" | "batch";
+type ImportTab = "single" | "github" | "github_repo" | "curated" | "batch";
 type ImportSourceKind = "markdown" | "github";
 
 interface GitHubPreviewSource {
@@ -166,6 +168,28 @@ export default function ImportPage() {
           }`}
         >
           GitHub 文件导入
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("github_repo")}
+          className={`px-4 py-1.5 text-sm transition-colors ${
+            tab === "github_repo"
+              ? "bg-primary text-primary-foreground"
+              : "bg-background text-foreground hover:bg-muted"
+          }`}
+        >
+          GitHub 仓库导入
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("curated")}
+          className={`px-4 py-1.5 text-sm transition-colors ${
+            tab === "curated"
+              ? "bg-primary text-primary-foreground"
+              : "bg-background text-foreground hover:bg-muted"
+          }`}
+        >
+          精选示例
         </button>
         <button
           type="button"
@@ -364,6 +388,10 @@ export default function ImportPage() {
             </div>
           )}
         </>
+      ) : tab === "github_repo" ? (
+        <GitHubRepoImport />
+      ) : tab === "curated" ? (
+        <CuratedExamples onImportComplete={() => router.refresh()} />
       ) : (
         <FolderImport onImportComplete={() => router.refresh()} />
       )}

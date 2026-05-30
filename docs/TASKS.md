@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.8 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
+Local milestone state: v0.9 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
 
 Implemented locally:
 
@@ -30,6 +30,10 @@ Implemented locally:
 - Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, preview-first Codex rollout importer, and directory scan with changed-file detection.
 - Imported asset source metadata fields for URL, ref, path, imported-at timestamp, and checksum, wired into Markdown import, detail display, backup/restore, and Markdown export.
 - Raw GitHub Markdown file import with preview, validation, checksum re-check on import, and imported-source metadata.
+- GitHub repository archive import with path filtering, file count limits, and per-file source metadata.
+- Source update check that compares remote checksum without auto-overwriting.
+- Bundled curated examples as local data with preview and selective import.
+- Source filter on asset list and source detail Card on asset detail page.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -38,7 +42,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.9 import sources, curated assets, and Git-friendly exchange. Raw GitHub file import is in place. The next slice should add repository archive import only after path filtering and file count limits are enforced.
+Next development focus: v1.0 stable personal local release. All prior phases are complete. The next milestone is a stable local release with full documentation, upgrade notes, and two-week real-use verification.
 
 ## Product Positioning
 
@@ -440,7 +444,7 @@ Exit criteria:
 
 ## v0.9 - Import Sources, Curated Assets, and Git-Friendly Exchange
 
-Status: in progress.
+Status: complete.
 
 Goal: support manual discovery and import while staying local-first.
 
@@ -456,10 +460,10 @@ Tasks:
 
 - [x] Define source metadata for imported assets: source URL, ref, path, imported at, and checksum.
 - [x] Add raw GitHub file import with preview and validation.
-- [ ] Add repository archive import only after path filtering and file count limits are in place.
-- [ ] Add update check that compares known source checksum without auto-overwriting.
-- [ ] Add bundled curated examples as local data, not remote marketplace content.
-- [ ] Add source filter and source detail on asset pages.
+- [x] Add repository archive import only after path filtering and file count limits are in place.
+- [x] Add update check that compares known source checksum without auto-overwriting.
+- [x] Add bundled curated examples as local data, not remote marketplace content.
+- [x] Add source filter and source detail on asset pages.
 
 Exit criteria:
 

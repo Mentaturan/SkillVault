@@ -106,6 +106,10 @@ export const ASSET_SOURCE_LABELS: Record<AssetSource, string> = {
   downloaded: "下载",
 };
 
+export const ASSET_SOURCE_FILTERS = [...ASSET_SOURCES] as const;
+export type AssetSourceFilter = (typeof ASSET_SOURCE_FILTERS)[number];
+export const ASSET_SOURCE_FILTER_LABELS: Record<AssetSourceFilter, string> = { ...ASSET_SOURCE_LABELS };
+
 export const CAPTURE_INBOX_SOURCE_TYPES = [
   "manual",
   "codex_rollout",

@@ -27,6 +27,7 @@ import { ArrowLeft, Edit, History, Pin } from "lucide-react";
 import { findCollectionsByAssetId } from "@/server/queries/collection-queries";
 import { findProjectsByAssetId } from "@/server/queries/project-queries";
 import { validateExistingAsset } from "@/server/services/validation-service";
+import { SourceUpdateCheck } from "@/components/assets/source-update-check";
 
 interface AssetDetailPageProps {
   params: Promise<{ id: string }>;
@@ -227,21 +228,13 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">元数据</CardTitle>
+          <CardTitle className="text-sm">来源信息</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className="grid gap-2 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-muted-foreground">导出预设</dt>
-              <dd>{EXPORT_PRESET_LABELS[asset.exportPreset]}</dd>
-            </div>
-            <div>
-              <dt className="text-muted-foreground">可见性</dt>
-              <dd>{VISIBILITY_LABELS[asset.visibility]}</dd>
-            </div>
-            <div>
               <dt className="text-muted-foreground">来源</dt>
-              <dd>{ASSET_SOURCE_LABELS[asset.source]}</dd>
+              <dd><Badge>{ASSET_SOURCE_LABELS[asset.source]}</Badge></dd>
             </div>
             {asset.sourceUrl && (
               <div>
@@ -282,6 +275,33 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
                 <dd className="break-all font-mono text-xs">{asset.sourceChecksum}</dd>
               </div>
             )}
+          </dl>
+          {asset.sourceUrl && asset.sourceChecksum && (
+            <div className="mt-3">
+              <SourceUpdateCheck
+                assetId={asset.id}
+                sourceUrl={asset.sourceUrl}
+                sourceChecksum={asset.sourceChecksum}
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">元数据</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <dl className="grid gap-2 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="text-muted-foreground">导出预设</dt>
+              <dd>{EXPORT_PRESET_LABELS[asset.exportPreset]}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">可见性</dt>
+              <dd>{VISIBILITY_LABELS[asset.visibility]}</dd>
+            </div>
             <div>
               <dt className="text-muted-foreground">创建时间</dt>
               <dd>{new Date(asset.createdAt).toLocaleString("zh-CN")}</dd>

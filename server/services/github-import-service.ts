@@ -29,6 +29,48 @@ async function fetchGitHubMarkdown(url: string) {
   return { source, markdown };
 }
 
+export interface SourceUpdateCheckResult {
+  hasUpdate: boolean;
+  currentChecksum: string;
+  remoteChecksum: string;
+  remoteContent: string;
+  sourceUrl: string;
+}
+
+export async function checkGitHubSourceUpdate(
+  sourceUrl: string,
+  storedChecksum: string,
+): Promise<SourceUpdateCheckResult> {
+  const source = parseGitHubFileUrl(sourceUrl);
+  const response = await fetch(source.rawUrl, {
+    cache: "no-store",
+    headers: {
+      Accept: "text/plain",
+      "User-Agent": "SkillVault",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`GitHub 文件获取失败：${response.status}`);
+  }
+
+  const remoteContent = await response.text();
+
+  if (Buffer.byteLength(remoteContent, "utf8") > MAX_GITHUB_FILE_BYTES) {
+    throw new Error("GitHub 文件过大，当前仅支持 1MB 以内的 Markdown 文件");
+  }
+
+  const remoteChecksum = createContentHash(remoteContent);
+
+  return {
+    hasUpdate: remoteChecksum !== storedChecksum,
+    currentChecksum: storedChecksum,
+    remoteChecksum,
+    remoteContent,
+    sourceUrl: source.htmlUrl,
+  };
+}
+
 export async function previewGitHubMarkdownImport(url: string) {
   const { source, markdown } = await fetchGitHubMarkdown(url);
   const sourceChecksum = createContentHash(markdown);

@@ -5,6 +5,7 @@ import { AssetFilters, type AssetFilterValues } from "@/components/assets/asset-
 import { getAssets } from "@/server/services/asset-service";
 import { getAllTags } from "@/server/services/tag-service";
 import {
+  ASSET_SOURCES,
   ASSET_STATE_FILTERS,
   ASSET_STATUSES,
   ASSET_TYPES,
@@ -36,6 +37,7 @@ function parseFilters(
   const stateFilter = getSingleParam(params, "stateFilter");
   const type = getSingleParam(params, "type");
   const targetTool = getSingleParam(params, "targetTool");
+  const source = getSingleParam(params, "source");
   const status = getSingleParam(params, "status");
   const tag = getSingleParam(params, "tag");
   const sortBy = getSingleParam(params, "sortBy");
@@ -45,6 +47,7 @@ function parseFilters(
     stateFilter: ASSET_STATE_FILTERS.find((item) => item === stateFilter),
     type: ASSET_TYPES.find((item) => item === type),
     targetTool: TARGET_TOOLS.find((item) => item === targetTool),
+    source: ASSET_SOURCES.find((item) => item === source),
     status: ASSET_STATUSES.find((item) => item === status),
     tag: tag && tag !== "_all" ? tag : undefined,
     includeArchived: getSingleParam(params, "includeArchived") === "true",
@@ -61,6 +64,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
       stateFilter: filters.stateFilter,
       type: filters.type,
       targetTool: filters.targetTool,
+      source: filters.source,
       search: filters.search,
       tag: filters.tag,
       includeArchived: filters.includeArchived,
