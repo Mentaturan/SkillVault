@@ -5,6 +5,14 @@ import { parseMarkdownForPreview, importMarkdownAsset } from "@/server/services/
 import { parseMarkdownToAsset } from "@/lib/markdown";
 import type { ImportConflictStrategy } from "@/lib/constants";
 import { createContentHash } from "@/lib/hash";
+import {
+  githubImportExecuteSchema,
+  githubImportPreviewSchema,
+} from "@/lib/validators/github-import";
+import {
+  importGitHubMarkdownAsset,
+  previewGitHubMarkdownImport,
+} from "@/server/services/github-import-service";
 
 export async function parseMarkdownAction(markdown: string) {
   try {
@@ -89,6 +97,66 @@ export async function importMarkdownAction(
     return {
       success: false,
       error: error instanceof Error ? error.message : "导入失败",
+    };
+  }
+}
+
+export async function previewGitHubImportAction(url: string) {
+  const parsed = githubImportPreviewSchema.safeParse({ url });
+  if (!parsed.success) {
+    return { success: false, error: "GitHub URL 格式无效" };
+  }
+
+  try {
+    const result = await previewGitHubMarkdownImport(parsed.data.url);
+    if ("error" in result) {
+      return { success: false, error: result.error };
+    }
+
+    return { success: true, data: result.data };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "GitHub 文件预览失败",
+    };
+  }
+}
+
+export async function importGitHubAction(
+  url: string,
+  previewChecksum: string,
+  strategy: ImportConflictStrategy,
+) {
+  const parsed = githubImportExecuteSchema.safeParse({
+    url,
+    previewChecksum,
+    strategy,
+  });
+  if (!parsed.success) {
+    return { success: false, error: "GitHub 导入参数无效" };
+  }
+
+  try {
+    const result = await importGitHubMarkdownAsset(
+      parsed.data.url,
+      parsed.data.previewChecksum,
+      parsed.data.strategy,
+    );
+
+    if ("cancelled" in result) {
+      return { success: true, cancelled: true };
+    }
+
+    revalidatePath("/assets");
+    if (result.asset) {
+      revalidatePath(`/assets/${result.asset.id}`);
+    }
+
+    return { success: true, assetId: result.asset.id };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "GitHub 文件导入失败",
     };
   }
 }

@@ -1,5 +1,5 @@
 import { renderAssetWithPreset, getExportFilenameWithPreset, parseMarkdownToAsset } from "@/lib/markdown";
-import type { ParsedMarkdownAsset } from "@/lib/markdown";
+import type { MarkdownFrontmatter, ParsedMarkdownAsset } from "@/lib/markdown";
 import { createContentHash } from "@/lib/hash";
 import { findAssetById, findAssetBySyncId, findAssetByContentHash } from "@/server/queries/asset-queries";
 import { createNewAsset, updateExistingAsset } from "@/server/services/asset-service";
@@ -7,9 +7,28 @@ import type { ImportConflictStrategy, ExportPreset } from "@/lib/constants";
 import { validateParsedImport } from "@/server/services/validation-service";
 
 interface ImportSourceMetadata {
+  sourceUrl?: string;
+  sourceRef?: string;
   sourcePath?: string;
   sourceChecksum?: string;
   sourceImportedAt?: number;
+}
+
+function mergePreviewSourceMetadata(
+  frontmatter: MarkdownFrontmatter,
+  sourceMetadata?: ImportSourceMetadata,
+): MarkdownFrontmatter {
+  if (!sourceMetadata) {
+    return frontmatter;
+  }
+
+  return {
+    ...frontmatter,
+    sourceUrl: frontmatter.sourceUrl ?? sourceMetadata.sourceUrl ?? null,
+    sourceRef: frontmatter.sourceRef ?? sourceMetadata.sourceRef ?? null,
+    sourcePath: frontmatter.sourcePath ?? sourceMetadata.sourcePath ?? null,
+    sourceChecksum: frontmatter.sourceChecksum ?? sourceMetadata.sourceChecksum ?? null,
+  };
 }
 
 export async function exportAssetToMarkdown(assetId: string, preset?: ExportPreset) {
@@ -24,7 +43,10 @@ export async function exportAssetToMarkdown(assetId: string, preset?: ExportPres
   return { markdown, filename };
 }
 
-export async function parseMarkdownForPreview(markdown: string) {
+export async function parseMarkdownForPreview(
+  markdown: string,
+  sourceMetadata?: ImportSourceMetadata,
+) {
   const result = parseMarkdownToAsset(markdown);
 
   if ("error" in result) {
@@ -32,6 +54,7 @@ export async function parseMarkdownForPreview(markdown: string) {
   }
 
   const { frontmatter, content } = result.data;
+  const previewFrontmatter = mergePreviewSourceMetadata(frontmatter, sourceMetadata);
 
   let conflictAsset = null;
   if (frontmatter.syncId) {
@@ -44,7 +67,7 @@ export async function parseMarkdownForPreview(markdown: string) {
 
   return {
     data: {
-      frontmatter,
+      frontmatter: previewFrontmatter,
       content,
       hasConflict: !!conflictAsset,
       conflictAssetId: conflictAsset?.id ?? null,
@@ -70,7 +93,7 @@ export async function importMarkdownAsset(
   if (strategy === "overwrite") {
     const existing = await findAssetBySyncId(frontmatter.syncId);
     if (!existing) {
-      return createAssetFromParsed(parsed, "imported");
+      return createAssetFromParsed(parsed, "imported", sourceMetadata);
     }
 
     const asset = await updateExistingAsset({
@@ -85,8 +108,8 @@ export async function importMarkdownAsset(
       status: frontmatter.status,
       visibility: frontmatter.visibility,
       source: frontmatter.source ?? "imported",
-      sourceUrl: frontmatter.sourceUrl ?? undefined,
-      sourceRef: frontmatter.sourceRef ?? undefined,
+      sourceUrl: sourceMetadata?.sourceUrl ?? frontmatter.sourceUrl ?? undefined,
+      sourceRef: sourceMetadata?.sourceRef ?? frontmatter.sourceRef ?? undefined,
       sourcePath: frontmatter.sourcePath ?? sourceMetadata?.sourcePath,
       sourceImportedAt:
         frontmatter.sourceImportedAt ?? sourceMetadata?.sourceImportedAt ?? Date.now(),
@@ -120,8 +143,8 @@ async function createAssetFromParsed(
     status: frontmatter.status,
     visibility: frontmatter.visibility,
     source,
-    sourceUrl: frontmatter.sourceUrl ?? undefined,
-    sourceRef: frontmatter.sourceRef ?? undefined,
+    sourceUrl: sourceMetadata?.sourceUrl ?? frontmatter.sourceUrl ?? undefined,
+    sourceRef: sourceMetadata?.sourceRef ?? frontmatter.sourceRef ?? undefined,
     sourcePath: frontmatter.sourcePath ?? sourceMetadata?.sourcePath,
     sourceImportedAt:
       frontmatter.sourceImportedAt ?? sourceMetadata?.sourceImportedAt ?? Date.now(),

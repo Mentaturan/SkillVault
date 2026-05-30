@@ -48,6 +48,7 @@ Current v0.8 progress:
 Current v0.9 progress:
 
 - Imported asset source metadata now covers URL, ref, path, imported-at timestamp, and checksum across Markdown import, detail display, backup/restore, and Markdown export.
+- Public GitHub Markdown file import now supports preview, validation, checksum re-check before write, and provenance capture from the fetched URL.
 
 ## Product Principles
 
