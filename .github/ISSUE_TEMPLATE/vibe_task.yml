@@ -1,0 +1,44 @@
+name: Vibe Task
+description: 一个适合用 AI Agent 完成的小任务
+title: "[Vibe] "
+labels: ["good first vibe"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vibe task 是颗粒度小、边界清晰、适合丢给 Codex / Claude Code / Trae Solo 直接做的任务。
+  - type: textarea
+    id: task
+    attributes:
+      label: 任务描述
+      description: 要做什么？
+      placeholder: "例如：改进资产列表的空状态文案和图标"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 相关代码/文件
+      description: 涉及哪些文件？
+      placeholder: |
+        - `app/assets/page.tsx`
+        - `components/asset-list.tsx`
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收标准
+      description: 怎样算完成？
+      placeholder: |
+        - [ ] 空状态显示友好提示
+        - [ ] 有对应图标
+        - [ ] 通过 `npm run typecheck && npm run lint && npm run build`
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: 难度
+      options:
+        - good first vibe（新手友好）
+        - codex-friendly（需要一点上下文）
+        - needs-design（需要先讨论）

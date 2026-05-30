@@ -1,5 +1,35 @@
 # SkillVault
 
+> **One-liner:** SkillVault is a local-first vault for prompts, agent skills, AGENTS.md rules, and reusable AI workflows.
+>
+> **For developers:** A local-first AI workflow asset manager built for people who use Codex, Claude Code, Cursor, Trae Solo, and other coding agents every day.
+>
+> **For vibe coders:** An open-source playground for vibe coding your own AI workflow operating system.
+
+## Join the Vibe Coding
+
+SkillVault is intentionally structured for AI-assisted open-source development.
+
+You can contribute with Codex, Claude Code, Cursor, Trae Solo, or any coding agent.
+
+**Start here:**
+
+- Pick a [`good first vibe`](https://github.com/Mentaturan/SkillVault/labels/good%20first%20vibe) issue
+- Read [`docs/VIBE_CODING_GUIDE.md`](docs/VIBE_CODING_GUIDE.md)
+- Run `npm run typecheck && npm run lint && npm run test && npm run build`
+- Open a PR
+
+**Good contribution areas:**
+
+- UI polish
+- import/export formats
+- validation rules
+- fixture tests
+- desktop packaging
+- documentation
+
+---
+
 SkillVault 是一个本地优先的个人 AI 工作流资产管理器，适合维护 20-50 个真正会重复使用的高价值资产。
 
 它用于管理提示词、Agent 技能、项目规则、AGENTS.md、CLAUDE.md、Cursor/Windsurf 规则、回复模板、图像提示词、工作流、SOP、检查清单，以及从 AI 对话中沉淀出来的可复用材料。
@@ -60,7 +90,9 @@ SkillVault 是一个运行在 localhost 的本地 Web 应用，使用本地 SQLi
 
 SQLite 是主数据库。Markdown、文件夹和工具特定文件是导入、导出、备份、部署或交换格式。
 
-SkillVault 不是 SaaS、提示词市场、AI 聊天工具、RAG 系统、同步服务、浏览器插件、团队协作工具或云端应用。当前支持 macOS、Windows 轻量原生壳和 iOS 伴侣应用。
+SkillVault is intentionally not a SaaS, not a prompt marketplace, not another chat UI. It is a local-first workflow asset vault for people who already use AI tools heavily.
+
+当前支持 macOS、Windows 轻量原生壳和 iOS 伴侣应用。
 
 ## 为什么这样规划
 
@@ -297,7 +329,7 @@ npx tsx scripts/smoke-backup-restore.ts --bundle /absolute/path/to/skillvault-ba
 - 若目标文件已存在且内容不同，会先保留一份 `*.skillvault-backup-*` 冲突副本，再覆盖写入
 - 若目标文件内容已和当前资产渲染结果一致，则只同步部署记录，不重复覆盖
 - 资产部署页会显示 `已部署 / 已过期 / 目标文件缺失 / 目标文件漂移` 等状态
-- 当目标文件缺失或漂移时，可以直接使用“修复预览”重新进入该目标的部署流程
+- 当目标文件缺失或漂移时，可以直接使用"修复预览"重新进入该目标的部署流程
 
 生成并应用 Drizzle 迁移：
 
@@ -436,6 +468,10 @@ SkillVault 当前支持这些资产类型：
 
 文件交换与捕获扩展：Exchange 交换包导入导出、Claude Code JSONL 对话捕获、来源保留重导入、液态玻璃主题修复、Fixture 测试。
 
+### 进行中：v1.4
+
+开源协作与社区：完善协作入口、创建 good-first-vibe issues、README 优化、社区宣传。
+
 详细开发计划见 `docs/TASKS.md`。
 
 ## 暂不包含
@@ -457,4 +493,7 @@ SkillVault 当前支持这些资产类型：
 
 - `README.md`：项目概览、本地运行方式、当前状态和路线图摘要。
 - `docs/TASKS.md`：详细开发计划和阶段状态。
+- `docs/ROADMAP.md`：路线图和版本规划。
+- `docs/VIBE_CODING_GUIDE.md`：如何用 AI Agent 参与本项目。
 - `AGENTS.md`：AI 编码 Agent 在本仓库工作的规则。
+- `CONTRIBUTING.md`：贡献指南。
