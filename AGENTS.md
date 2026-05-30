@@ -12,7 +12,7 @@ It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration pl
 
 Use `docs/TASKS.md` as the source of truth.
 
-As of the current plan, v0.6 is implemented locally:
+As of the current plan, v0.7 is implemented locally:
 
 - v0.1-alpha core asset library is complete.
 - v0.1-beta organization and evaluation is complete.
@@ -21,7 +21,8 @@ As of the current plan, v0.6 is implemented locally:
 - v0.4 backup, restore, and integrity is complete.
 - v0.5 local folder library and tool deployment is complete.
 - v0.6 deterministic validation and safety checks is complete.
-- v0.7 capture inbox and local conversation mining is the current development phase.
+- v0.7 capture inbox and local conversation mining is complete.
+- v0.8 diff, test runs, and use history is the current development phase.
 
 The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
 
@@ -32,8 +33,7 @@ Current v0.6 progress:
 
 Current v0.7 progress:
 
-- Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, and preview-first Codex rollout import are in place.
-- Incremental scan with changed-file detection is still pending.
+- Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, preview-first Codex rollout import, and changed-file detection scan are in place.
 
 ## Product Principles
 

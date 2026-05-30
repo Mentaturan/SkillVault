@@ -275,6 +275,33 @@ export const captureInboxItems = sqliteTable(
   }),
 );
 
+export const captureImportSources = sqliteTable(
+  "capture_import_sources",
+  {
+    id: text("id").primaryKey(),
+    sourceType: text("source_type", { enum: CAPTURE_INBOX_SOURCE_TYPES }).notNull(),
+    filePath: text("file_path").notNull(),
+    directoryPath: text("directory_path"),
+    fileModifiedAt: integer("file_modified_at").notNull(),
+    fileSize: integer("file_size").notNull(),
+    lastImportedAt: integer("last_imported_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => ({
+    sourceTypeIndex: index("capture_import_sources_source_type_idx").on(
+      table.sourceType,
+    ),
+    directoryPathIndex: index("capture_import_sources_directory_path_idx").on(
+      table.directoryPath,
+    ),
+    filePathUnique: uniqueIndex("capture_import_sources_source_file_unique").on(
+      table.sourceType,
+      table.filePath,
+    ),
+  }),
+);
+
 import { relations } from "drizzle-orm";
 
 export const assetsRelations = relations(assets, ({ many }) => ({
@@ -377,6 +404,8 @@ export const captureInboxItemsRelations = relations(captureInboxItems, ({ one })
   }),
 }));
 
+export const captureImportSourcesRelations = relations(captureImportSources, () => ({}));
+
 export type Asset = typeof assets.$inferSelect;
 export type NewAsset = typeof assets.$inferInsert;
 export type AssetVersion = typeof assetVersions.$inferSelect;
@@ -401,3 +430,5 @@ export type DeploymentRecord = typeof deploymentRecords.$inferSelect;
 export type NewDeploymentRecord = typeof deploymentRecords.$inferInsert;
 export type CaptureInboxItem = typeof captureInboxItems.$inferSelect;
 export type NewCaptureInboxItem = typeof captureInboxItems.$inferInsert;
+export type CaptureImportSource = typeof captureImportSources.$inferSelect;
+export type NewCaptureImportSource = typeof captureImportSources.$inferInsert;

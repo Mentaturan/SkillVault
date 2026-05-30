@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.6 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
+Local milestone state: v0.7 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
 
 Implemented locally:
 
@@ -27,7 +27,7 @@ Implemented locally:
 - Deployment target settings, asset-level and project-level deployment preview, copy-first deploy writes, conflict backup copies, persisted deploy status metadata, and repair preview for drifted targets.
 - Reusable validation result types plus deterministic validation summaries on asset detail, import preview, and a maintenance queue for SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
 - File-based validation fixtures plus a deterministic fixture check script for valid, malformed, and suspicious skill samples.
-- Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, and a preview-first Codex rollout importer.
+- Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, preview-first Codex rollout importer, and directory scan with changed-file detection.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -36,7 +36,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.7 capture inbox and local conversation mining. The next slice should add changed-file detection for local conversation scans on top of the Codex rollout importer.
+Next development focus: start v0.8 diff, test runs, and use history. The first slice should add version diffing without changing the existing version model.
 
 ## Product Positioning
 
@@ -373,7 +373,7 @@ Exit criteria:
 
 ## v0.7 - Capture Inbox and Local Conversation Mining
 
-Status: in progress.
+Status: complete.
 
 Goal: make it easy to turn daily AI usage into reusable assets.
 
@@ -398,7 +398,7 @@ Tasks:
 - [x] Add convert-to-asset workflow.
 - [x] Track source type, source path, source timestamp, and extraction note.
 - [x] Add deterministic importers for one source first, likely Codex session rollouts or Claude Code JSONL.
-- [ ] Add incremental scan with changed-file detection.
+- [x] Add incremental scan with changed-file detection.
 - [x] Add candidate review UI before creating assets.
 - [x] Keep raw conversation content out of asset content unless user explicitly selects it.
 

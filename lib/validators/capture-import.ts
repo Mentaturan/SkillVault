@@ -9,3 +9,9 @@ export const codexRolloutImportPathSchema = z.object({
 });
 
 export type CodexRolloutImportPathInput = z.infer<typeof codexRolloutImportPathSchema>;
+
+export const codexRolloutScanPathSchema = z.object({
+  directoryPath: z.string().min(1, "目录路径不能为空").max(2000, "目录路径过长"),
+});
+
+export type CodexRolloutScanPathInput = z.infer<typeof codexRolloutScanPathSchema>;

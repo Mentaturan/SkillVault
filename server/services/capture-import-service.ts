@@ -1,10 +1,12 @@
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
+import path from "node:path";
 
 import { parseCodexRolloutImport } from "@/lib/capture-import/codex-rollout";
 import type { CodexRolloutImportPreview } from "@/lib/capture-import/codex-rollout";
 import { createNewCaptureInboxItem } from "@/server/services/capture-inbox-service";
 import { findCaptureInboxItemsBySourcePath } from "@/server/queries/capture-inbox-queries";
+import { recordCaptureImportSource } from "@/server/services/capture-import-source-service";
 
 export type CodexRolloutPreviewCandidate =
   CodexRolloutImportPreview["candidates"][number] & {
@@ -28,6 +30,17 @@ async function readCodexRolloutFile(sourcePath: string) {
   return readFile(sourcePath, "utf8");
 }
 
+async function assertCodexRolloutFile(sourcePath: string) {
+  const fileStat = await stat(sourcePath);
+  if (!fileStat.isFile()) {
+    throw new Error("提供的路径不是可读取文件。");
+  }
+
+  if (path.extname(sourcePath) !== ".jsonl") {
+    throw new Error("当前只支持导入 `.jsonl` rollout 文件。");
+  }
+}
+
 function isDuplicateCandidate(
   candidate: CodexRolloutImportPreview["candidates"][number],
   existingItems: Awaited<ReturnType<typeof findCaptureInboxItemsBySourcePath>>,
@@ -41,6 +54,7 @@ function isDuplicateCandidate(
 }
 
 export async function previewCodexRolloutImport(sourcePath: string) {
+  await assertCodexRolloutFile(sourcePath);
   const content = await readCodexRolloutFile(sourcePath);
   const preview = parseCodexRolloutImport(content, sourcePath);
   const existingItems = await findCaptureInboxItemsBySourcePath(sourcePath);
@@ -77,6 +91,8 @@ export async function importCodexRolloutToInbox(
     });
     importedCount += 1;
   }
+
+  await recordCaptureImportSource("codex_rollout", sourcePath);
 
   return {
     importedCount,
