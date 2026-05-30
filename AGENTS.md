@@ -26,8 +26,8 @@ The package version may still be `0.1.0-alpha`. Do not infer roadmap status from
 
 Current v0.6 progress:
 
-- Deterministic validation summaries already cover SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
-- Maintenance queue and validation fixtures are still pending.
+- Deterministic validation summaries already cover SKILL.md metadata, variable placeholder syntax, suspicious content warnings, and a maintenance queue for flagged assets.
+- Validation fixtures are still pending.
 
 ## Product Principles
 

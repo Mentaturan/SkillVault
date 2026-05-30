@@ -25,7 +25,7 @@ Implemented locally:
 - Settings and diagnostics for local database path and record counts.
 - Full backup export bundle, restore preview and restore execution, checksum validation, and fresh-database restore smoke verification.
 - Deployment target settings, asset-level and project-level deployment preview, copy-first deploy writes, conflict backup copies, persisted deploy status metadata, and repair preview for drifted targets.
-- Reusable validation result types plus deterministic validation summaries on asset detail and import preview for SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
+- Reusable validation result types plus deterministic validation summaries on asset detail, import preview, and a maintenance queue for SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -34,7 +34,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.6 deterministic validation and safety checks. Suspicious-pattern warnings are now in place; maintenance queue and fixtures remain.
+Next development focus: continue v0.6 deterministic validation and safety checks. Validation warnings and the maintenance queue are now in place; fixtures remain.
 
 ## Product Positioning
 
@@ -361,7 +361,7 @@ Tasks:
 - [x] Warn for suspicious patterns such as hardcoded secrets, hidden instructions, obfuscated text, pipe-to-shell snippets, and remote script install commands.
 - [x] Validate variables against `{{variable_name}}` syntax and missing rendered values.
 - [x] Add validation badges to asset detail and import preview.
-- [ ] Add a maintenance queue for invalid or risky assets.
+- [x] Add a maintenance queue for invalid or risky assets.
 - [ ] Add tests for valid, malformed, and suspicious fixtures.
 
 Exit criteria:

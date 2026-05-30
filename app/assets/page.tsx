@@ -10,7 +10,7 @@ import {
   SORT_OPTIONS,
   TARGET_TOOLS,
 } from "@/lib/constants";
-import { Plus } from "lucide-react";
+import { Plus, ShieldAlert } from "lucide-react";
 import { BatchExportButton } from "@/components/assets/batch-export-button";
 
 interface AssetsPageProps {
@@ -76,6 +76,12 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href="/assets/maintenance">
+              <ShieldAlert className="mr-2 h-4 w-4" />
+              维护队列
+            </Link>
+          </Button>
           <BatchExportButton assetIds={assets.map((a) => a.id)} />
           <Button asChild>
             <Link href="/assets/new">

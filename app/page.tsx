@@ -93,6 +93,12 @@ export default function DashboardPage() {
             <Link href="/collections" className="text-sm text-primary hover:underline">
               集合
             </Link>
+            <Link
+              href="/assets/maintenance"
+              className="text-sm text-primary hover:underline"
+            >
+              维护队列
+            </Link>
           </CardContent>
         </Card>
       </div>
