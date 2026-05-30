@@ -266,6 +266,7 @@ export const VARIABLE_PATTERN = /\{\{\s*([A-Za-z0-9_-]+)\s*\}\}/g;
 export const PAGE_ROUTES = {
   dashboard: "/",
   assets: "/assets",
+  inbox: "/inbox",
   newAsset: "/assets/new",
   import: "/import",
   collections: "/collections",

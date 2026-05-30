@@ -15,12 +15,14 @@ import {
   Settings,
   Menu,
   X,
+  Inbox,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const NAV_ITEMS: Array<{ href: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { href: "/", label: "仪表盘", icon: LayoutDashboard, exact: true },
   { href: "/assets", label: "资产库", icon: FileText },
+  { href: "/inbox", label: "Inbox", icon: Inbox },
   { href: "/collections", label: "集合", icon: FolderOpen },
   { href: "/projects", label: "项目", icon: Briefcase },
   { href: "/assets/new", label: "新建资产", icon: Plus },

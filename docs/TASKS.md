@@ -393,9 +393,9 @@ Scope:
 Tasks:
 
 - [x] Add capture inbox table and service.
-- [ ] Add manual paste-to-inbox page.
+- [x] Add manual paste-to-inbox page.
 - [ ] Add convert-to-asset workflow.
-- [ ] Track source type, source path, source timestamp, and extraction note.
+- [x] Track source type, source path, source timestamp, and extraction note.
 - [ ] Add deterministic importers for one source first, likely Codex session rollouts or Claude Code JSONL.
 - [ ] Add incremental scan with changed-file detection.
 - [ ] Add candidate review UI before creating assets.
