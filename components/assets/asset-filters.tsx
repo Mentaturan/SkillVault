@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -194,7 +194,7 @@ export function AssetFilters({ filters, tags, presets }: AssetFiltersProps) {
               name="q"
               value={displaySearch}
               placeholder="标题、内容、标签"
-              className="pl-8"
+              className="pl-8 pr-8"
               onChange={(e) => {
                 const value = e.target.value;
                 setPendingSearch(value);
@@ -216,6 +216,9 @@ export function AssetFilters({ filters, tags, presets }: AssetFiltersProps) {
                 }
               }}
             />
+            {pendingSearch !== null && (
+              <Loader2 className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground animate-spin" />
+            )}
           </div>
         </div>
 
