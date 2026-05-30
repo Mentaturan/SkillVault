@@ -26,7 +26,7 @@ As of the current plan, v0.9 is implemented locally and v1.0 is in progress:
 - v0.9 import sources, curated assets, and Git-friendly exchange is complete.
 - v1.0 stable personal local release is the current development phase.
 
-The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
+The package version is `1.0.0`.
 
 ## Product Principles
 

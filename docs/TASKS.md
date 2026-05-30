@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.9 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
+Local milestone state: v0.9 is implemented. The package version is `1.0.0`.
 
 Implemented locally:
 
