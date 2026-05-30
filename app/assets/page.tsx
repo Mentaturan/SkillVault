@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { AssetCard } from "@/components/assets/asset-card";
 import { AssetFilters, type AssetFilterValues } from "@/components/assets/asset-filters";
+import { AssetSelectProvider } from "@/components/assets/asset-select-provider";
+import { BatchActionsToolbar } from "@/components/assets/batch-actions-toolbar";
 import { getAssets } from "@/server/services/asset-service";
 import { getAllTags } from "@/server/services/tag-service";
 import {
@@ -9,6 +11,7 @@ import {
   ASSET_STATE_FILTERS,
   ASSET_STATUSES,
   ASSET_TYPES,
+  LIFECYCLE_FILTERS,
   SORT_OPTIONS,
   TARGET_TOOLS,
 } from "@/lib/constants";
@@ -30,11 +33,26 @@ function getSingleParam(
   return value;
 }
 
+function getMultiParam(
+  params: Record<string, string | string[] | undefined>,
+  key: string,
+) {
+  const value = params[key];
+  if (Array.isArray(value)) {
+    return value;
+  }
+  if (value !== undefined) {
+    return [value];
+  }
+  return [];
+}
+
 function parseFilters(
   params: Record<string, string | string[] | undefined>,
 ): AssetFilterValues {
   const search = getSingleParam(params, "q")?.trim() || undefined;
   const stateFilter = getSingleParam(params, "stateFilter");
+  const lifecycleRaw = getMultiParam(params, "lifecycle");
   const type = getSingleParam(params, "type");
   const targetTool = getSingleParam(params, "targetTool");
   const source = getSingleParam(params, "source");
@@ -42,9 +60,15 @@ function parseFilters(
   const tag = getSingleParam(params, "tag");
   const sortBy = getSingleParam(params, "sortBy");
 
+  const lifecycleFilters = lifecycleRaw
+    .filter((v): v is typeof LIFECYCLE_FILTERS[number] =>
+      (LIFECYCLE_FILTERS as readonly string[]).includes(v),
+    );
+
   return {
     search,
     stateFilter: ASSET_STATE_FILTERS.find((item) => item === stateFilter),
+    lifecycleFilters: lifecycleFilters.length > 0 ? lifecycleFilters : undefined,
     type: ASSET_TYPES.find((item) => item === type),
     targetTool: TARGET_TOOLS.find((item) => item === targetTool),
     source: ASSET_SOURCES.find((item) => item === source),
@@ -62,6 +86,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
     getAssets({
       status: filters.status,
       stateFilter: filters.stateFilter,
+      lifecycleFilters: filters.lifecycleFilters,
       type: filters.type,
       targetTool: filters.targetTool,
       source: filters.source,
@@ -116,11 +141,14 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {assets.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} />
-          ))}
-        </div>
+        <AssetSelectProvider>
+          <BatchActionsToolbar allAssetIds={assets.map((a) => a.id)} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {assets.map((asset) => (
+              <AssetCard key={asset.id} asset={asset} selectable />
+            ))}
+          </div>
+        </AssetSelectProvider>
       )}
     </div>
   );

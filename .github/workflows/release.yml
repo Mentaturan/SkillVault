@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  release-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +25,84 @@ jobs:
       - name: Package macOS app
         run: bash scripts/package-macos.sh
 
-      - name: List dist
-        run: ls -la dist/
-
-      - name: Create Release
+      - name: Upload macOS artifacts
         uses: softprops/action-gh-release@v2
         with:
           files: |
             dist/SkillVault-macOS-*.dmg
             dist/SkillVault-macOS-*.zip
+          generate_release_notes: true
+
+  release-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm install
+
+      - run: npm run build
+
+      - name: Package Windows app
+        run: powershell -ExecutionPolicy Bypass -File scripts/package-windows.ps1
+
+      - name: Upload Windows artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/SkillVault-Windows-*.zip
+          generate_release_notes: true
+
+  release-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm install
+
+      - run: npm run build
+
+      - name: Build iOS archive
+        run: |
+          xcodebuild archive \
+            -project ios/SkillVault/SkillVault.xcodeproj \
+            -scheme SkillVault \
+            -archivePath dist/SkillVault-iOS.xcarchive \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+
+      - name: Create unsigned IPA
+        run: |
+          mkdir -p dist/ipa_payload
+          cp -r dist/SkillVault-iOS.xcarchive/Products/Applications/*.app dist/ipa_payload/
+          cd dist/ipa_payload
+          zip -r ../SkillVault-iOS-${{ github.ref_name }}.ipa .
+          cd ../..
+          rm -rf dist/ipa_payload
+        continue-on-error: true
+
+      - name: Fallback to ZIP if IPA fails
+        if: failure()
+        run: |
+          mkdir -p dist
+          cp -r dist/SkillVault-iOS.xcarchive/Products/Applications/*.app dist/SkillVault.app
+          cd dist
+          zip -r SkillVault-iOS-${{ github.ref_name }}.zip SkillVault.app
+          rm -rf SkillVault.app
+
+      - name: Upload iOS artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/SkillVault-iOS-*.ipa
+            dist/SkillVault-iOS-*.zip
           generate_release_notes: true

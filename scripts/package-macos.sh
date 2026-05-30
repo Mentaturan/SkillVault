@@ -5,6 +5,7 @@ APP_NAME="SkillVault"
 VERSION=$(node -p "require('./package.json').version")
 BUILD_DIR="dist"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
+ICON_SOURCE="icon/icon.png"
 
 echo "==> Packaging ${APP_NAME} v${VERSION} for macOS..."
 
@@ -62,9 +63,25 @@ echo "  Bundled: $(basename "$NODE_REAL") -> Contents/Frameworks/node"
 echo "Re-signing bundled node binary..."
 codesign --force --sign - "${APP_BUNDLE}/Contents/Frameworks/node" 2>&1 || echo "  Warning: codesign of node failed (non-critical)"
 
-echo "Creating icon assets..."
-if command -v iconutil &> /dev/null && [ -d "macos/SkillVault/Assets.xcassets/AppIcon.appiconset" ]; then
-  iconutil -c icns -o "${APP_BUNDLE}/Contents/Resources/AppIcon.icns" macos/SkillVault/Assets.xcassets/AppIcon.appiconset || true
+echo "Creating application icon..."
+if [ -f "${ICON_SOURCE}" ]; then
+  ICONSET_DIR=$(mktemp -d)/AppIcon.iconset
+  mkdir -p "${ICONSET_DIR}"
+  sips -z 16 16 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_16x16.png" >/dev/null 2>&1
+  sips -z 32 32 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_16x16@2x.png" >/dev/null 2>&1
+  sips -z 32 32 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_32x32.png" >/dev/null 2>&1
+  sips -z 64 64 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_32x32@2x.png" >/dev/null 2>&1
+  sips -z 128 128 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_128x128.png" >/dev/null 2>&1
+  sips -z 256 256 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_128x128@2x.png" >/dev/null 2>&1
+  sips -z 256 256 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_256x256.png" >/dev/null 2>&1
+  sips -z 512 512 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_256x256@2x.png" >/dev/null 2>&1
+  sips -z 512 512 "${ICON_SOURCE}" --out "${ICONSET_DIR}/icon_512x512.png" >/dev/null 2>&1
+  cp "${ICON_SOURCE}" "${ICONSET_DIR}/icon_512x512@2x.png"
+  iconutil -c icns -o "${APP_BUNDLE}/Contents/Resources/AppIcon.icns" "${ICONSET_DIR}" 2>&1 || echo "  Warning: iconutil failed"
+  rm -rf "$(dirname "${ICONSET_DIR}")"
+  echo "  Icon created from ${ICON_SOURCE}"
+else
+  echo "  No icon source found at ${ICON_SOURCE}"
 fi
 
 echo "Removing quarantine and extended attributes..."
@@ -105,3 +122,6 @@ echo ""
 echo "✓ Packaged: dist/SkillVault-macOS-v${VERSION}.zip"
 echo "✓ DMG: dist/SkillVault-macOS-v${VERSION}.dmg"
 echo "✓ App bundle: ${APP_BUNDLE}"
+echo ""
+echo "Note: To bypass Gatekeeper, right-click the app and select Open on first launch."
+echo "Or run: xattr -cr /Applications/SkillVault.app"

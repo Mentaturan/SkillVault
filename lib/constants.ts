@@ -238,6 +238,55 @@ export const ASSET_STATE_FILTER_LABELS: Record<AssetStateFilter, string> = {
   untested: "未测试",
 };
 
+export const LIFECYCLE_FILTERS = [
+  "last_used_over_30d",
+  "last_used_over_90d",
+  "last_reviewed_over_30d",
+  "never_used",
+  "low_rated",
+  "untested",
+  "has_validation_warnings",
+  "review_overdue",
+] as const;
+export type LifecycleFilter = (typeof LIFECYCLE_FILTERS)[number];
+
+export const LIFECYCLE_FILTER_LABELS: Record<LifecycleFilter, string> = {
+  last_used_over_30d: "超过30天未使用",
+  last_used_over_90d: "超过90天未使用",
+  last_reviewed_over_30d: "超过30天未复查",
+  never_used: "从未使用",
+  low_rated: "低评分（1-2分）",
+  untested: "未测试",
+  has_validation_warnings: "有校验告警",
+  review_overdue: "复查已到期",
+};
+
+export const MAINTENANCE_PRESET_FILTERS: LifecycleFilter[] = [
+  "review_overdue",
+  "never_used",
+  "low_rated",
+  "has_validation_warnings",
+];
+
+export const BATCH_ACTION_TYPES = [
+  "archive",
+  "retag",
+  "rate",
+  "review_date",
+  "merge",
+  "dismiss_duplicate",
+] as const;
+export type BatchActionType = (typeof BATCH_ACTION_TYPES)[number];
+
+export const BATCH_ACTION_TYPE_LABELS: Record<BatchActionType, string> = {
+  archive: "归档",
+  retag: "重标",
+  rate: "评分",
+  review_date: "复查日期",
+  merge: "合并",
+  dismiss_duplicate: "忽略重复",
+};
+
 export const IMPORT_CONFLICT_STRATEGIES = [
   "overwrite",
   "copy",

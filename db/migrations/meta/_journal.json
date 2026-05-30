@@ -50,6 +50,13 @@
       "when": 1780116826819,
       "tag": "0006_wet_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1780138854527,
+      "tag": "0007_dapper_hellcat",
+      "breakpoints": true
     }
   ]
 }

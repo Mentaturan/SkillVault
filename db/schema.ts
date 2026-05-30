@@ -12,6 +12,7 @@ import {
   ASSET_SOURCES,
   ASSET_STATUSES,
   ASSET_TYPES,
+  BATCH_ACTION_TYPES,
   CAPTURE_INBOX_SOURCE_TYPES,
   CAPTURE_INBOX_STATUSES,
   DEPLOYMENT_TARGET_KEYS,
@@ -308,6 +309,20 @@ export const captureImportSources = sqliteTable(
   }),
 );
 
+export const batchAuditLogs = sqliteTable(
+  "batch_audit_logs",
+  {
+    id: text("id").primaryKey(),
+    actionType: text("action_type", { enum: BATCH_ACTION_TYPES }).notNull(),
+    assetIds: text("asset_ids").notNull(),
+    performedAt: integer("performed_at").notNull(),
+    snapshotSummary: text("snapshot_summary"),
+  },
+  (table) => ({
+    performedAtIndex: index("batch_audit_logs_performed_at_idx").on(table.performedAt),
+  }),
+);
+
 import { relations } from "drizzle-orm";
 
 export const assetsRelations = relations(assets, ({ many }) => ({
@@ -438,3 +453,5 @@ export type CaptureInboxItem = typeof captureInboxItems.$inferSelect;
 export type NewCaptureInboxItem = typeof captureInboxItems.$inferInsert;
 export type CaptureImportSource = typeof captureImportSources.$inferSelect;
 export type NewCaptureImportSource = typeof captureImportSources.$inferInsert;
+export type BatchAuditLog = typeof batchAuditLogs.$inferSelect;
+export type NewBatchAuditLog = typeof batchAuditLogs.$inferInsert;

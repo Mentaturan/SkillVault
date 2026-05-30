@@ -21,8 +21,9 @@ import {
   getVersionById,
 } from "@/server/services/version-service";
 import type { CreateAssetInput, UpdateAssetInput } from "@/lib/validators/asset";
-import type { AssetStateFilter } from "@/lib/constants";
+import type { AssetStateFilter, LifecycleFilter } from "@/lib/constants";
 import type { FindAllAssetsOptions } from "@/server/queries/asset-queries";
+import { validateAssetContent } from "@/lib/validation";
 
 export async function getAssetById(id: string) {
   return findAssetById(id);
@@ -62,16 +63,90 @@ async function filterAssetsByState<T extends Awaited<ReturnType<typeof findAllAs
   }
 }
 
-export async function getAssets(
-  options?: FindAllAssetsOptions & { stateFilter?: AssetStateFilter },
+async function filterAssetsByLifecycle<T extends Awaited<ReturnType<typeof findAllAssets>>>(
+  assets: T,
+  lifecycleFilters: LifecycleFilter[],
 ) {
-  const assets = await findAllAssets(options);
-
-  if (!options?.stateFilter) {
+  if (lifecycleFilters.length === 0) {
     return assets;
   }
 
-  return filterAssetsByState(assets, options.stateFilter);
+  const now = Date.now();
+  const dayMs = 24 * 60 * 60 * 1000;
+
+  let filtered = assets;
+
+  for (const filter of lifecycleFilters) {
+    switch (filter) {
+      case "last_used_over_30d":
+        filtered = filtered.filter(
+          (asset) => asset.lastUsedAt === null || asset.lastUsedAt < now - 30 * dayMs,
+        ) as typeof filtered;
+        break;
+      case "last_used_over_90d":
+        filtered = filtered.filter(
+          (asset) => asset.lastUsedAt === null || asset.lastUsedAt < now - 90 * dayMs,
+        ) as typeof filtered;
+        break;
+      case "last_reviewed_over_30d":
+        filtered = filtered.filter(
+          (asset) => asset.updatedAt < now - 30 * dayMs,
+        ) as typeof filtered;
+        break;
+      case "never_used":
+        filtered = filtered.filter((asset) => asset.lastUsedAt === null) as typeof filtered;
+        break;
+      case "low_rated":
+        filtered = filtered.filter(
+          (asset) => asset.rating !== null && asset.rating <= 2,
+        ) as typeof filtered;
+        break;
+      case "untested": {
+        const testedAssetIds = new Set(await findAssetIdsWithTestCases());
+        filtered = filtered.filter(
+          (asset) => !testedAssetIds.has(asset.id),
+        ) as typeof filtered;
+        break;
+      }
+      case "has_validation_warnings":
+        filtered = filtered.filter((asset) => {
+          const result = validateAssetContent({
+            title: asset.title,
+            description: asset.description,
+            content: asset.content,
+            type: asset.type,
+            exportPreset: asset.exportPreset,
+          });
+          return result.summary.warningCount > 0;
+        }) as typeof filtered;
+        break;
+      case "review_overdue":
+        filtered = filtered.filter(
+          (asset) => asset.reviewDueAt !== null && asset.reviewDueAt < now,
+        ) as typeof filtered;
+        break;
+    }
+  }
+
+  return filtered;
+}
+
+export async function getAssets(
+  options?: FindAllAssetsOptions & { stateFilter?: AssetStateFilter; lifecycleFilters?: LifecycleFilter[] },
+) {
+  const assets = await findAllAssets(options);
+
+  let result = assets;
+
+  if (options?.stateFilter) {
+    result = await filterAssetsByState(result, options.stateFilter);
+  }
+
+  if (options?.lifecycleFilters && options.lifecycleFilters.length > 0) {
+    result = await filterAssetsByLifecycle(result, options.lifecycleFilters);
+  }
+
+  return result;
 }
 
 export async function createNewAsset(input: CreateAssetInput) {

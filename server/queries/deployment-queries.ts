@@ -43,6 +43,21 @@ export async function updateDeploymentTarget(
   return target;
 }
 
+export async function findAllDeploymentRecords() {
+  return db.query.deploymentRecords.findMany({
+    with: {
+      asset: {
+        columns: {
+          id: true,
+          title: true,
+        },
+      },
+      deploymentTarget: true,
+    },
+    orderBy: [asc(deploymentRecords.updatedAt)],
+  });
+}
+
 export async function findDeploymentRecordsByAssetId(assetId: string) {
   return db.query.deploymentRecords.findMany({
     where: eq(deploymentRecords.assetId, assetId),

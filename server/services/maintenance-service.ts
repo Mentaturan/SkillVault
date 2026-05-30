@@ -7,6 +7,67 @@ export interface MaintenanceQueueItem {
   priorityScore: number;
 }
 
+export interface DuplicateCandidate {
+  asset1: { id: string; title: string; type: string; status: string; contentHash: string };
+  asset2: { id: string; title: string; type: string; status: string; contentHash: string };
+  reason: "content_hash" | "title_similarity";
+  confidence: "high" | "medium";
+}
+
+function jaccardSimilarity(a: string, b: string): number {
+  const tokenize = (s: string) =>
+    new Set(s.toLowerCase().split(/\s+/).filter(Boolean));
+  const setA = tokenize(a);
+  const setB = tokenize(b);
+  if (setA.size === 0 && setB.size === 0) return 1;
+  if (setA.size === 0 || setB.size === 0) return 0;
+  let intersection = 0;
+  for (const token of setA) {
+    if (setB.has(token)) intersection++;
+  }
+  const union = setA.size + setB.size - intersection;
+  return intersection / union;
+}
+
+export async function findDuplicateCandidates(): Promise<DuplicateCandidate[]> {
+  const assets = await findAllAssets({ includeArchived: true });
+  const candidates: DuplicateCandidate[] = [];
+  const seen = new Set<string>();
+
+  for (let i = 0; i < assets.length; i++) {
+    for (let j = i + 1; j < assets.length; j++) {
+      const a = assets[i];
+      const b = assets[j];
+      const pairKey = [a.id, b.id].sort().join("|");
+      if (seen.has(pairKey)) continue;
+
+      if (a.contentHash === b.contentHash) {
+        seen.add(pairKey);
+        candidates.push({
+          asset1: { id: a.id, title: a.title, type: a.type, status: a.status, contentHash: a.contentHash },
+          asset2: { id: b.id, title: b.title, type: b.type, status: b.status, contentHash: b.contentHash },
+          reason: "content_hash",
+          confidence: "high",
+        });
+        continue;
+      }
+
+      const similarity = jaccardSimilarity(a.title, b.title);
+      if (similarity >= 0.5) {
+        seen.add(pairKey);
+        candidates.push({
+          asset1: { id: a.id, title: a.title, type: a.type, status: a.status, contentHash: a.contentHash },
+          asset2: { id: b.id, title: b.title, type: b.type, status: b.status, contentHash: b.contentHash },
+          reason: "title_similarity",
+          confidence: "medium",
+        });
+      }
+    }
+  }
+
+  return candidates;
+}
+
 export async function getAssetMaintenanceQueue() {
   const assets = await findAllAssets({
     includeArchived: true,

@@ -23,6 +23,9 @@ import {
   ASSET_STATUSES,
   ASSET_TYPE_LABELS,
   ASSET_TYPES,
+  LIFECYCLE_FILTER_LABELS,
+  LIFECYCLE_FILTERS,
+  MAINTENANCE_PRESET_FILTERS,
   SORT_OPTION_LABELS,
   SORT_OPTIONS,
   TARGET_TOOL_LABELS,
@@ -31,6 +34,7 @@ import {
   type AssetStatus,
   type AssetStateFilter,
   type AssetType,
+  type LifecycleFilter,
   type SortOption,
   type TargetTool,
 } from "@/lib/constants";
@@ -39,6 +43,7 @@ import type { Tag } from "@/db/schema";
 export interface AssetFilterValues {
   search?: string;
   stateFilter?: AssetStateFilter;
+  lifecycleFilters?: LifecycleFilter[];
   type?: AssetType;
   targetTool?: TargetTool;
   source?: AssetSource;
@@ -66,6 +71,11 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
 
     if (merged.search) params.set("q", merged.search);
     if (merged.stateFilter) params.set("stateFilter", merged.stateFilter);
+    if (merged.lifecycleFilters && merged.lifecycleFilters.length > 0) {
+      for (const lf of merged.lifecycleFilters) {
+        params.append("lifecycle", lf);
+      }
+    }
     if (merged.type) params.set("type", merged.type);
     if (merged.targetTool) params.set("targetTool", merged.targetTool);
     if (merged.source) params.set("source", merged.source);
@@ -86,6 +96,34 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
   function clearFilters() {
     router.push("/assets");
   }
+
+  function toggleLifecycleFilter(filter: LifecycleFilter) {
+    const current = filters.lifecycleFilters ?? [];
+    const next = current.includes(filter)
+      ? current.filter((f) => f !== filter)
+      : [...current, filter];
+    applyFilters({ lifecycleFilters: next.length > 0 ? next : undefined });
+  }
+
+  function applyMaintenancePreset() {
+    const current = filters.lifecycleFilters ?? [];
+    const isPresetActive =
+      MAINTENANCE_PRESET_FILTERS.every((f) => current.includes(f)) &&
+      current.length === MAINTENANCE_PRESET_FILTERS.length;
+    if (isPresetActive) {
+      applyFilters({ lifecycleFilters: undefined });
+    } else {
+      applyFilters({ lifecycleFilters: [...MAINTENANCE_PRESET_FILTERS] });
+    }
+  }
+
+  const isMaintenancePresetActive = (() => {
+    const current = filters.lifecycleFilters ?? [];
+    return (
+      MAINTENANCE_PRESET_FILTERS.every((f) => current.includes(f)) &&
+      current.length === MAINTENANCE_PRESET_FILTERS.length
+    );
+  })();
 
   return (
     <div className="space-y-3 rounded-md border bg-background p-3">
@@ -262,6 +300,34 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
               ))}
             </SelectContent>
           </Select>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">生命周期筛选</span>
+          <Button
+            variant={isMaintenancePresetActive ? "default" : "outline"}
+            size="sm"
+            onClick={applyMaintenancePreset}
+          >
+            维护队列
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {LIFECYCLE_FILTERS.map((filter) => {
+            const isActive = (filters.lifecycleFilters ?? []).includes(filter);
+            return (
+              <Button
+                key={filter}
+                variant={isActive ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleLifecycleFilter(filter)}
+              >
+                {LIFECYCLE_FILTER_LABELS[filter]}
+              </Button>
+            );
+          })}
         </div>
       </div>
 

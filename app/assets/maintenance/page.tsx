@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+import { BatchAuditLog } from "@/components/maintenance/batch-audit-log";
+import { DeploymentHealthSummary } from "@/components/maintenance/deployment-health-summary";
+import { DuplicateCandidates } from "@/components/maintenance/duplicate-candidates";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -131,6 +134,36 @@ export default async function AssetMaintenancePage() {
           ))}
         </div>
       )}
+
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">重复候选</h2>
+          <p className="text-sm text-muted-foreground">
+            基于内容哈希和标题相似度检测到的可能重复资产对。
+          </p>
+        </div>
+        <DuplicateCandidates />
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">部署健康状态</h2>
+          <p className="text-sm text-muted-foreground">
+            查看所有部署目标的实时状态，包括已过期、目标缺失和文件漂移的情况。
+          </p>
+        </div>
+        <DeploymentHealthSummary />
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold">批量操作历史</h2>
+          <p className="text-sm text-muted-foreground">
+            查看近期的批量操作记录，包括归档、重标、评分等操作。
+          </p>
+        </div>
+        <BatchAuditLog />
+      </div>
     </div>
   );
 }

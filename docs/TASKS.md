@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.9 is implemented. The package version is `1.0.0`.
+Local milestone state: v1.0 is complete. v1.1 packaging, release, and onboarding polish is complete. v1.2 library maintenance and review ergonomics is complete. The package version is `1.1.0`.
 
 Implemented locally:
 
@@ -34,7 +34,15 @@ Implemented locally:
 - Source update check that compares remote checksum without auto-overwriting.
 - Bundled curated examples as local data with preview and selective import.
 - Source filter on asset list and source detail Card on asset detail page.
+- Settings-page update check against GitHub Releases with latest version, release notes, and DMG download link.
+- Optional preset seeding for empty libraries via `npm run seed` or `SKILLVAULT_SEED_ON_EMPTY=1`.
+- macOS packaging that bundles a local Node.js runtime inside the `.app` and produces `.zip` plus `.dmg` release artifacts.
 - Basic mobile usability for view, search, and copy flows.
+- Duplicate-candidate review queue based on title similarity and content hash matching.
+- Batch-safe maintenance actions for archive, retag, rating, and review-date with preview confirmation.
+- Deployment health summary view grouped by status.
+- Combined lifecycle filters with maintenance queue preset.
+- Batch action audit trail with operation history viewer.
 
 Known local caveats:
 
@@ -42,13 +50,13 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: v1.0 complete. All planned phases have been delivered. Future work beyond v1.0 would require explicit replanning.
+Next development focus: v1.3 filesystem exchange and capture expansion.
 
 ## Product Positioning
 
 SkillVault is a local-first personal AI workflow asset manager for a small, high-value library of 20-50 reusable assets. It manages prompts, agent skills, project rules, AGENTS.md and CLAUDE.md snippets, image prompts, reply templates, workflows, SOPs, checklists, and reusable rules extracted from AI conversations.
 
-It is not a SaaS, public prompt market, AI chat app, RAG system, team collaboration app, sync service, browser extension, cloud deployment target, or full desktop/mobile product in the current roadmap.
+It is not a SaaS, public prompt market, AI chat app, RAG system, team collaboration app, sync service, browser extension, cloud deployment target, or broad desktop/mobile product in the current roadmap. A lightweight native macOS wrapper around the local web app is in scope.
 
 SQLite is the primary database. Markdown and folder formats are exchange formats. Future filesystem workflows must protect the SQLite source of truth until a phase explicitly changes that architecture.
 
@@ -135,7 +143,7 @@ Roadmap conclusion:
 2. Then add local folder and tool deployment workflows with dry-run, conflict copies, and explicit target paths.
 3. Then add deterministic validation and security warnings for SKILL.md, AGENTS.md, CLAUDE.md, Cursor rules, and imported Markdown.
 4. Then add capture inbox and local conversation-log extraction.
-5. Delay public curated libraries, registries, AI APIs, and desktop packaging until the personal local workflow is reliable.
+5. Keep public curated libraries, registries, and AI API workflows delayed; desktop packaging is now valid only as a thin local wrapper after the personal local workflow proved reliable.
 
 ## Planning Rules
 
@@ -510,6 +518,107 @@ Exit criteria:
 - README and AGENTS.md match delivered behavior.
 - Migration and upgrade notes exist.
 
+## v1.1 - Packaging, Release, and Onboarding Polish
+
+Status: complete.
+
+Scope:
+
+- Native macOS packaging for practical personal distribution.
+- Native Windows packaging with C# WebView2 wrapper.
+- iOS companion app with Bonjour discovery for desktop instances.
+- Desktop Bonjour/mDNS broadcasting for iOS companion discovery.
+- In-app visibility into newer releases.
+- Fast start for an empty personal library.
+- Docs and release flow polish for upgrade and packaging.
+- No cloud updater, no auto-download, no signed installer pipeline yet.
+
+Tasks:
+
+- [x] Bump app/package versioning to `1.1.0`.
+- [x] Add settings-page update check against GitHub Releases with release notes and download link.
+- [x] Prefer `.dmg` release asset when available.
+- [x] Bundle Node.js runtime into the macOS `.app` so runtime does not depend on system Node.
+- [x] Produce both `.zip` and `.dmg` artifacts from `scripts/package-macos.sh`.
+- [x] Add optional preset seeding for empty libraries through `SKILLVAULT_SEED_ON_EMPTY=1`.
+- [x] Create Windows native shell project: C# WebView2 wrapper with ServerManager, MainForm, BonjourService.
+- [x] Create Windows packaging scripts: `scripts/package-windows.ps1` and `scripts/package-windows.sh`.
+- [x] Create iOS companion app project: Swift WKWebView with ServerDiscovery and Bonjour browsing.
+- [x] Add Bonjour/mDNS broadcasting to macOS launcher (`macos/SkillVault/BonjourService.swift`).
+- [x] Add Bonjour/mDNS broadcasting to Windows launcher (`windows/SkillVault/BonjourService.cs`).
+- [x] Update GitHub Actions for multi-platform release (macOS, Windows, iOS).
+- [x] Verify packaged-app launch on a clean macOS environment after fresh clone and build.
+- [x] Verify external links from the WKWebView shell open in the system browser while localhost navigation stays in-app.
+- [x] Finalize icon pipeline from a single source image and confirm `.icns` generation in packaging.
+- [x] Add a lightweight release checklist covering build, launch, backup/restore smoke, and artifact sanity checks.
+- [ ] Verify Windows app launch on a clean Windows environment.
+- [ ] Verify iOS companion app discovers and connects to desktop instances.
+- [ ] Verify cross-platform backup/restore between macOS and Windows.
+
+Exit criteria:
+
+- A packaged `.app` launches without requiring system Node.js.
+- A packaged Windows app launches without requiring system Node.js.
+- An iOS companion app discovers and connects to a desktop SkillVault instance on the same network.
+- Tagged releases can ship macOS `.zip`/`.dmg`, Windows `.zip`, and iOS `.ipa`/`.zip` artifacts.
+- The settings page can tell a local user whether a newer GitHub Release exists.
+- An empty library can be seeded intentionally without bypassing version rules or data safety rules.
+- README and AGENTS.md explain the packaging and update workflow accurately for all platforms.
+- Backup/restore works across macOS and Windows without data loss.
+
+## v1.2 - Library Maintenance and Review Ergonomics
+
+Status: complete.
+
+Goal: reduce entropy in a long-lived personal library and make recurring cleanup faster than ad hoc searching.
+
+Scope:
+
+- Maintenance views and batch-safe workflows for stale, low-quality, duplicate, and untested assets.
+- Better review scheduling and clearer decision queues.
+- No AI auto-scoring and no hidden bulk mutations.
+
+Tasks:
+
+- [x] Add duplicate-candidate review queue based on title/content similarity with preview-first archive or merge-follow-up actions.
+- [x] Add batch-safe maintenance actions for archive, retag, rating updates, and review-date changes.
+- [x] Add clearer deployment health summaries so stale, missing, and broken targets can be repaired from one place.
+- [x] Add asset lifecycle filters that combine last-used, last-reviewed, rating, and test coverage without leaving the current local-first model.
+- [x] Preserve auditability for every batch maintenance action.
+
+Exit criteria:
+
+- A user can identify likely duplicates and stale assets without manual spreadsheet-style cleanup.
+- Batch maintenance actions remain previewable, reversible where applicable, and do not silently rewrite content.
+- Review and deployment queues stay readable for a personal library of 20-50 assets.
+
+## v1.3 - Filesystem Exchange and Capture Expansion
+
+Status: planned.
+
+Goal: deepen deterministic exchange with local files and broaden supported local capture sources without turning SkillVault into a sync platform.
+
+Scope:
+
+- Support files beside an asset for filesystem exchange.
+- More deterministic local capture/import inputs.
+- Round-trip safety for exchange flows.
+- No live sync daemon, no remote registry, no automatic marketplace install.
+
+Tasks:
+
+- [ ] Define an exchange folder shape that can include a primary Markdown asset plus support files and structured metadata.
+- [ ] Add preview-first import/export for support-file bundles without losing version readability.
+- [ ] Extend local capture beyond current Codex rollout handling, starting with the already-modeled `claude_code_jsonl` source type.
+- [ ] Add provenance-preserving re-import flows for captured/imported assets when the source is unchanged versus changed.
+- [ ] Add fixture-based tests for exchange round-trips and capture parsing.
+
+Exit criteria:
+
+- A user can round-trip a file-backed asset bundle without silent overwrite or metadata drift.
+- Additional local conversation sources can be previewed and converted deterministically.
+- Source and version provenance remain readable after export, import, and capture flows.
+
 ## Recurring Verification Checklist
 
 Run this before marking any phase complete:
@@ -529,6 +638,9 @@ Run this before marking any phase complete:
 - [ ] Archive, soft delete, and restore.
 - [ ] Restart server and verify data persists.
 - [ ] If the phase changes import/export/backup/deploy behavior, run a round-trip fixture.
+- [ ] If the phase changes macOS packaging or upgrade behavior, launch the packaged app and verify update-check and release-artifact assumptions still hold.
+- [ ] If the phase changes Windows packaging, verify the packaged Windows app launches and connects to the standalone server.
+- [ ] If the phase changes iOS companion behavior, verify the iOS app discovers and connects to a desktop instance.
 
 ## Backlog Parking Lot
 
@@ -548,7 +660,7 @@ Do not implement these until a roadmap phase explicitly accepts them:
 - Comments, likes, payments, or social features.
 - Monaco, CodeMirror, or rich text editing.
 - Complex visual analytics.
-- Electron, Tauri, or mobile app publishing.
+- Electron, Tauri, or App Store publishing. (Lightweight native wrappers and sideloading/TestFlight are allowed.)
 - Public registry publishing.
 - Automatic dependency resolver for third-party skills.
 - Hosted MCP access to the library.

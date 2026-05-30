@@ -5,6 +5,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
     var webView: WKWebView!
     let serverManager = ServerManager()
+    let bonjourService = BonjourService()
 
     let windowWidth: CGFloat = 1280
     let windowHeight: CGFloat = 800
@@ -28,6 +29,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        bonjourService.stop()
         serverManager.stopServer()
     }
 
@@ -36,6 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func createWindow(port: Int) {
+        bonjourService.start(port: port)
         let frame = savedWindowFrame()
         window = NSWindow(
             contentRect: frame,
@@ -49,10 +52,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .default()
-        config.preferences.javaScriptCanOpenWindowsAutomatically = false
+        config.preferences.javaScriptCanOpenWindowsAutomatically = true
 
         webView = WKWebView(frame: .zero, configuration: config)
+        webView.uiDelegate = self
         webView.customUserAgent = "SkillVault/1.0.0"
+        webView.navigationDelegate = self
 
         let loadingHTML = """
         <!DOCTYPE html>
@@ -109,6 +114,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         defaults.set(window.frame.origin.y, forKey: "windowY")
         defaults.set(window.frame.size.width, forKey: "windowW")
         defaults.set(window.frame.size.height, forKey: "windowH")
+    }
+}
+
+extension AppDelegate: WKUIDelegate {
+    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if let url = navigationAction.request.url {
+            if url.host != "localhost" && url.host != "127.0.0.1" {
+                NSWorkspace.shared.open(url)
+                return nil
+            }
+        }
+        return nil
+    }
+}
+
+extension AppDelegate: WKNavigationDelegate {
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url {
+            if url.scheme == "http" || url.scheme == "https" {
+                if url.host == "localhost" || url.host == "127.0.0.1" {
+                    decisionHandler(.allow)
+                    return
+                }
+                if navigationAction.navigationType == .linkActivated {
+                    NSWorkspace.shared.open(url)
+                    decisionHandler(.cancel)
+                    return
+                }
+            }
+        }
+        decisionHandler(.allow)
     }
 }
 

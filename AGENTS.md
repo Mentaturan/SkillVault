@@ -6,13 +6,13 @@ SkillVault is a local-first personal AI workflow asset manager for a small, high
 
 It manages Codex Skills, Trae Solo Skills, Claude Code rules, Cursor and Windsurf rules, AGENTS.md, CLAUDE.md, AI chat prompts, image prompts, reply templates, copywriting templates, code review rules, file workflows, SOPs, checklists, and reusable prompts, skills, and rules extracted from AI conversations.
 
-It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration platform, cloud sync service, browser extension, hosted MCP service, or desktop/mobile product in the current implementation.
+It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration platform, cloud sync service, browser extension, hosted MCP service, or broad desktop/mobile product. Lightweight native wrappers around the local web app are in scope: macOS (`macos/SkillVault/`), Windows (`windows/SkillVault/`), and iOS companion (`ios/SkillVault/`).
 
 ## Current Implementation State
 
 Use `docs/TASKS.md` as the source of truth.
 
-As of the current plan, v0.9 is implemented locally and v1.0 is in progress:
+As of 2026-05-30, v1.0 stable personal local release is complete and v1.1 packaging, release, and onboarding polish is complete and v1.2 library maintenance and review ergonomics is complete and v1.3 filesystem exchange and capture expansion is in progress:
 
 - v0.1-alpha core asset library is complete.
 - v0.1-beta organization and evaluation is complete.
@@ -24,9 +24,13 @@ As of the current plan, v0.9 is implemented locally and v1.0 is in progress:
 - v0.7 capture inbox and local conversation mining is complete.
 - v0.8 diff, test runs, and use history is complete.
 - v0.9 import sources, curated assets, and Git-friendly exchange is complete.
-- v1.0 stable personal local release is the current development phase.
+- v1.0 stable personal local release is complete.
+- v1.1 packaging, release, and onboarding polish is complete.
+- v1.1 local enhancements already landed include GitHub release update checks, optional preset seeding for empty libraries, bundled Node.js runtime in the macOS app, `.zip` plus `.dmg` packaging outputs, Windows C# WebView2 native wrapper, iOS companion app with Bonjour discovery, and desktop Bonjour/mDNS broadcasting.
+- v1.2 library maintenance and review ergonomics is complete.
+- v1.3 filesystem exchange and capture expansion is in progress.
 
-The package version is `1.0.0`.
+The package version is `1.1.0`.
 
 ## Product Principles
 
@@ -121,7 +125,10 @@ Current phase order:
 4. v0.7 capture inbox and local conversation mining.
 5. v0.8 diff, test runs, and use history.
 6. v0.9 import sources, curated assets, and Git-friendly exchange (complete).
-7. v1.0 stable personal local release (current).
+7. v1.0 stable personal local release (complete).
+8. v1.1 packaging, release, and onboarding polish (complete).
+9. v1.2 library maintenance and review ergonomics (complete).
+10. v1.3 filesystem exchange and capture expansion (current).
 
 If a feature crosses phase boundaries, implement the smallest current-phase-safe subset first.
 
@@ -156,7 +163,8 @@ Do not implement:
 - Monaco, CodeMirror, or rich text editing.
 - Complex visual dashboards.
 - Hosted MCP service.
-- Electron, Tauri, or mobile app publishing. (A lightweight Swift WKWebView wrapper for macOS is allowed and implemented in `macos/SkillVault/`.)
+- Electron, Tauri. (Lightweight native wrappers are allowed: macOS Swift WKWebView in `macos/SkillVault/`, Windows C# WebView2 in `windows/SkillVault/`, iOS Swift WKWebView companion in `ios/SkillVault/`.)
+- App Store publishing. (Sideloading and TestFlight distribution are allowed.)
 - Cloud deployment adaptation.
 - Multi-user permissions.
 - Public sharing.
@@ -207,8 +215,40 @@ For documentation-only changes, these commands are optional. State clearly if th
 - The macOS .app is a lightweight Swift WKWebView wrapper around the Next.js standalone server.
 - Swift source code lives in `macos/SkillVault/`.
 - The packaging script is `scripts/package-macos.sh`.
-- The .app uses system Node.js; do not bundle Node.js in the .app.
+- The .app bundles a local Node.js runtime inside `Contents/Frameworks/node`; do not assume system Node.js is available.
 - The .app stores data in `~/Library/Application Support/SkillVault/`.
 - The .app is not an Electron or Tauri app; it is a native Swift wrapper.
 - Changes to the Swift launcher should be minimal and focused on window management and server lifecycle.
-- The packaging script must be idempotent.
+- The packaging script must stay idempotent and produce `dist/SkillVault.app`, `dist/SkillVault-macOS-v<version>.zip`, and `dist/SkillVault-macOS-v<version>.dmg`.
+- The macOS app broadcasts `_skillvault._tcp.` via Bonjour/NetService for iOS companion discovery.
+
+## Windows App Packaging Rules
+
+- The Windows app is a lightweight C# WebView2 wrapper around the Next.js standalone server.
+- C# source code lives in `windows/SkillVault/`.
+- The packaging script is `scripts/package-windows.ps1` (on Windows) or `scripts/package-windows.sh` (cross-prep on macOS).
+- The app bundles a local Node.js runtime as `node.exe` next to the executable; do not assume system Node.js is available.
+- The app stores data in `%APPDATA%\SkillVault\`.
+- The app is not an Electron or Tauri app; it is a native C# WinForms wrapper.
+- Changes to the C# launcher should be minimal and focused on window management and server lifecycle.
+- The packaging script must produce `dist/SkillVault-Windows-v<version>.zip`.
+- The Windows app broadcasts `_skillvault._tcp.` via mDNS (Makaretu.Dns.Multicast) for iOS companion discovery.
+
+## iOS Companion App Rules
+
+- The iOS app is a companion that connects to a desktop SkillVault instance on the local network.
+- Swift source code lives in `ios/SkillVault/`.
+- The iOS app does NOT run a local server or store a local database.
+- The iOS app discovers desktop instances via Bonjour/NetServiceBrowser searching for `_skillvault._tcp.`.
+- The iOS app uses WKWebView to load the desktop instance's Web UI.
+- Changes to the iOS app should be minimal and focused on server discovery, connection, and WebView lifecycle.
+- App Store publishing is not in scope; sideloading and TestFlight distribution are allowed.
+
+## Cross-Platform Data Rules
+
+- Each platform uses an independent database path; no shared locks or file conflicts.
+- macOS: `~/Library/Application Support/SkillVault/skillvault.sqlite`
+- Windows: `%APPDATA%\SkillVault\skillvault.sqlite`
+- Development: `./data/skillvault.sqlite`
+- Data migration between platforms uses the existing backup/restore workflow.
+- The backup bundle format is platform-agnostic; syncId conflict strategies apply consistently.

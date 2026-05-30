@@ -14,6 +14,7 @@ import {
   DEPLOYMENT_TARGET_KEYS,
   DEPLOYMENT_TARGET_LABELS,
   DEPLOYMENT_TARGET_PATH_PLACEHOLDERS,
+  type DeploymentStatus,
   type DeploymentTargetKey,
   type TargetTool,
 } from "@/lib/constants";
@@ -37,6 +38,7 @@ import { findAssetById } from "@/server/queries/asset-queries";
 import {
   createDeploymentRecord,
   createDeploymentTarget,
+  findAllDeploymentRecords,
   findAllDeploymentTargets,
   findDeploymentRecordByAssetAndTarget,
   findDeploymentRecordsByAssetId,
@@ -609,5 +611,64 @@ export async function getProjectDeploymentPageData(projectId: string) {
       status: item.asset.status,
       type: item.asset.type,
     })),
+  };
+}
+
+export interface DeploymentHealthItem {
+  assetId: string;
+  assetTitle: string;
+  targetKey: DeploymentTargetKey;
+  targetLabel: string;
+  status: DeploymentStatus;
+  statusReason: string;
+  targetFilePath: string | null;
+  lastDeployedAt: number | null;
+}
+
+export interface DeploymentHealthSummary {
+  totalDeployed: number;
+  byStatus: Record<DeploymentStatus, number>;
+  items: DeploymentHealthItem[];
+}
+
+export async function getDeploymentHealthSummary(): Promise<DeploymentHealthSummary> {
+  const targets = await ensureDeploymentTargets();
+  const targetMap = new Map(targets.map((t) => [t.id, t]));
+  const records = await findAllDeploymentRecords();
+
+  const byStatus: Record<DeploymentStatus, number> = {
+    not_deployed: 0,
+    installed: 0,
+    stale: 0,
+    missing: 0,
+    broken: 0,
+  };
+
+  const items: DeploymentHealthItem[] = [];
+
+  for (const record of records) {
+    const target = targetMap.get(record.deploymentTargetId);
+    if (!target) continue;
+
+    const liveStatus = await buildLiveStatus(record.assetId, target);
+
+    byStatus[liveStatus.status] += 1;
+
+    items.push({
+      assetId: record.assetId,
+      assetTitle: record.asset.title,
+      targetKey: liveStatus.targetKey,
+      targetLabel: liveStatus.targetLabel,
+      status: liveStatus.status,
+      statusReason: liveStatus.statusReason,
+      targetFilePath: liveStatus.targetFilePath,
+      lastDeployedAt: liveStatus.lastDeployedAt,
+    });
+  }
+
+  return {
+    totalDeployed: records.length,
+    byStatus,
+    items,
   };
 }
