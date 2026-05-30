@@ -24,6 +24,11 @@ As of the current plan, v0.5 is implemented locally:
 
 The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
 
+Current v0.6 progress:
+
+- Deterministic validation summaries already cover SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
+- Maintenance queue and validation fixtures are still pending.
+
 ## Product Principles
 
 - Local-first beats cloud convenience.
