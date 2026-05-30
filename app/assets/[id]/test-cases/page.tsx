@@ -20,13 +20,18 @@ export default async function TestCasesPage({ params }: TestCasesPageProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={`/assets/${id}`}>
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-semibold">测试用例 - {asset.title}</h1>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href={`/assets/${id}`}>
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
+            <h1 className="text-2xl font-semibold">测试用例 - {asset.title}</h1>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            运行日志继续复用同一记录模型，通过类型区分测试用例和实际运行结果。
+          </p>
         </div>
       </div>
 

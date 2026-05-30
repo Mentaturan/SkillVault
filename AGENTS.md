@@ -40,6 +40,7 @@ Current v0.8 progress:
 - Simple version-to-version text diff is in place from the version history view.
 - Raw copy and rendered copy now update `lastUsedAt` without mutating content versions.
 - Assets can carry a manual `reviewDueAt`, and a dedicated review queue page surfaces overdue and upcoming reviews.
+- Run logs stay in the existing test case model via `kind`, so v0.8 does not add a separate run-log entity.
 
 ## Product Principles
 
