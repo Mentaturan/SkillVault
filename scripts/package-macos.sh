@@ -10,8 +10,10 @@ echo "==> Packaging ${APP_NAME} v${VERSION} for macOS..."
 
 rm -rf "${APP_BUNDLE}"
 
-echo "Building Next.js..."
-npm run build
+if [ ! -d ".next/standalone" ]; then
+  echo "Building Next.js..."
+  npm run build
+fi
 
 echo "Creating .app bundle structure..."
 mkdir -p "${APP_BUNDLE}/Contents/MacOS"

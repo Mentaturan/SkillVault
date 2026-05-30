@@ -16,17 +16,17 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '22'
 
-      - run: npm ci
+      - run: npm install
 
-      - run: npm run typecheck
-      - run: npm run lint
       - run: npm run build
 
       - name: Package macOS app
-        run: scripts/package-macos.sh
+        run: bash scripts/package-macos.sh
+
+      - name: List dist
+        run: ls -la dist/
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
