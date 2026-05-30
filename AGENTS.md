@@ -12,7 +12,7 @@ It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration pl
 
 Use `docs/TASKS.md` as the source of truth.
 
-As of the current plan, v0.7 is implemented locally:
+As of the current plan, v0.7 is implemented locally and v0.8 is in progress:
 
 - v0.1-alpha core asset library is complete.
 - v0.1-beta organization and evaluation is complete.
@@ -34,6 +34,10 @@ Current v0.6 progress:
 Current v0.7 progress:
 
 - Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, preview-first Codex rollout import, and changed-file detection scan are in place.
+
+Current v0.8 progress:
+
+- Simple version-to-version text diff is in place from the version history view.
 
 ## Product Principles
 

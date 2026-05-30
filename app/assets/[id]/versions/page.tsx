@@ -42,7 +42,7 @@ export default async function AssetVersionsPage({
       </div>
 
       <div className="space-y-3">
-        {versions.map((version) => {
+        {versions.map((version, index) => {
           const isCurrent = version.contentHash === currentHash;
 
           return (
@@ -63,12 +63,23 @@ export default async function AssetVersionsPage({
                       <p className="text-sm">{version.changeNote}</p>
                     )}
                   </div>
-                  <RollbackButton
-                    id={asset.id}
-                    versionId={version.id}
-                    version={version.version}
-                    disabled={isCurrent}
-                  />
+                  <div className="flex flex-wrap gap-2">
+                    {versions[index + 1] ? (
+                      <Button asChild variant="outline" size="sm">
+                        <Link
+                          href={`/assets/${asset.id}/versions/compare?from=${versions[index + 1].id}&to=${version.id}`}
+                        >
+                          与版本 {versions[index + 1].version} 对比
+                        </Link>
+                      </Button>
+                    ) : null}
+                    <RollbackButton
+                      id={asset.id}
+                      versionId={version.id}
+                      version={version.version}
+                      disabled={isCurrent}
+                    />
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-3">

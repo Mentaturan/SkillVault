@@ -36,7 +36,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: start v0.8 diff, test runs, and use history. The first slice should add version diffing without changing the existing version model.
+Next development focus: continue v0.8 diff, test runs, and use history. The first slice, simple version diffing without changing the existing version model, is in place. The next slice should add deterministic run history or use history with the smallest stable schema change.
 
 ## Product Positioning
 
@@ -410,7 +410,7 @@ Exit criteria:
 
 ## v0.8 - Diff, Test Runs, and Use History
 
-Status: planned.
+Status: in progress.
 
 Goal: help maintain quality after assets are used repeatedly.
 
@@ -424,7 +424,7 @@ Scope:
 
 Tasks:
 
-- [ ] Add simple text diff for asset versions.
+- [x] Add simple text diff for asset versions.
 - [ ] Add run log entity if the current test case model is not enough.
 - [ ] Track copy events enough to update `lastUsedAt`.
 - [ ] Add filters for stale, recently used, never used, low-rated, and untested assets.
