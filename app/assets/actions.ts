@@ -19,11 +19,15 @@ import {
 
 function parseFormData(formData: FormData) {
   const tagNamesRaw = formData.get("tagNames") as string | null;
+  const reviewDueAtRaw = (formData.get("reviewDueAt") as string | null)?.trim();
   const tagNames = tagNamesRaw
     ? tagNamesRaw
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean)
+    : undefined;
+  const reviewDueAt = reviewDueAtRaw
+    ? new Date(`${reviewDueAtRaw}T00:00:00`).getTime()
     : undefined;
 
   return {
@@ -35,6 +39,7 @@ function parseFormData(formData: FormData) {
     scenario: (formData.get("scenario") as string) || undefined,
     content: formData.get("content") as string,
     status: (formData.get("status") as string) || undefined,
+    reviewDueAt,
     visibility: (formData.get("visibility") as string) || undefined,
     source: (formData.get("source") as string) || undefined,
     sourceUrl: (formData.get("sourceUrl") as string) || undefined,

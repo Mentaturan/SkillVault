@@ -348,6 +348,7 @@ export async function restoreBackupBundle(
         createdAt: bundleAsset.metadata.createdAt,
         updatedAt: bundleAsset.metadata.updatedAt,
         lastUsedAt: bundleAsset.metadata.lastUsedAt,
+        reviewDueAt: bundleAsset.metadata.reviewDueAt ?? null,
         lastSyncedAt: bundleAsset.metadata.lastSyncedAt,
         deletedAt: bundleAsset.metadata.deletedAt,
       };

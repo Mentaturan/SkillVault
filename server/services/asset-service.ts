@@ -58,6 +58,7 @@ export async function createNewAsset(input: CreateAssetInput) {
     pinned: input.pinned ?? false,
     createdAt: now,
     updatedAt: now,
+    reviewDueAt: input.reviewDueAt ?? null,
   });
 
   await createInitialVersion({
@@ -99,6 +100,7 @@ export async function updateExistingAsset(input: UpdateAssetInput) {
   if (input.scenario !== undefined) updates.scenario = input.scenario;
   if (input.status !== undefined) updates.status = input.status;
   if (input.rating !== undefined) updates.rating = input.rating;
+  if (input.reviewDueAt !== undefined) updates.reviewDueAt = input.reviewDueAt;
   if (input.visibility !== undefined) updates.visibility = input.visibility;
   if (input.source !== undefined) updates.source = input.source;
   if (input.sourceUrl !== undefined) updates.sourceUrl = input.sourceUrl;

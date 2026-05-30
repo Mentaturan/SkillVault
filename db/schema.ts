@@ -44,6 +44,7 @@ export const assets = sqliteTable(
     createdAt: integer("created_at").notNull(),
     updatedAt: integer("updated_at").notNull(),
     lastUsedAt: integer("last_used_at"),
+    reviewDueAt: integer("review_due_at"),
     lastSyncedAt: integer("last_synced_at"),
     deletedAt: integer("deleted_at"),
   },
@@ -57,6 +58,7 @@ export const assets = sqliteTable(
     deletedAtIndex: index("assets_deleted_at_idx").on(table.deletedAt),
     updatedAtIndex: index("assets_updated_at_idx").on(table.updatedAt),
     pinnedIndex: index("assets_pinned_idx").on(table.pinned),
+    reviewDueAtIndex: index("assets_review_due_at_idx").on(table.reviewDueAt),
   }),
 );
 

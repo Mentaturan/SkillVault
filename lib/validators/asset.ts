@@ -20,6 +20,7 @@ export const createAssetSchema = z.object({
   content: z.string().min(1),
   status: z.enum(ASSET_STATUSES).optional(),
   rating: z.number().int().min(RATING_MIN).max(RATING_MAX).optional().nullable(),
+  reviewDueAt: z.number().int().nonnegative().optional().nullable(),
   visibility: z.enum(VISIBILITIES).optional(),
   source: z.enum(ASSET_SOURCES).optional(),
   sourceUrl: z.string().url().max(500).optional().nullable(),

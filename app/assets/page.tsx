@@ -10,7 +10,7 @@ import {
   SORT_OPTIONS,
   TARGET_TOOLS,
 } from "@/lib/constants";
-import { Plus, ShieldAlert } from "lucide-react";
+import { CalendarClock, Plus, ShieldAlert } from "lucide-react";
 import { BatchExportButton } from "@/components/assets/batch-export-button";
 
 interface AssetsPageProps {
@@ -80,6 +80,12 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
             <Link href="/assets/maintenance">
               <ShieldAlert className="mr-2 h-4 w-4" />
               维护队列
+            </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/assets/review-queue">
+              <CalendarClock className="mr-2 h-4 w-4" />
+              复查队列
             </Link>
           </Button>
           <BatchExportButton assetIds={assets.map((a) => a.id)} />

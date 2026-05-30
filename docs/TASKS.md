@@ -36,7 +36,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.8 diff, test runs, and use history. The first slice, simple version diffing without changing the existing version model, is in place. The next slice should add deterministic run history or use history with the smallest stable schema change.
+Next development focus: continue v0.8 diff, test runs, and use history. Simple version diffing, copy-driven `lastUsedAt`, and manual review due dates are in place. The next slice should resolve the conditional run-log task explicitly and add asset filters for stale, recently used, never used, low-rated, and untested views.
 
 ## Product Positioning
 
@@ -429,7 +429,7 @@ Tasks:
 - [x] Track copy events enough to update `lastUsedAt`.
 - [ ] Add filters for stale, recently used, never used, low-rated, and untested assets.
 - [ ] Add model/tool compatibility fields only if they improve filtering without bloating forms.
-- [ ] Add review due date and review queue.
+- [x] Add review due date and review queue.
 
 Exit criteria:
 

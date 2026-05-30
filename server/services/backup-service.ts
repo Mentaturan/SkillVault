@@ -108,6 +108,7 @@ export async function exportBackupBundle() {
         createdAt: asset.createdAt,
         updatedAt: asset.updatedAt,
         lastUsedAt: asset.lastUsedAt,
+        reviewDueAt: asset.reviewDueAt,
         lastSyncedAt: asset.lastSyncedAt,
         deletedAt: asset.deletedAt,
         tagNames,

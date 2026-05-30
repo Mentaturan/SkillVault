@@ -274,6 +274,14 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
                   : "暂无记录"}
               </dd>
             </div>
+            <div>
+              <dt className="text-muted-foreground">复查截止日</dt>
+              <dd>
+                {asset.reviewDueAt
+                  ? new Date(asset.reviewDueAt).toLocaleDateString("zh-CN")
+                  : "未设置"}
+              </dd>
+            </div>
           </dl>
         </CardContent>
       </Card>

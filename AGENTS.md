@@ -39,6 +39,7 @@ Current v0.8 progress:
 
 - Simple version-to-version text diff is in place from the version history view.
 - Raw copy and rendered copy now update `lastUsedAt` without mutating content versions.
+- Assets can carry a manual `reviewDueAt`, and a dedicated review queue page surfaces overdue and upcoming reviews.
 
 ## Product Principles
 

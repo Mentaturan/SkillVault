@@ -44,6 +44,14 @@ interface InitialValues {
   content?: string;
 }
 
+function formatDateInputValue(timestamp?: number | null) {
+  if (!timestamp) {
+    return "";
+  }
+
+  return new Date(timestamp).toISOString().slice(0, 10);
+}
+
 interface AssetFormProps {
   asset?: Asset & { assetTags?: { tag: Tag }[] };
   isEditing?: boolean;
@@ -248,6 +256,19 @@ export function AssetForm({ asset, isEditing = false, initialValues }: AssetForm
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="reviewDueAt">复查截止日</Label>
+          <Input
+            id="reviewDueAt"
+            name="reviewDueAt"
+            type="date"
+            defaultValue={formatDateInputValue(asset?.reviewDueAt)}
+          />
+          {fieldError("reviewDueAt") && (
+            <p className="text-sm text-destructive">{fieldError("reviewDueAt")}</p>
+          )}
         </div>
       </div>
 

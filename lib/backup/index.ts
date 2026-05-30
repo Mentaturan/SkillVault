@@ -67,6 +67,7 @@ export const backupAssetSchema = z.object({
     createdAt: z.number().int().nonnegative(),
     updatedAt: z.number().int().nonnegative(),
     lastUsedAt: z.number().int().nonnegative().nullable(),
+    reviewDueAt: z.number().int().nonnegative().nullable().optional(),
     lastSyncedAt: z.number().int().nonnegative().nullable(),
     deletedAt: z.number().int().nonnegative().nullable(),
     tagNames: z.array(z.string().min(1)),
