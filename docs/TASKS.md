@@ -394,12 +394,12 @@ Tasks:
 
 - [x] Add capture inbox table and service.
 - [x] Add manual paste-to-inbox page.
-- [ ] Add convert-to-asset workflow.
+- [x] Add convert-to-asset workflow.
 - [x] Track source type, source path, source timestamp, and extraction note.
 - [ ] Add deterministic importers for one source first, likely Codex session rollouts or Claude Code JSONL.
 - [ ] Add incremental scan with changed-file detection.
-- [ ] Add candidate review UI before creating assets.
-- [ ] Keep raw conversation content out of asset content unless user explicitly selects it.
+- [x] Add candidate review UI before creating assets.
+- [x] Keep raw conversation content out of asset content unless user explicitly selects it.
 
 Exit criteria:
 

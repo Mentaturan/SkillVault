@@ -83,14 +83,23 @@ export default async function InboxPage() {
                           说明：{item.extractionNote}
                         </p>
                       ) : null}
-                      {item.convertedAsset ? (
-                        <Link
-                          href={`/assets/${item.convertedAsset.id}`}
-                          className="text-sm text-primary hover:underline"
-                        >
-                          已关联资产：{item.convertedAsset.title}
-                        </Link>
-                      ) : null}
+                      <div className="flex flex-wrap items-center gap-3">
+                        {item.convertedAsset ? (
+                          <Link
+                            href={`/assets/${item.convertedAsset.id}`}
+                            className="text-sm text-primary hover:underline"
+                          >
+                            已关联资产：{item.convertedAsset.title}
+                          </Link>
+                        ) : (
+                          <Link
+                            href={`/inbox/${item.id}/convert`}
+                            className="text-sm text-primary hover:underline"
+                          >
+                            复核并转为资产
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
