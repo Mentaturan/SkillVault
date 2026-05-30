@@ -27,6 +27,7 @@ Implemented locally:
 - Deployment target settings, asset-level and project-level deployment preview, copy-first deploy writes, conflict backup copies, persisted deploy status metadata, and repair preview for drifted targets.
 - Reusable validation result types plus deterministic validation summaries on asset detail, import preview, and a maintenance queue for SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
 - File-based validation fixtures plus a deterministic fixture check script for valid, malformed, and suspicious skill samples.
+- Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, and a preview-first Codex rollout importer.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -35,7 +36,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: start v0.7 capture inbox and local conversation mining. The first slice should add the capture inbox data model and service without auto-promoting anything into assets.
+Next development focus: continue v0.7 capture inbox and local conversation mining. The next slice should add changed-file detection for local conversation scans on top of the Codex rollout importer.
 
 ## Product Positioning
 
@@ -396,7 +397,7 @@ Tasks:
 - [x] Add manual paste-to-inbox page.
 - [x] Add convert-to-asset workflow.
 - [x] Track source type, source path, source timestamp, and extraction note.
-- [ ] Add deterministic importers for one source first, likely Codex session rollouts or Claude Code JSONL.
+- [x] Add deterministic importers for one source first, likely Codex session rollouts or Claude Code JSONL.
 - [ ] Add incremental scan with changed-file detection.
 - [x] Add candidate review UI before creating assets.
 - [x] Keep raw conversation content out of asset content unless user explicitly selects it.

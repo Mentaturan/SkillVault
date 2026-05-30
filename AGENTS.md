@@ -30,6 +30,11 @@ Current v0.6 progress:
 - Deterministic validation summaries cover SKILL.md metadata, variable placeholder syntax, suspicious content warnings, and a maintenance queue for flagged assets.
 - Validation fixtures and the deterministic fixture check script are in place.
 
+Current v0.7 progress:
+
+- Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, and preview-first Codex rollout import are in place.
+- Incremental scan with changed-file detection is still pending.
+
 ## Product Principles
 
 - Local-first beats cloud convenience.

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { CaptureInboxForm } from "@/components/inbox/capture-inbox-form";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -25,11 +26,16 @@ export default async function InboxPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Capture Inbox</h1>
-        <p className="text-sm text-muted-foreground">
-          先收集原始材料，再决定哪些内容值得整理成正式资产。
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Capture Inbox</h1>
+          <p className="text-sm text-muted-foreground">
+            先收集原始材料，再决定哪些内容值得整理成正式资产。
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/inbox/import/codex">导入 Codex Rollout</Link>
+        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

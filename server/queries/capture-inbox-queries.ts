@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { captureInboxItems } from "@/db/schema";
@@ -28,6 +28,21 @@ export async function findCaptureInboxItemById(id: string) {
           title: true,
         },
       },
+    },
+  });
+}
+
+export async function findCaptureInboxItemsBySourcePath(sourcePath: string) {
+  return db.query.captureInboxItems.findMany({
+    where: and(
+      eq(captureInboxItems.sourcePath, sourcePath),
+      eq(captureInboxItems.sourceType, "codex_rollout"),
+    ),
+    columns: {
+      id: true,
+      sourceType: true,
+      sourceTimestamp: true,
+      rawContent: true,
     },
   });
 }
