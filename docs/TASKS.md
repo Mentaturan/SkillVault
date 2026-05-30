@@ -42,7 +42,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: v1.0 stable personal local release. All prior phases are complete. The next milestone is a stable local release with full documentation, upgrade notes, and two-week real-use verification.
+Next development focus: v1.0 complete. All planned phases have been delivered. Future work beyond v1.0 would require explicit replanning.
 
 ## Product Positioning
 
@@ -473,7 +473,7 @@ Exit criteria:
 
 ## v1.0 - Stable Personal Local Release
 
-Status: future.
+Status: complete.
 
 Goal: a stable local release for one person managing a durable personal AI workflow library.
 
