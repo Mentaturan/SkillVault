@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 interface PreviewData {
   frontmatter: MarkdownFrontmatter;
@@ -33,7 +34,7 @@ interface PreviewData {
   validation: ValidationResult;
 }
 
-type ImportTab = "single" | "github" | "github_repo" | "curated" | "batch";
+type ImportTab = "single" | "github" | "github_repo" | "curated" | "batch" | "exchange";
 type ImportSourceKind = "markdown" | "github";
 
 interface GitHubPreviewSource {
@@ -198,9 +199,20 @@ export default function ImportPage() {
             tab === "batch"
               ? "bg-primary text-primary-foreground"
               : "bg-background text-foreground hover:bg-muted"
-          } rounded-r-md`}
+          }`}
         >
           批量导入
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("exchange")}
+          className={`px-4 py-1.5 text-sm transition-colors ${
+            tab === "exchange"
+              ? "bg-primary text-primary-foreground"
+              : "bg-background text-foreground hover:bg-muted"
+          } rounded-r-md`}
+        >
+          交换包导入
         </button>
       </div>
 
@@ -392,6 +404,18 @@ export default function ImportPage() {
         <GitHubRepoImport />
       ) : tab === "curated" ? (
         <CuratedExamples onImportComplete={() => router.refresh()} />
+      ) : tab === "exchange" ? (
+        <div className="space-y-4 rounded-xl border bg-card p-6 shadow">
+          <div>
+            <h2 className="text-lg font-semibold">交换包导入</h2>
+            <p className="text-sm text-muted-foreground">
+              从本地 Exchange Bundle 文件夹导入资产（manifest.json + asset.md + support-files/）
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/import/exchange">前往交换包导入</Link>
+          </Button>
+        </div>
       ) : (
         <FolderImport onImportComplete={() => router.refresh()} />
       )}

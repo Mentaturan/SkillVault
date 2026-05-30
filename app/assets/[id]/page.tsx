@@ -15,6 +15,7 @@ import {
   RestoreButton,
 } from "@/components/assets/asset-actions";
 import { ExportPresetMenu } from "@/components/assets/export-preset-menu";
+import { ExportExchangeButton } from "@/components/assets/export-exchange-button";
 import {
   ASSET_SOURCE_LABELS,
   ASSET_STATUS_LABELS,
@@ -80,6 +81,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
             </Link>
           </Button>
           <ExportPresetMenu assetId={asset.id} currentPreset={asset.exportPreset} />
+          <ExportExchangeButton assetId={asset.id} />
           <Button asChild variant="outline">
             <Link href={`/assets/${asset.id}/deploy`}>
               部署

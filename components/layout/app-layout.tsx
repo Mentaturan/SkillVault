@@ -80,7 +80,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r md:flex",
-          "bg-background",
+          "bg-background glass-sidebar",
         )}
       >
         <SidebarContent />
@@ -95,7 +95,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r transition-transform md:hidden",
-          "bg-background",
+          "bg-background glass-sidebar",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -124,7 +124,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           </Button>
           <span className="ml-3 text-sm font-medium">{APP_NAME}</span>
         </header>
-        <main className="mx-auto w-full max-w-5xl flex-1 p-4 sm:p-6">
+        <main className="mx-auto w-full max-w-5xl flex-1 p-4 sm:p-6 glass-surface">
           {children}
         </main>
       </div>

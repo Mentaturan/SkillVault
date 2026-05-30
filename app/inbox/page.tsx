@@ -33,9 +33,14 @@ export default async function InboxPage() {
             先收集原始材料，再决定哪些内容值得整理成正式资产。
           </p>
         </div>
-        <Button asChild variant="outline">
-          <Link href="/inbox/import/codex">导入 Codex Rollout</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link href="/inbox/import/codex">导入 Codex Rollout</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/inbox/import/claude-code">导入 Claude Code 对话</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
