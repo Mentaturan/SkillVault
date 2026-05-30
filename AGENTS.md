@@ -66,6 +66,21 @@ The package version is `1.1.0`.
 - Future backup code should live under `lib/backup`, `server/services/backup-service.ts`, or equivalent service/query boundaries.
 - Future validation code should live under `lib/validation` or a service module, not in React components.
 
+## Theme System Rules
+
+- Theme management uses `next-themes` with `attribute="data-theme"` and 4 themes: `light`, `dark`, `claude`, `glass`.
+- Default theme is `claude` to preserve the existing visual style for current users.
+- All theme CSS variables are defined in `app/globals.css` using `[data-theme="xxx"]` selectors.
+- Theme constants (`THEMES`, `Theme` type, `THEME_LABELS`) live in `lib/constants.ts`.
+- The `ThemeProvider` wrapper lives in `components/theme-provider.tsx`.
+- The `ThemeSwitcher` (sidebar cycle button) lives in `components/theme-switcher.tsx`.
+- The `ThemeSelector` (settings page grid) lives in `components/theme-selector.tsx`.
+- The `useMounted` hook for hydration-safe rendering lives in `lib/hooks/use-mounted.ts`.
+- Liquid Glass theme uses `glass-surface`, `glass-border`, and `glass-sidebar` CSS classes defined in `globals.css`.
+- Liquid Glass theme degrades to opaque dark backgrounds when `backdrop-filter` is unsupported.
+- Do not add per-component theme conditionals; use CSS variables and data-theme selectors instead.
+- New themes must define a complete set of CSS variables matching the existing variable names.
+
 ## Layering Rules
 
 - React components only handle UI.

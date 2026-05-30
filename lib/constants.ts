@@ -1,6 +1,16 @@
 export const APP_NAME = "SkillVault";
 export const APP_VERSION = "1.1.0";
 
+export const THEMES = ["light", "dark", "claude", "glass"] as const;
+export type Theme = (typeof THEMES)[number];
+
+export const THEME_LABELS: Record<Theme, string> = {
+  light: "浅色",
+  dark: "深色",
+  claude: "Claude",
+  glass: "液态玻璃",
+};
+
 export const ASSET_TYPES = [
   "agent_skill",
   "system_rule",

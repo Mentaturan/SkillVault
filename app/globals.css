@@ -4,6 +4,54 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 0 0% 4%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 20% 96%;
+    --accent-foreground: 0 0% 4%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
+    --brand-orange: 16 58% 59%;
+    --brand-blue: 210 39% 61%;
+    --brand-green: 83 22% 46%;
+  }
+
+  [data-theme="dark"] {
+    --background: 222 47% 6%;
+    --foreground: 210 20% 98%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 20% 98%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 12%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 217 33% 12%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 12%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+  }
+
+  [data-theme="claude"] {
     --background: 40 33% 97%;
     --foreground: 60 3% 8%;
     --card: 40 33% 97%;
@@ -23,32 +71,38 @@
     --border: 40 14% 85%;
     --input: 40 14% 85%;
     --ring: 16 58% 59%;
-    --radius: 0.5rem;
     --brand-orange: 16 58% 59%;
     --brand-blue: 210 39% 61%;
     --brand-green: 83 22% 46%;
   }
 
-  .dark {
-    --background: 60 3% 8%;
-    --foreground: 40 33% 97%;
-    --card: 60 3% 8%;
-    --card-foreground: 40 33% 97%;
-    --popover: 60 3% 12%;
-    --popover-foreground: 40 33% 97%;
-    --primary: 16 58% 59%;
-    --primary-foreground: 60 3% 8%;
-    --secondary: 60 3% 15%;
-    --secondary-foreground: 40 33% 97%;
-    --muted: 60 3% 15%;
-    --muted-foreground: 40 8% 67%;
-    --accent: 60 3% 15%;
-    --accent-foreground: 40 33% 97%;
-    --destructive: 0 62.8% 30.6%;
+  [data-theme="glass"] {
+    --background: 230 25% 8%;
+    --foreground: 220 20% 95%;
+    --card: 230 20% 14%;
+    --card-foreground: 220 20% 95%;
+    --popover: 230 20% 14%;
+    --popover-foreground: 220 20% 95%;
+    --primary: 220 90% 66%;
+    --primary-foreground: 230 25% 8%;
+    --secondary: 230 20% 18%;
+    --secondary-foreground: 220 20% 95%;
+    --muted: 230 20% 18%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 230 20% 18%;
+    --accent-foreground: 220 20% 95%;
+    --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 60 3% 15%;
-    --input: 60 3% 15%;
-    --ring: 16 58% 59%;
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 220 90% 66%;
+    --radius: 0.75rem;
+    --brand-orange: 16 58% 59%;
+    --brand-blue: 220 90% 66%;
+    --brand-green: 83 22% 46%;
+    --glass-bg: 230 20% 14% / 0.7;
+    --glass-border: 220 20% 30% / 0.3;
+    --glass-sidebar: 230 25% 10% / 0.6;
   }
 
   * {
@@ -57,5 +111,46 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  [data-theme="glass"] .glass-surface {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  [data-theme="glass"] .glass-border {
+    border-color: hsl(var(--glass-border));
+  }
+
+  [data-theme="glass"] .glass-sidebar {
+    background: hsl(var(--glass-sidebar));
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  [data-theme="glass"] [class*="bg-card"] {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-color: hsl(var(--glass-border));
+  }
+
+  [data-theme="glass"] [class*="bg-popover"] {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border-color: hsl(var(--glass-border));
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    [data-theme="glass"] .glass-surface,
+    [data-theme="glass"] .glass-sidebar,
+    [data-theme="glass"] [class*="bg-card"],
+    [data-theme="glass"] [class*="bg-popover"] {
+      background: hsl(var(--card));
+    }
   }
 }

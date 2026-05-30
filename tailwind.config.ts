@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
-  darkMode: "class",
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -49,6 +49,11 @@ const config: Config = {
           orange: "hsl(var(--brand-orange))",
           blue: "hsl(var(--brand-blue))",
           green: "hsl(var(--brand-green))",
+        },
+        glass: {
+          bg: "hsl(var(--glass-bg))",
+          border: "hsl(var(--glass-border))",
+          sidebar: "hsl(var(--glass-sidebar))",
         },
       },
       borderRadius: {

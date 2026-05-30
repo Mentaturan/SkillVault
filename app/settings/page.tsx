@@ -5,6 +5,7 @@ import { dbPath } from "@/db";
 import { DiagnosticsPanel } from "@/components/settings/diagnostics-panel";
 import { UpdateCheck } from "@/components/settings/update-check";
 import { DeploymentTargetSettings } from "@/components/settings/deployment-target-settings";
+import { ThemeSelector } from "@/components/theme-selector";
 import { getDeploymentTargets } from "@/server/services/deployment-service";
 
 export default async function SettingsPage() {
@@ -38,6 +39,15 @@ export default async function SettingsPage() {
             <span className="text-muted-foreground">数据库路径</span>
             <span className="font-mono text-xs">{dbPath}</span>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>外观主题</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ThemeSelector />
         </CardContent>
       </Card>
 

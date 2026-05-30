@@ -4,6 +4,7 @@ import "./globals.css";
 
 import { APP_NAME } from "@/lib/constants";
 import { AppLayout } from "@/components/layout/app-layout";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: APP_NAME,
@@ -16,9 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
       <body>
-        <AppLayout>{children}</AppLayout>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="claude"
+          enableSystem={false}
+          themes={["light", "dark", "claude", "glass"]}
+        >
+          <AppLayout>{children}</AppLayout>
+        </ThemeProvider>
       </body>
     </html>
   );

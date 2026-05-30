@@ -594,7 +594,7 @@ Exit criteria:
 
 ## v1.3 - Filesystem Exchange and Capture Expansion
 
-Status: planned.
+Status: in progress.
 
 Goal: deepen deterministic exchange with local files and broaden supported local capture sources without turning SkillVault into a sync platform.
 
@@ -603,10 +603,14 @@ Scope:
 - Support files beside an asset for filesystem exchange.
 - More deterministic local capture/import inputs.
 - Round-trip safety for exchange flows.
+- UI theme system with 4 themes.
 - No live sync daemon, no remote registry, no automatic marketplace install.
 
 Tasks:
 
+- [x] Add multi-theme UI system: light, dark, Claude, and Liquid Glass themes with next-themes integration.
+- [x] Add theme switcher in sidebar and theme selector in settings page.
+- [x] Add Liquid Glass theme with backdrop-blur, semi-transparent backgrounds, and glass border effects.
 - [ ] Define an exchange folder shape that can include a primary Markdown asset plus support files and structured metadata.
 - [ ] Add preview-first import/export for support-file bundles without losing version readability.
 - [ ] Extend local capture beyond current Codex rollout handling, starting with the already-modeled `claude_code_jsonl` source type.
@@ -618,6 +622,7 @@ Exit criteria:
 - A user can round-trip a file-backed asset bundle without silent overwrite or metadata drift.
 - Additional local conversation sources can be previewed and converted deterministically.
 - Source and version provenance remain readable after export, import, and capture flows.
+- A user can switch between 4 UI themes from the sidebar or settings page, with the choice persisted in localStorage.
 
 ## Recurring Verification Checklist
 
