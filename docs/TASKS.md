@@ -426,7 +426,7 @@ Tasks:
 
 - [x] Add simple text diff for asset versions.
 - [ ] Add run log entity if the current test case model is not enough.
-- [ ] Track copy events enough to update `lastUsedAt`.
+- [x] Track copy events enough to update `lastUsedAt`.
 - [ ] Add filters for stale, recently used, never used, low-rated, and untested assets.
 - [ ] Add model/tool compatibility fields only if they improve filtering without bloating forms.
 - [ ] Add review due date and review queue.

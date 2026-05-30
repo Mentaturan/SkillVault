@@ -38,6 +38,7 @@ Current v0.7 progress:
 Current v0.8 progress:
 
 - Simple version-to-version text diff is in place from the version history view.
+- Raw copy and rendered copy now update `lastUsedAt` without mutating content versions.
 
 ## Product Principles
 

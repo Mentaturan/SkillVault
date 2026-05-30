@@ -61,7 +61,7 @@ export function AssetCard({ asset }: AssetCardProps) {
             >
               <Download className="h-4 w-4" />
             </Link>
-            <CopyContentButton content={asset.content} />
+            <CopyContentButton assetId={asset.id} content={asset.content} />
           </div>
         </div>
       </CardContent>

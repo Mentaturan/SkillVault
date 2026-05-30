@@ -1,19 +1,27 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check, Copy } from "lucide-react";
 
+import { recordAssetUseAction } from "@/app/assets/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getMissingVariables, renderVariables } from "@/lib/variables";
 
 interface VariableCopyPanelProps {
+  assetId?: string;
   content: string;
   variables: string[];
 }
 
-export function VariableCopyPanel({ content, variables }: VariableCopyPanelProps) {
+export function VariableCopyPanel({
+  assetId,
+  content,
+  variables,
+}: VariableCopyPanelProps) {
+  const router = useRouter();
   const [values, setValues] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
@@ -33,6 +41,13 @@ export function VariableCopyPanel({ content, variables }: VariableCopyPanelProps
 
     try {
       await navigator.clipboard.writeText(renderVariables(content, values));
+      if (assetId) {
+        void recordAssetUseAction({ assetId, kind: "rendered_copy" }).then((result) => {
+          if (result.success) {
+            router.refresh();
+          }
+        });
+      }
       setCopyError(false);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);

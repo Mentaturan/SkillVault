@@ -8,6 +8,7 @@ import {
   findAllAssets,
   createAsset,
   updateAsset,
+  updateAssetLastUsedAt,
   softDeleteAsset,
   restoreAsset,
   archiveAsset,
@@ -155,6 +156,15 @@ export async function rollbackAssetToVersion(assetId: string, versionId: string)
   });
 
   return asset;
+}
+
+export async function markAssetAsUsed(assetId: string, usedAt = nowTimestamp()) {
+  const existing = await findAssetById(assetId);
+  if (!existing) {
+    throw new Error("资产不存在");
+  }
+
+  return updateAssetLastUsedAt(assetId, usedAt);
 }
 
 export async function archiveExistingAsset(id: string) {

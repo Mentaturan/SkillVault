@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check, Copy } from "lucide-react";
 
+import { recordAssetUseAction } from "@/app/assets/actions";
 import { Button } from "@/components/ui/button";
 
 interface CopyContentButtonProps {
+  assetId?: string;
   content: string;
   label?: string;
   copiedLabel?: string;
@@ -14,18 +17,27 @@ interface CopyContentButtonProps {
 }
 
 export function CopyContentButton({
+  assetId,
   content,
   label = "复制原文",
   copiedLabel = "已复制",
   variant = "outline",
   size = "sm",
 }: CopyContentButtonProps) {
+  const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(content);
+      if (assetId) {
+        void recordAssetUseAction({ assetId, kind: "raw_copy" }).then((result) => {
+          if (result.success) {
+            router.refresh();
+          }
+        });
+      }
       setCopyError(false);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);

@@ -163,6 +163,15 @@ export async function updateAsset(id: string, data: Partial<NewAsset>) {
   return asset;
 }
 
+export async function updateAssetLastUsedAt(id: string, lastUsedAt: number) {
+  const [asset] = await db
+    .update(assets)
+    .set({ lastUsedAt })
+    .where(eq(assets.id, id))
+    .returning();
+  return asset;
+}
+
 export async function softDeleteAsset(id: string) {
   const [asset] = await db
     .update(assets)

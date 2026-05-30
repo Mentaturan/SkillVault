@@ -127,7 +127,7 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
         <CardHeader>
           <div className="flex items-center justify-between gap-2">
             <CardTitle className="text-sm">内容</CardTitle>
-            <CopyContentButton content={asset.content} />
+            <CopyContentButton assetId={asset.id} content={asset.content} />
           </div>
         </CardHeader>
         <CardContent>
@@ -137,7 +137,11 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
         </CardContent>
       </Card>
 
-      <VariableCopyPanel content={asset.content} variables={variables} />
+      <VariableCopyPanel
+        assetId={asset.id}
+        content={asset.content}
+        variables={variables}
+      />
 
       <ValidationPanel result={validation} />
 
@@ -261,6 +265,14 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
             <div>
               <dt className="text-muted-foreground">更新时间</dt>
               <dd>{new Date(asset.updatedAt).toLocaleString("zh-CN")}</dd>
+            </div>
+            <div>
+              <dt className="text-muted-foreground">最近使用</dt>
+              <dd>
+                {asset.lastUsedAt
+                  ? new Date(asset.lastUsedAt).toLocaleString("zh-CN")
+                  : "暂无记录"}
+              </dd>
             </div>
           </dl>
         </CardContent>
