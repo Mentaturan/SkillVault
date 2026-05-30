@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.4 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
+Local milestone state: v0.6 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
 
 Implemented locally:
 
@@ -26,6 +26,7 @@ Implemented locally:
 - Full backup export bundle, restore preview and restore execution, checksum validation, and fresh-database restore smoke verification.
 - Deployment target settings, asset-level and project-level deployment preview, copy-first deploy writes, conflict backup copies, persisted deploy status metadata, and repair preview for drifted targets.
 - Reusable validation result types plus deterministic validation summaries on asset detail, import preview, and a maintenance queue for SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
+- File-based validation fixtures plus a deterministic fixture check script for valid, malformed, and suspicious skill samples.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -34,7 +35,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.6 deterministic validation and safety checks. Validation warnings and the maintenance queue are now in place; fixtures remain.
+Next development focus: start v0.7 capture inbox and local conversation mining. The first slice should add the capture inbox data model and service without auto-promoting anything into assets.
 
 ## Product Positioning
 
@@ -334,7 +335,7 @@ Exit criteria:
 
 ## v0.6 - Deterministic Validation and Safety Checks
 
-Status: in progress.
+Status: complete.
 
 Goal: prevent malformed or risky assets from drifting into the library or target tool directories.
 
@@ -362,7 +363,7 @@ Tasks:
 - [x] Validate variables against `{{variable_name}}` syntax and missing rendered values.
 - [x] Add validation badges to asset detail and import preview.
 - [x] Add a maintenance queue for invalid or risky assets.
-- [ ] Add tests for valid, malformed, and suspicious fixtures.
+- [x] Add tests for valid, malformed, and suspicious fixtures.
 
 Exit criteria:
 

@@ -12,7 +12,7 @@ It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration pl
 
 Use `docs/TASKS.md` as the source of truth.
 
-As of the current plan, v0.5 is implemented locally:
+As of the current plan, v0.6 is implemented locally:
 
 - v0.1-alpha core asset library is complete.
 - v0.1-beta organization and evaluation is complete.
@@ -20,14 +20,15 @@ As of the current plan, v0.5 is implemented locally:
 - v0.3 project workspace scanner is complete.
 - v0.4 backup, restore, and integrity is complete.
 - v0.5 local folder library and tool deployment is complete.
-- v0.6 deterministic validation and safety checks is the current development phase.
+- v0.6 deterministic validation and safety checks is complete.
+- v0.7 capture inbox and local conversation mining is the current development phase.
 
 The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
 
 Current v0.6 progress:
 
-- Deterministic validation summaries already cover SKILL.md metadata, variable placeholder syntax, suspicious content warnings, and a maintenance queue for flagged assets.
-- Validation fixtures are still pending.
+- Deterministic validation summaries cover SKILL.md metadata, variable placeholder syntax, suspicious content warnings, and a maintenance queue for flagged assets.
+- Validation fixtures and the deterministic fixture check script are in place.
 
 ## Product Principles
 
