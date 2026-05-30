@@ -37,7 +37,7 @@ export async function createCaptureInboxItemAction(formData: FormData) {
   try {
     const parsed = createCaptureInboxItemSchema.safeParse(parseFormData(formData));
     if (!parsed.success) {
-      return { success: false, error: parsed.error.flatten().fieldErrors };
+      return { success: false, error: parsed.error.issues.map((i) => i.message).join("; ") };
     }
 
     const item = await createNewCaptureInboxItem(parsed.data);
@@ -75,21 +75,21 @@ export async function convertCaptureInboxItemToAssetAction(
   inboxId: string,
   formData: FormData,
 ) {
-  const inboxItem = await getCaptureInboxItemById(inboxId);
-  if (!inboxItem) {
-    return { success: false, error: "Capture inbox 项不存在" };
-  }
-
-  if (inboxItem.convertedAssetId) {
-    redirect(`/assets/${inboxItem.convertedAssetId}`);
-  }
-
-  const parsed = createAssetSchema.safeParse(parseConvertFormData(formData));
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.flatten().fieldErrors };
-  }
-
   try {
+    const inboxItem = await getCaptureInboxItemById(inboxId);
+    if (!inboxItem) {
+      return { success: false, error: "Capture inbox 项不存在" };
+    }
+
+    if (inboxItem.convertedAssetId) {
+      redirect(`/assets/${inboxItem.convertedAssetId}`);
+    }
+
+    const parsed = createAssetSchema.safeParse(parseConvertFormData(formData));
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues.map((i) => i.message).join("; ") };
+    }
+
     const result = await createNewAsset(parsed.data);
     await updateExistingCaptureInboxItem({
       id: inboxId,
@@ -103,6 +103,9 @@ export async function convertCaptureInboxItemToAssetAction(
 
     return { success: true, assetId: result.asset.id };
   } catch (error) {
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      throw error;
+    }
     return {
       success: false,
       error: error instanceof Error ? error.message : "转换为资产失败",

@@ -1,4 +1,5 @@
 import { createId } from "@/lib/id";
+import { nowTimestamp } from "@/lib/time";
 import {
   findVersionsByAssetId,
   findVersionById,
@@ -33,7 +34,7 @@ export async function createNewVersion(input: CreateVersionInput) {
     contentSnapshot: input.contentSnapshot,
     contentHash: input.contentHash,
     changeNote: input.changeNote ?? null,
-    createdAt: Date.now(),
+    createdAt: nowTimestamp(),
   });
 }
 
@@ -46,6 +47,6 @@ export async function createInitialVersion(input: CreateVersionInput) {
     contentSnapshot: input.contentSnapshot,
     contentHash: input.contentHash,
     changeNote: "初始版本",
-    createdAt: Date.now(),
+    createdAt: nowTimestamp(),
   });
 }

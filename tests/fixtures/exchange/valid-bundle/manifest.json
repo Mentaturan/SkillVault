@@ -1,0 +1,18 @@
+{
+  "version": "1",
+  "exportedAt": 1717000000000,
+  "asset": {
+    "syncId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "slug": "test-coding-rules",
+    "title": "Test Coding Rules",
+    "type": "system_rule",
+    "targetTool": null,
+    "exportPreset": null,
+    "content": "# Test Coding Rules\n\nThis is a test asset.\n",
+    "tags": ["coding", "test"],
+    "sourceUrl": "https://example.com/test.md",
+    "sourceRef": "main",
+    "sourcePath": "rules/test.md"
+  },
+  "supportFiles": []
+}

@@ -7,7 +7,7 @@ import { APP_NAME, APP_VERSION, ASSET_TYPE_LABELS } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getDashboardAction } from "@/app/dashboard/actions";
-import { FileText, FolderOpen, Briefcase, Clock } from "lucide-react";
+import { FileText, FolderOpen, Briefcase, Clock, Plus, Download, ShieldAlert } from "lucide-react";
 
 interface DashboardData {
   assetCount: number;
@@ -35,7 +35,9 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
 
   useEffect(() => {
-    getDashboardAction().then(setData);
+    getDashboardAction().then((result) => {
+      if (result.success) setData(result.data);
+    });
   }, []);
 
   return (
@@ -83,21 +85,34 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">快捷入口</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="flex gap-2">
-            <Link href="/assets/new" className="text-sm text-primary hover:underline">
-              新建资产
+          <CardContent className="grid grid-cols-2 gap-2">
+            <Link
+              href="/assets/new"
+              className="flex flex-col items-center justify-center gap-1.5 rounded-md border bg-muted/50 py-3 px-2 text-xs transition-colors hover:bg-accent"
+            >
+              <Plus className="h-5 w-5" />
+              <span>新建资产</span>
             </Link>
-            <Link href="/import" className="text-sm text-primary hover:underline">
-              导入
+            <Link
+              href="/import"
+              className="flex flex-col items-center justify-center gap-1.5 rounded-md border bg-muted/50 py-3 px-2 text-xs transition-colors hover:bg-accent"
+            >
+              <Download className="h-5 w-5" />
+              <span>导入</span>
             </Link>
-            <Link href="/collections" className="text-sm text-primary hover:underline">
-              集合
+            <Link
+              href="/collections"
+              className="flex flex-col items-center justify-center gap-1.5 rounded-md border bg-muted/50 py-3 px-2 text-xs transition-colors hover:bg-accent"
+            >
+              <FolderOpen className="h-5 w-5" />
+              <span>集合</span>
             </Link>
             <Link
               href="/assets/maintenance"
-              className="text-sm text-primary hover:underline"
+              className="flex flex-col items-center justify-center gap-1.5 rounded-md border bg-muted/50 py-3 px-2 text-xs transition-colors hover:bg-accent"
             >
-              维护队列
+              <ShieldAlert className="h-5 w-5" />
+              <span>维护队列</span>
             </Link>
           </CardContent>
         </Card>

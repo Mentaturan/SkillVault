@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDiagnosticsAction } from "@/app/settings/actions";
 
-type Diagnostics = Awaited<ReturnType<typeof getDiagnosticsAction>>;
+type DiagnosticsResult = Awaited<ReturnType<typeof getDiagnosticsAction>>;
+type Diagnostics = Extract<DiagnosticsResult, { success: true }>["data"];
 
 function formatTimestamp(timestamp: number | null | undefined) {
   if (!timestamp) {
@@ -20,7 +21,9 @@ export function DiagnosticsPanel() {
   const [diagnostics, setDiagnostics] = useState<Diagnostics | null>(null);
 
   useEffect(() => {
-    getDiagnosticsAction().then(setDiagnostics);
+    getDiagnosticsAction().then((result) => {
+      if (result.success) setDiagnostics(result.data);
+    });
   }, []);
 
   return (

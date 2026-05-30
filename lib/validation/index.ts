@@ -111,7 +111,8 @@ export function parseFrontmatterForValidation(markdown: string) {
     return { data: null as Record<string, unknown> | null };
   }
 
-  const secondDash = trimmed.indexOf("---", 3);
+  const secondDashIndex = trimmed.slice(3).search(/^---\s*$/m);
+  const secondDash = secondDashIndex === -1 ? -1 : secondDashIndex + 3;
   if (secondDash === -1) {
     return {
       error: "Frontmatter 未正确关闭：缺少第二个 ---",
@@ -265,6 +266,7 @@ export function validateSuspiciousPatterns(content: string) {
 
   for (const rule of REMOTE_INSTALL_PATTERNS) {
     pushIssueIfMatched(issues, rule, rule.pattern.test(content));
+    rule.pattern.lastIndex = 0;
   }
 
   return issues;

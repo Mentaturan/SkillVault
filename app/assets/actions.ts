@@ -27,7 +27,7 @@ function parseFormData(formData: FormData) {
         .filter(Boolean)
     : undefined;
   const reviewDueAt = reviewDueAtRaw
-    ? new Date(`${reviewDueAtRaw}T00:00:00`).getTime()
+    ? new Date(`${reviewDueAtRaw}T00:00:00Z`).getTime()
     : undefined;
 
   return {
@@ -52,7 +52,7 @@ export async function createAssetAction(formData: FormData) {
   try {
     const parsed = createAssetSchema.safeParse(parseFormData(formData));
     if (!parsed.success) {
-      return { success: false, error: parsed.error.flatten().fieldErrors };
+      return { success: false, error: parsed.error.issues.map((i) => i.message).join("; ") };
     }
     const result = await createNewAsset(parsed.data);
     revalidatePath("/assets");
@@ -72,7 +72,7 @@ export async function updateAssetAction(id: string, formData: FormData) {
       ...parseFormData(formData),
     });
     if (!parsed.success) {
-      return { success: false, error: parsed.error.flatten().fieldErrors };
+      return { success: false, error: parsed.error.issues.map((i) => i.message).join("; ") };
     }
     const asset = await updateExistingAsset(parsed.data);
     revalidatePath("/assets");

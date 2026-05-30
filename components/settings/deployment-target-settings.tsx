@@ -38,15 +38,19 @@ export function DeploymentTargetSettings({
 
     startTransition(async () => {
       try {
-        const nextTargets = await saveDeploymentTargetsAction(
+        const result = await saveDeploymentTargetsAction(
           targets.map((target) => ({
             key: target.key,
             path: target.path,
             enabled: target.enabled,
           })),
         );
-        setTargets(nextTargets);
-        setSaved("部署目录已保存");
+        if (result.success) {
+          setTargets(result.targets);
+          setSaved("部署目录已保存");
+        } else {
+          setError(result.error ?? "保存部署目录失败");
+        }
       } catch (actionError) {
         setError(
           actionError instanceof Error ? actionError.message : "保存部署目录失败",

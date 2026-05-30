@@ -20,12 +20,25 @@ import {
   executeBatchReviewDate,
 } from "@/server/services/batch-service";
 
+const batchAuditLogLimitSchema = z.number().int().min(1).max(1000).optional();
+
 export async function getBatchAuditLogsAction(limit?: number) {
-  return findBatchAuditLogs(limit);
+  try {
+    const validatedLimit = batchAuditLogLimitSchema.parse(limit);
+    const data = await findBatchAuditLogs(validatedLimit);
+    return { success: true as const, data };
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : "获取批量审计日志失败" };
+  }
 }
 
 export async function getDeploymentHealthAction() {
-  return getDeploymentHealthSummary();
+  try {
+    const data = await getDeploymentHealthSummary();
+    return { success: true as const, data };
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : "获取部署健康状态失败" };
+  }
 }
 
 export async function getDuplicateCandidatesAction() {

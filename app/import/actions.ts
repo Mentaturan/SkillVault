@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { parseMarkdownForPreview, importMarkdownAsset } from "@/server/services/markdown-service";
 import { parseMarkdownToAsset } from "@/lib/markdown";
 import type { ImportConflictStrategy } from "@/lib/constants";
@@ -19,8 +20,40 @@ import {
   importGitHubRepoAssets,
 } from "@/server/services/github-repo-import-service";
 
+const markdownSchema = z.string().max(10_000_000);
+
+const batchItemSchema = z.object({
+  filename: z.string().min(1).max(255),
+  markdown: z.string().min(1).max(10_000_000),
+});
+const batchSchema = z.array(batchItemSchema).min(1).max(100);
+
+const importMarkdownSchema = z.object({
+  markdown: z.string().min(1).max(10_000_000),
+  strategy: z.enum(["overwrite", "copy", "cancel"]),
+});
+
+const githubRepoPreviewSchema = z.object({
+  url: z.string().url().max(2000),
+  ref: z.string().max(255).optional(),
+  pathFilter: z.string().max(500).optional(),
+});
+
+const githubRepoImportSchema = z.object({
+  url: z.string().url().max(2000),
+  ref: z.string().max(255).optional(),
+  selectedFiles: z.array(z.string().min(1).max(500)).min(1).max(100),
+  strategy: z.enum(["overwrite", "copy", "cancel"]),
+});
+
+const curatedImportSchema = z.object({
+  selectedFiles: z.array(z.string().min(1).max(255)).min(1).max(50),
+  strategy: z.enum(["overwrite", "copy", "cancel"]),
+});
+
 export async function parseMarkdownAction(markdown: string) {
   try {
+    markdownSchema.parse(markdown);
     const result = await parseMarkdownForPreview(markdown);
     if ("error" in result) {
       return { success: false, error: result.error };
@@ -37,6 +70,15 @@ export async function parseMarkdownAction(markdown: string) {
 export async function batchImportAction(
   items: { filename: string; markdown: string }[],
 ) {
+  try {
+    batchSchema.parse(items);
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "批量导入参数无效",
+    };
+  }
+
   const results: { filename: string; success: boolean; assetId?: string; error?: string }[] = [];
 
   for (const item of items) {
@@ -78,6 +120,7 @@ export async function importMarkdownAction(
   strategy: ImportConflictStrategy,
 ) {
   try {
+    importMarkdownSchema.parse({ markdown, strategy });
     const parsed = parseMarkdownToAsset(markdown);
     if ("error" in parsed) {
       return { success: false, error: parsed.error.message };
@@ -172,6 +215,7 @@ export async function previewGitHubRepoImportAction(
   pathFilter: string,
 ) {
   try {
+    githubRepoPreviewSchema.parse({ url, ref, pathFilter });
     const result = await previewGitHubRepoImport(url, ref, pathFilter);
     return { success: true, data: result };
   } catch (error) {
@@ -189,6 +233,7 @@ export async function importGitHubRepoAssetsAction(
   strategy: ImportConflictStrategy,
 ) {
   try {
+    githubRepoImportSchema.parse({ url, ref, selectedFiles, strategy });
     const result = await importGitHubRepoAssets(url, ref, selectedFiles, strategy);
     revalidatePath("/assets");
     return { success: true, data: result };
@@ -216,6 +261,15 @@ export async function importCuratedExamplesAction(
   selectedFiles: string[],
   strategy: ImportConflictStrategy,
 ) {
+  try {
+    curatedImportSchema.parse({ selectedFiles, strategy });
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "精选导入参数无效",
+    };
+  }
+
   const results: { filename: string; success: boolean; assetId?: string; error?: string }[] = [];
 
   for (const filename of selectedFiles) {

@@ -97,7 +97,7 @@ export function parseCodexRolloutImport(
     try {
       parsed = JSON.parse(line) as RolloutLine;
     } catch {
-      throw new Error("Rollout 文件包含无效 JSON 行。");
+      continue;
     }
 
     if (parsed.type === "session_meta") {

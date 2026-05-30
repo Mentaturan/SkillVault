@@ -135,17 +135,28 @@ export function FolderImport({ onImportComplete }: FolderImportProps) {
 
     const result = await batchImportAction(items);
 
-    setFiles((prev) =>
-      prev.map((f) => {
-        if (f.status !== "importing") return f;
-        const r = result.find((rr) => rr.filename === f.name);
-        if (!r) return f;
-        if (r.success) {
-          return { ...f, status: "success" as FileStatus, assetId: r.assetId ?? null };
-        }
-        return { ...f, status: "error" as FileStatus, error: r.error ?? "导入失败" };
-      })
-    );
+    if ("success" in result && !result.success) {
+      setFiles((prev) =>
+        prev.map((f) =>
+          f.status === "importing"
+            ? { ...f, status: "error" as FileStatus, error: result.error }
+            : f
+        )
+      );
+    } else {
+      const results = result as { filename: string; success: boolean; assetId?: string; error?: string }[];
+      setFiles((prev) =>
+        prev.map((f) => {
+          if (f.status !== "importing") return f;
+          const r = results.find((rr) => rr.filename === f.name);
+          if (!r) return f;
+          if (r.success) {
+            return { ...f, status: "success" as FileStatus, assetId: r.assetId ?? null };
+          }
+          return { ...f, status: "error" as FileStatus, error: r.error ?? "导入失败" };
+        })
+      );
+    }
 
     setIsImporting(false);
     setImportDone(true);

@@ -4,7 +4,6 @@ import {
   findTagsByAssetId,
   bindTagToAsset,
   unbindTagFromAsset,
-  unbindAllTagsFromAsset,
   findAllTags,
 } from "@/server/queries/tag-queries";
 
@@ -28,13 +27,23 @@ export async function removeTagFromAsset(assetId: string, tagId: string) {
 }
 
 export async function syncAssetTags(assetId: string, tagNames: string[]) {
-  await unbindAllTagsFromAsset(assetId);
+  const currentTags = await findTagsByAssetId(assetId);
+  const currentNames = new Set(currentTags.map((t) => t.name));
+  const desiredNames = new Set(
+    tagNames.map((n) => n.trim().toLowerCase()).filter(Boolean),
+  );
 
-  for (const name of tagNames) {
-    if (name.trim()) {
+  for (const tagName of desiredNames) {
+    if (!currentNames.has(tagName)) {
       const tagId = createId();
-      const tag = await findOrCreateTag(name.trim().toLowerCase(), tagId);
+      const tag = await findOrCreateTag(tagName, tagId);
       await bindTagToAsset(assetId, tag.id);
+    }
+  }
+
+  for (const currentTag of currentTags) {
+    if (!desiredNames.has(currentTag.name)) {
+      await unbindTagFromAsset(assetId, currentTag.id);
     }
   }
 }

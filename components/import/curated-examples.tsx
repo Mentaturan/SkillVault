@@ -82,7 +82,11 @@ export function CuratedExamples({ onImportComplete }: CuratedExamplesProps) {
       strategy,
     );
 
-    setResults(res);
+    if ("success" in res && !res.success) {
+      setResults([]);
+    } else {
+      setResults(res as { filename: string; success: boolean; assetId?: string; error?: string }[]);
+    }
     setIsImporting(false);
     onImportComplete?.();
   };

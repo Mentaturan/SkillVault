@@ -2,16 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 
-import type { DeploymentPreviewInput } from "@/lib/validators/deployment";
+import { deploymentPreviewSchema } from "@/lib/validators/deployment";
 import {
   deployAssetToTarget,
   getAssetDeploymentStatuses,
   previewAssetDeployment,
 } from "@/server/services/deployment-service";
 
-export async function previewAssetDeploymentAction(input: DeploymentPreviewInput) {
+export async function previewAssetDeploymentAction(input: unknown) {
+  const parsed = deploymentPreviewSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues.map((i) => i.message).join("; ") };
+  }
   try {
-    const preview = await previewAssetDeployment(input);
+    const preview = await previewAssetDeployment(parsed.data);
     return { success: true, preview };
   } catch (error) {
     return {
@@ -21,13 +25,17 @@ export async function previewAssetDeploymentAction(input: DeploymentPreviewInput
   }
 }
 
-export async function deployAssetToTargetAction(input: DeploymentPreviewInput) {
+export async function deployAssetToTargetAction(input: unknown) {
+  const parsed = deploymentPreviewSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues.map((i) => i.message).join("; ") };
+  }
   try {
-    const result = await deployAssetToTarget(input);
-    const statuses = await getAssetDeploymentStatuses(input.assetId);
+    const result = await deployAssetToTarget(parsed.data);
+    const statuses = await getAssetDeploymentStatuses(parsed.data.assetId);
 
-    revalidatePath(`/assets/${input.assetId}`);
-    revalidatePath(`/assets/${input.assetId}/deploy`);
+    revalidatePath(`/assets/${parsed.data.assetId}`);
+    revalidatePath(`/assets/${parsed.data.assetId}/deploy`);
     revalidatePath("/settings");
 
     return { success: true, result, statuses };

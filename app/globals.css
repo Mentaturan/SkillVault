@@ -77,32 +77,32 @@
   }
 
   [data-theme="glass"] {
-    --background: 230 25% 8%;
-    --foreground: 220 20% 95%;
-    --card: 230 20% 14%;
-    --card-foreground: 220 20% 95%;
-    --popover: 230 20% 14%;
-    --popover-foreground: 220 20% 95%;
-    --primary: 220 90% 66%;
-    --primary-foreground: 230 25% 8%;
-    --secondary: 230 20% 18%;
-    --secondary-foreground: 220 20% 95%;
-    --muted: 230 20% 18%;
-    --muted-foreground: 220 15% 60%;
-    --accent: 230 20% 18%;
-    --accent-foreground: 220 20% 95%;
+    --background: 225 30% 8%;
+    --foreground: 215 25% 94%;
+    --card: 225 25% 13% / 0.65;
+    --card-foreground: 215 25% 94%;
+    --popover: 225 25% 15% / 0.75;
+    --popover-foreground: 215 25% 94%;
+    --primary: 210 100% 66%;
+    --primary-foreground: 225 25% 8%;
+    --secondary: 225 20% 18% / 0.55;
+    --secondary-foreground: 215 25% 94%;
+    --muted: 225 20% 18% / 0.55;
+    --muted-foreground: 215 15% 58%;
+    --accent: 225 20% 20% / 0.55;
+    --accent-foreground: 215 25% 94%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 20% 22%;
-    --input: 220 20% 22%;
-    --ring: 220 90% 66%;
+    --border: 215 30% 28% / 0.45;
+    --input: 215 30% 28% / 0.45;
+    --ring: 210 100% 66%;
     --radius: 0.75rem;
     --brand-orange: 16 58% 59%;
-    --brand-blue: 220 90% 66%;
-    --brand-green: 83 22% 46%;
-    --glass-bg: 230 20% 14% / 0.7;
-    --glass-border: 220 20% 30% / 0.3;
-    --glass-sidebar: 230 25% 10% / 0.6;
+    --brand-blue: 210 100% 66%;
+    --brand-green: 145 50% 50%;
+    --glass-bg: 225 25% 13% / 0.6;
+    --glass-border: 215 35% 40% / 0.3;
+    --glass-sidebar: 225 30% 10% / 0.7;
   }
 
   * {
@@ -115,6 +115,17 @@
 }
 
 @layer components {
+  [data-theme="glass"] body {
+    background: linear-gradient(
+      135deg,
+      hsl(230 35% 6%) 0%,
+      hsl(240 30% 9%) 40%,
+      hsl(220 35% 7%) 70%,
+      hsl(250 25% 10%) 100%
+    );
+    background-attachment: fixed;
+  }
+
   [data-theme="glass"] .glass-surface {
     background: hsl(var(--glass-bg));
     backdrop-filter: blur(20px) saturate(180%);
@@ -132,25 +143,41 @@
   }
 
   [data-theme="glass"] [class*="bg-card"] {
-    background: hsl(var(--glass-bg));
+    background: hsl(var(--glass-bg)) !important;
     backdrop-filter: blur(16px) saturate(160%);
     -webkit-backdrop-filter: blur(16px) saturate(160%);
     border-color: hsl(var(--glass-border));
   }
 
   [data-theme="glass"] [class*="bg-popover"] {
-    background: hsl(var(--glass-bg));
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    background: hsl(var(--popover)) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-color: hsl(var(--glass-border));
+  }
+
+  [data-theme="glass"] [class*="bg-background"]:not(.glass-sidebar):not(.glass-surface) {
+    background: hsl(var(--glass-bg)) !important;
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+  }
+
+  [data-theme="glass"] [class*="border-"] {
     border-color: hsl(var(--glass-border));
   }
 
   @supports not (backdrop-filter: blur(1px)) {
+    [data-theme="glass"] body {
+      background: hsl(230 30% 6%);
+    }
     [data-theme="glass"] .glass-surface,
     [data-theme="glass"] .glass-sidebar,
     [data-theme="glass"] [class*="bg-card"],
-    [data-theme="glass"] [class*="bg-popover"] {
-      background: hsl(var(--card));
+    [data-theme="glass"] [class*="bg-popover"],
+    [data-theme="glass"] [class*="bg-background"] {
+      background: hsl(230 25% 12%) !important;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
   }
 }

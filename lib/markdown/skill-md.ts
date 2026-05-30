@@ -12,7 +12,8 @@ export function isSkillMd(markdown: string): boolean {
   const trimmed = markdown.trimStart();
   if (!trimmed.startsWith("---")) return false;
 
-  const secondDash = trimmed.indexOf("---", 3);
+  const secondDashIndex = trimmed.slice(3).search(/^---\s*$/m);
+  const secondDash = secondDashIndex === -1 ? -1 : secondDashIndex + 3;
   if (secondDash === -1) return false;
 
   const frontmatterStr = trimmed.slice(3, secondDash).trim();
@@ -33,7 +34,7 @@ export function isSkillMd(markdown: string): boolean {
 }
 
 function extractExamplesSection(content: string): { scenario: string | null; remainingContent: string } {
-  const examplesRegex = /^##\s+Examples\s*\n([\s\S]*?)(?=\n##\s|$)/m;
+  const examplesRegex = /^##\s+Examples\s*\n([\s\S]*?)(?=\n##\s)/;
   const match = content.match(examplesRegex);
 
   if (!match) return { scenario: null, remainingContent: content };
@@ -70,8 +71,8 @@ export function parseSkillMd(
     };
   }
 
-  const name = (raw.name as string).trim();
-  const description = (raw.description as string).trim();
+  const name = typeof raw.name === "string" ? raw.name.trim() : "";
+  const description = typeof raw.description === "string" ? raw.description.trim() : "";
 
   const { scenario, remainingContent } = extractExamplesSection(rawContent);
 

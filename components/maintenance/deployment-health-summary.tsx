@@ -36,7 +36,9 @@ export function DeploymentHealthSummary() {
 
   useEffect(() => {
     getDeploymentHealthAction()
-      .then(setData)
+      .then((result) => {
+        if (result.success) setData(result.data);
+      })
       .finally(() => setLoading(false));
   }, []);
 

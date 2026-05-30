@@ -82,16 +82,11 @@ export function AssetForm({ asset, isEditing = false, initialValues }: AssetForm
         router.push("/assets");
         router.refresh();
       } else {
-        if (result.error && typeof result.error === "object") {
-          setFieldErrors(result.error as FieldErrors);
-          setError("请检查表单中的错误");
-        } else {
-          setError(
-            typeof result.error === "string"
-              ? result.error
-              : "保存资产失败",
-          );
-        }
+        setError(
+          typeof result.error === "string"
+            ? result.error
+            : "保存资产失败",
+        );
       }
     } catch {
       setError("发生了意外错误");

@@ -26,7 +26,7 @@ export function renderAssetToMarkdown(asset: AssetWithTags): string {
     sourceUrl: asset.sourceUrl || undefined,
     sourceRef: asset.sourceRef || undefined,
     sourcePath: asset.sourcePath || undefined,
-    sourceImportedAt: asset.sourceImportedAt || undefined,
+    sourceImportedAt: asset.sourceImportedAt ?? undefined,
     sourceChecksum: asset.sourceChecksum || undefined,
     pinned: asset.pinned || undefined,
     description: asset.description || undefined,

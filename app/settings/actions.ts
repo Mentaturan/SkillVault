@@ -8,13 +8,22 @@ import { getDiagnosticsSnapshot } from "@/server/services/diagnostics-service";
 import { saveDeploymentTargets } from "@/server/services/deployment-service";
 
 export async function getDiagnosticsAction() {
-  return getDiagnosticsSnapshot();
+  try {
+    const data = await getDiagnosticsSnapshot();
+    return { success: true as const, data };
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : "获取诊断信息失败" };
+  }
 }
 
 export async function saveDeploymentTargetsAction(input: SaveDeploymentTargetsInput) {
-  const targets = await saveDeploymentTargets(input);
-  revalidatePath("/settings");
-  return targets;
+  try {
+    const targets = await saveDeploymentTargets(input);
+    revalidatePath("/settings");
+    return { success: true as const, targets };
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : "保存部署目标失败" };
+  }
 }
 
 interface UpdateCheckResult {
@@ -36,13 +45,17 @@ export async function checkForUpdateAction(): Promise<UpdateCheckResult> {
       return { currentVersion: APP_VERSION, latestVersion: null, hasUpdate: false, downloadUrl: null, releaseNotes: null, error: "Failed to fetch release info" };
     }
     const data = await res.json();
-    const tagName = data.tag_name as string;
+    const tagName = typeof data.tag_name === "string" ? data.tag_name : "";
+    if (!tagName) {
+      return { hasUpdate: false, currentVersion: APP_VERSION, latestVersion: "", downloadUrl: null, releaseNotes: null, error: null };
+    }
     const latestVersion = tagName.replace(/^v/, "");
     const currentVersion = APP_VERSION;
 
     const hasUpdate = compareVersions(latestVersion, currentVersion) > 0;
 
-    const dmgAsset = (data.assets as Array<{ name: string; browser_download_url: string }>)?.find(a => a.name.endsWith(".dmg"));
+    const assets = Array.isArray(data.assets) ? data.assets as Array<{ name: string; browser_download_url: string }> : [];
+    const dmgAsset = assets.find(a => a.name.endsWith(".dmg"));
     const downloadUrl = dmgAsset?.browser_download_url ?? data.html_url ?? null;
 
     return {
@@ -58,14 +71,16 @@ export async function checkForUpdateAction(): Promise<UpdateCheckResult> {
   }
 }
 
-function compareVersions(a: string, b: string): number {
-  const pa = a.split(".").map(Number);
-  const pb = b.split(".").map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const na = pa[i] ?? 0;
-    const nb = pb[i] ?? 0;
-    if (na > nb) return 1;
-    if (na < nb) return -1;
+function compareVersions(current: string, latest: string) {
+  const cleanSegment = (s: string) => {
+    const num = parseInt(s.replace(/[^0-9]/g, ""), 10);
+    return Number.isNaN(num) ? 0 : num;
+  };
+  const a = current.split(".").map(cleanSegment);
+  const b = latest.split(".").map(cleanSegment);
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    if ((a[i] ?? 0) < (b[i] ?? 0)) return -1;
+    if ((a[i] ?? 0) > (b[i] ?? 0)) return 1;
   }
   return 0;
 }

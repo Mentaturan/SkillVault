@@ -84,34 +84,22 @@ export async function findAllAssets(options?: FindAllAssetsOptions) {
   }
 
   if (options?.tag) {
-    const taggedAssetIds = await db
+    const tagSubquery = db
       .select({ assetId: assetTags.assetId })
       .from(assetTags)
       .innerJoin(tags, eq(assetTags.tagId, tags.id))
       .where(eq(tags.name, options.tag));
-
-    if (taggedAssetIds.length === 0) {
-      return [];
-    }
-
-    conditions.push(inArray(assets.id, taggedAssetIds.map((row) => row.assetId)));
+    conditions.push(inArray(assets.id, tagSubquery));
   }
 
   const search = options?.search?.trim();
   if (search) {
     const searchPattern = `%${search}%`;
-    const matchingTaggedAssetIds = await db
-      .select({ assetId: assetTags.assetId })
+    const tagSearchSubquery = db
+      .selectDistinct({ assetId: assetTags.assetId })
       .from(assetTags)
       .innerJoin(tags, eq(assetTags.tagId, tags.id))
       .where(like(tags.name, searchPattern));
-    const tagSearchCondition =
-      matchingTaggedAssetIds.length > 0
-        ? inArray(
-            assets.id,
-            Array.from(new Set(matchingTaggedAssetIds.map((row) => row.assetId))),
-          )
-        : undefined;
 
     conditions.push(
       or(
@@ -119,7 +107,7 @@ export async function findAllAssets(options?: FindAllAssetsOptions) {
         like(assets.description, searchPattern),
         like(assets.scenario, searchPattern),
         like(assets.content, searchPattern),
-        ...(tagSearchCondition ? [tagSearchCondition] : []),
+        inArray(assets.id, tagSearchSubquery),
       ),
     );
   }
@@ -162,10 +150,21 @@ export async function createAsset(data: NewAsset) {
   return asset;
 }
 
+const UPDATABLE_ASSET_FIELDS = new Set([
+  "slug", "title", "type", "targetTool", "exportPreset",
+  "description", "scenario", "content", "contentHash",
+  "status", "rating", "visibility", "source", "sourceUrl",
+  "sourceRef", "sourcePath", "sourceImportedAt", "sourceChecksum",
+  "pinned", "reviewDueAt", "lastUsedAt", "updatedAt", "deletedAt",
+]);
+
 export async function updateAsset(id: string, data: Partial<NewAsset>) {
+  const filtered = Object.fromEntries(
+    Object.entries(data).filter(([key]) => UPDATABLE_ASSET_FIELDS.has(key)),
+  );
   const [asset] = await db
     .update(assets)
-    .set({ ...data, updatedAt: Date.now() })
+    .set({ ...filtered, updatedAt: Date.now() })
     .where(eq(assets.id, id))
     .returning();
   return asset;
@@ -212,7 +211,7 @@ export async function findAssetsByTagId(tagId: string) {
     .select()
     .from(assets)
     .innerJoin(assetTags, eq(assets.id, assetTags.assetId))
-    .where(eq(assetTags.tagId, tagId));
+    .where(and(eq(assetTags.tagId, tagId), isNull(assets.deletedAt)));
   return result.map((r) => r.assets);
 }
 

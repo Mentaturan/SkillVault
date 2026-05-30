@@ -33,8 +33,8 @@ export function BatchAuditLog() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    getBatchAuditLogsAction().then((data) => {
-      setLogs(data);
+    getBatchAuditLogsAction().then((result) => {
+      if (result.success) setLogs(result.data);
       setLoading(false);
     });
   }, []);

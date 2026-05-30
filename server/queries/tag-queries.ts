@@ -20,15 +20,23 @@ export async function findOrCreateTag(name: string, tagId: string) {
     return existing;
   }
 
-  const [tag] = await db
-    .insert(tags)
-    .values({
-      id: tagId,
-      name,
-      createdAt: Date.now(),
-    })
-    .returning();
-  return tag;
+  try {
+    const [tag] = await db
+      .insert(tags)
+      .values({
+        id: tagId,
+        name,
+        createdAt: Date.now(),
+      })
+      .returning();
+    return tag;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).message?.includes("UNIQUE constraint failed")) {
+      const concurrent = await findTagByName(name);
+      if (concurrent) return concurrent;
+    }
+    throw error;
+  }
 }
 
 export async function findTagsByAssetId(assetId: string) {
@@ -41,10 +49,16 @@ export async function findTagsByAssetId(assetId: string) {
 }
 
 export async function bindTagToAsset(assetId: string, tagId: string) {
-  await db.insert(assetTags).values({
-    assetId,
-    tagId,
-  });
+  try {
+    await db.insert(assetTags).values({
+      assetId,
+      tagId,
+    });
+  } catch (error) {
+    if (!(error as NodeJS.ErrnoException).message?.includes("UNIQUE constraint failed")) {
+      throw error;
+    }
+  }
 }
 
 export async function unbindTagFromAsset(assetId: string, tagId: string) {

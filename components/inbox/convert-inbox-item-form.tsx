@@ -55,13 +55,10 @@ export function ConvertInboxItemForm({ item }: { item: CaptureInboxItem }) {
         return;
       }
 
-      if (result.error && typeof result.error === "object") {
-        setFieldErrors(result.error as FieldErrors);
-        setError("请检查表单中的错误");
+      if (!result.success) {
+        setError(result.error ?? "转换失败");
         return;
       }
-
-      setError(typeof result.error === "string" ? result.error : "转换失败");
     } catch {
       setError("发生了意外错误");
     } finally {

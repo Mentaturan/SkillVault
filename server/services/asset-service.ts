@@ -275,6 +275,8 @@ export async function rollbackAssetToVersion(assetId: string, versionId: string)
   }
 
   const asset = await updateAsset(assetId, {
+    title: version.titleSnapshot,
+    slug: createSlug(version.titleSnapshot),
     content: version.contentSnapshot,
     contentHash: version.contentHash,
   });

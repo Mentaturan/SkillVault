@@ -1,15 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import type { RestoreConflictStrategy } from "@/lib/constants";
 import { previewRestoreBundle, restoreBackupBundle } from "@/server/services/restore-service";
+
+const restoreSchema = z.object({
+  raw: z.string().min(1).max(50_000_000),
+  strategy: z.enum(["skip", "overwrite", "copy"]),
+});
 
 export async function previewRestoreAction(
   raw: string,
   strategy: RestoreConflictStrategy,
 ) {
   try {
+    restoreSchema.parse({ raw, strategy });
     const result = await previewRestoreBundle(raw, strategy);
     if ("error" in result) {
       return { success: false, error: result.error };
@@ -29,6 +36,7 @@ export async function restoreBackupAction(
   strategy: RestoreConflictStrategy,
 ) {
   try {
+    restoreSchema.parse({ raw, strategy });
     const result = await restoreBackupBundle(raw, strategy);
     if ("error" in result) {
       return { success: false, error: result.error };

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { APP_NAME } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import {
@@ -76,15 +75,12 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { theme } = useTheme();
-  const isGlass = theme === "glass";
-
   return (
     <div className="flex min-h-screen">
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r md:flex",
-          isGlass ? "glass-sidebar glass-border" : "bg-background",
+          "bg-background",
         )}
       >
         <SidebarContent />
@@ -99,7 +95,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r transition-transform md:hidden",
-          isGlass ? "glass-sidebar glass-border" : "bg-background",
+          "bg-background",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -120,7 +116,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <header
           className={cn(
             "sticky top-0 z-20 flex h-14 items-center border-b px-4 md:hidden",
-            isGlass ? "glass-surface glass-border" : "bg-background/95 backdrop-blur",
+            "bg-background/95 backdrop-blur",
           )}
         >
           <Button variant="ghost" size="icon" onClick={() => setMobileOpen(true)}>

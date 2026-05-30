@@ -56,7 +56,8 @@ export function parseMarkdownToAsset(
     };
   }
 
-  const secondDash = trimmed.indexOf("---", 3);
+  const secondDashIndex = trimmed.slice(3).search(/^---\s*$/m);
+  const secondDash = secondDashIndex === -1 ? -1 : secondDashIndex + 3;
   if (secondDash === -1) {
     return { error: { message: "Frontmatter 未正确关闭：缺少第二个 ---" } };
   }

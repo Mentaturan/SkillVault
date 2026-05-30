@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readdirSync, statSync, existsSync } from "fs";
-import { join } from "path";
+import { readdir, stat } from "node:fs/promises";
+import { join, resolve, relative, posix } from "node:path";
 
 const AI_CONFIG_PATTERNS: Array<{ filename: string; type: string }> = [
   { filename: "AGENTS.md", type: "agents_md" },
@@ -16,6 +16,13 @@ function detectFileType(filename: string): string | null {
   return null;
 }
 
+function isSafePath(inputPath: string): boolean {
+  const resolved = resolve(inputPath);
+  if (resolved.includes("..")) return false;
+  if (!posix.isAbsolute(resolved) && !resolved.startsWith("/")) return false;
+  return true;
+}
+
 export async function GET(request: NextRequest) {
   const dirPath = request.nextUrl.searchParams.get("path");
 
@@ -23,44 +30,59 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "未提供目录路径" }, { status: 400 });
   }
 
-  if (!existsSync(dirPath) || !statSync(dirPath).isDirectory()) {
+  if (!isSafePath(dirPath)) {
+    return NextResponse.json({ error: "目录路径不合法" }, { status: 400 });
+  }
+
+  const resolvedRoot = resolve(dirPath);
+
+  try {
+    const dirStat = await stat(resolvedRoot);
+    if (!dirStat.isDirectory()) {
+      return NextResponse.json({ error: "目录不存在或不可读" }, { status: 404 });
+    }
+  } catch {
     return NextResponse.json({ error: "目录不存在或不可读" }, { status: 404 });
   }
 
   try {
     const files: Array<{ path: string; name: string; type: string; size: number }> = [];
 
-    const topEntries = readdirSync(dirPath);
+    const topEntries = await readdir(resolvedRoot);
     for (const entry of topEntries) {
-      const fullPath = join(dirPath, entry);
+      const fullPath = join(resolvedRoot, entry);
       try {
-        const stat = statSync(fullPath);
-        if (!stat.isFile()) continue;
+        const fileStat = await stat(fullPath);
+        if (!fileStat.isFile()) continue;
         const type = detectFileType(entry);
         if (type) {
-          files.push({ path: fullPath, name: entry, type, size: stat.size });
+          files.push({ path: relative(resolvedRoot, fullPath), name: entry, type, size: fileStat.size });
         }
       } catch {
         continue;
       }
     }
 
-    const cursorRulesDir = join(dirPath, ".cursor", "rules");
-    if (existsSync(cursorRulesDir) && statSync(cursorRulesDir).isDirectory()) {
-      const cursorEntries = readdirSync(cursorRulesDir);
-      for (const entry of cursorEntries) {
-        const fullPath = join(cursorRulesDir, entry);
-        try {
-          const stat = statSync(fullPath);
-          if (!stat.isFile()) continue;
-          const type = detectFileType(entry);
-          if (type) {
-            files.push({ path: fullPath, name: `.cursor/rules/${entry}`, type, size: stat.size });
+    const cursorRulesDir = join(resolvedRoot, ".cursor", "rules");
+    try {
+      const cursorDirStat = await stat(cursorRulesDir);
+      if (cursorDirStat.isDirectory()) {
+        const cursorEntries = await readdir(cursorRulesDir);
+        for (const entry of cursorEntries) {
+          const fullPath = join(cursorRulesDir, entry);
+          try {
+            const fileStat = await stat(fullPath);
+            if (!fileStat.isFile()) continue;
+            const type = detectFileType(entry);
+            if (type) {
+              files.push({ path: relative(resolvedRoot, fullPath), name: `.cursor/rules/${entry}`, type, size: fileStat.size });
+            }
+          } catch {
+            continue;
           }
-        } catch {
-          continue;
         }
       }
+    } catch {
     }
 
     return NextResponse.json({ files });
