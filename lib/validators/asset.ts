@@ -24,6 +24,10 @@ export const createAssetSchema = z.object({
   visibility: z.enum(VISIBILITIES).optional(),
   source: z.enum(ASSET_SOURCES).optional(),
   sourceUrl: z.string().url().max(500).optional().nullable(),
+  sourceRef: z.string().max(200).optional().nullable(),
+  sourcePath: z.string().max(1000).optional().nullable(),
+  sourceImportedAt: z.number().int().nonnegative().optional().nullable(),
+  sourceChecksum: z.string().max(128).optional().nullable(),
   pinned: z.boolean().optional(),
   tagNames: z.array(z.string().min(1).max(50)).optional(),
 });

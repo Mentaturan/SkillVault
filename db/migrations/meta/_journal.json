@@ -43,6 +43,13 @@
       "when": 1780116366986,
       "tag": "0005_uneven_joseph",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1780116826819,
+      "tag": "0006_wet_demogoblin",
+      "breakpoints": true
     }
   ]
 }

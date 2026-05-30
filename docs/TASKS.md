@@ -28,6 +28,7 @@ Implemented locally:
 - Reusable validation result types plus deterministic validation summaries on asset detail, import preview, and a maintenance queue for SKILL.md metadata, variable placeholder syntax, and suspicious content warnings.
 - File-based validation fixtures plus a deterministic fixture check script for valid, malformed, and suspicious skill samples.
 - Capture inbox data model, manual paste flow, reviewed convert-to-asset flow, preview-first Codex rollout importer, and directory scan with changed-file detection.
+- Imported asset source metadata fields for URL, ref, path, imported-at timestamp, and checksum, wired into Markdown import, detail display, backup/restore, and Markdown export.
 - Basic mobile usability for view, search, and copy flows.
 
 Known local caveats:
@@ -36,7 +37,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: start v0.9 import sources, curated assets, and Git-friendly exchange. The first slice should define source metadata for imported assets: source URL, ref, path, imported at, and checksum.
+Next development focus: continue v0.9 import sources, curated assets, and Git-friendly exchange. Source metadata for imported assets is in place. The next slice should add raw GitHub file import with preview and validation.
 
 ## Product Positioning
 
@@ -438,7 +439,7 @@ Exit criteria:
 
 ## v0.9 - Import Sources, Curated Assets, and Git-Friendly Exchange
 
-Status: planned.
+Status: in progress.
 
 Goal: support manual discovery and import while staying local-first.
 
@@ -452,7 +453,7 @@ Scope:
 
 Tasks:
 
-- [ ] Define source metadata for imported assets: source URL, ref, path, imported at, and checksum.
+- [x] Define source metadata for imported assets: source URL, ref, path, imported at, and checksum.
 - [ ] Add raw GitHub file import with preview and validation.
 - [ ] Add repository archive import only after path filtering and file count limits are in place.
 - [ ] Add update check that compares known source checksum without auto-overwriting.

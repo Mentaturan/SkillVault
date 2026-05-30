@@ -45,6 +45,10 @@ Current v0.8 progress:
 - Asset filters now cover stale, recently used, never used, low-rated, and untested views with explicit deterministic thresholds.
 - v0.8 intentionally does not add extra model/tool compatibility fields because existing `type` and `targetTool` already cover the current filtering need.
 
+Current v0.9 progress:
+
+- Imported asset source metadata now covers URL, ref, path, imported-at timestamp, and checksum across Markdown import, detail display, backup/restore, and Markdown export.
+
 ## Product Principles
 
 - Local-first beats cloud convenience.

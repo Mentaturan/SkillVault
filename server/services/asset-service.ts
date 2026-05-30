@@ -100,6 +100,10 @@ export async function createNewAsset(input: CreateAssetInput) {
     visibility: input.visibility ?? "private",
     source: input.source ?? "self_created",
     sourceUrl: input.sourceUrl ?? null,
+    sourceRef: input.sourceRef ?? null,
+    sourcePath: input.sourcePath ?? null,
+    sourceImportedAt: input.sourceImportedAt ?? null,
+    sourceChecksum: input.sourceChecksum ?? null,
     pinned: input.pinned ?? false,
     createdAt: now,
     updatedAt: now,
@@ -149,6 +153,12 @@ export async function updateExistingAsset(input: UpdateAssetInput) {
   if (input.visibility !== undefined) updates.visibility = input.visibility;
   if (input.source !== undefined) updates.source = input.source;
   if (input.sourceUrl !== undefined) updates.sourceUrl = input.sourceUrl;
+  if (input.sourceRef !== undefined) updates.sourceRef = input.sourceRef;
+  if (input.sourcePath !== undefined) updates.sourcePath = input.sourcePath;
+  if (input.sourceImportedAt !== undefined) {
+    updates.sourceImportedAt = input.sourceImportedAt;
+  }
+  if (input.sourceChecksum !== undefined) updates.sourceChecksum = input.sourceChecksum;
   if (input.pinned !== undefined) updates.pinned = input.pinned;
 
   if (input.content !== undefined) {

@@ -98,6 +98,14 @@ export function parseMarkdownToAsset(
 
   const sourceUrl =
     typeof raw.sourceUrl === "string" ? raw.sourceUrl : null;
+  const sourceRef =
+    typeof raw.sourceRef === "string" ? raw.sourceRef : null;
+  const sourcePath =
+    typeof raw.sourcePath === "string" ? raw.sourcePath : null;
+  const sourceImportedAt =
+    typeof raw.sourceImportedAt === "number" ? raw.sourceImportedAt : null;
+  const sourceChecksum =
+    typeof raw.sourceChecksum === "string" ? raw.sourceChecksum : null;
 
   const pinned =
     typeof raw.pinned === "boolean" ? raw.pinned : undefined;
@@ -124,6 +132,10 @@ export function parseMarkdownToAsset(
         visibility,
         source,
         sourceUrl,
+        sourceRef,
+        sourcePath,
+        sourceImportedAt,
+        sourceChecksum,
         pinned,
         description,
         scenario,

@@ -258,6 +258,30 @@ export default async function AssetDetailPage({ params }: AssetDetailPageProps) 
                 </dd>
               </div>
             )}
+            {asset.sourceRef && (
+              <div>
+                <dt className="text-muted-foreground">来源 Ref</dt>
+                <dd>{asset.sourceRef}</dd>
+              </div>
+            )}
+            {asset.sourcePath && (
+              <div>
+                <dt className="text-muted-foreground">来源路径</dt>
+                <dd className="break-all">{asset.sourcePath}</dd>
+              </div>
+            )}
+            {asset.sourceImportedAt && (
+              <div>
+                <dt className="text-muted-foreground">导入时间</dt>
+                <dd>{new Date(asset.sourceImportedAt).toLocaleString("zh-CN")}</dd>
+              </div>
+            )}
+            {asset.sourceChecksum && (
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">来源 Checksum</dt>
+                <dd className="break-all font-mono text-xs">{asset.sourceChecksum}</dd>
+              </div>
+            )}
             <div>
               <dt className="text-muted-foreground">创建时间</dt>
               <dd>{new Date(asset.createdAt).toLocaleString("zh-CN")}</dd>

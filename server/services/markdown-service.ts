@@ -6,6 +6,12 @@ import { createNewAsset, updateExistingAsset } from "@/server/services/asset-ser
 import type { ImportConflictStrategy, ExportPreset } from "@/lib/constants";
 import { validateParsedImport } from "@/server/services/validation-service";
 
+interface ImportSourceMetadata {
+  sourcePath?: string;
+  sourceChecksum?: string;
+  sourceImportedAt?: number;
+}
+
 export async function exportAssetToMarkdown(assetId: string, preset?: ExportPreset) {
   const asset = await findAssetById(assetId);
   if (!asset) {
@@ -53,6 +59,7 @@ export async function parseMarkdownForPreview(markdown: string) {
 export async function importMarkdownAsset(
   parsed: ParsedMarkdownAsset,
   strategy: ImportConflictStrategy,
+  sourceMetadata?: ImportSourceMetadata,
 ) {
   const { frontmatter, content } = parsed;
 
@@ -79,6 +86,12 @@ export async function importMarkdownAsset(
       visibility: frontmatter.visibility,
       source: frontmatter.source ?? "imported",
       sourceUrl: frontmatter.sourceUrl ?? undefined,
+      sourceRef: frontmatter.sourceRef ?? undefined,
+      sourcePath: frontmatter.sourcePath ?? sourceMetadata?.sourcePath,
+      sourceImportedAt:
+        frontmatter.sourceImportedAt ?? sourceMetadata?.sourceImportedAt ?? Date.now(),
+      sourceChecksum:
+        frontmatter.sourceChecksum ?? sourceMetadata?.sourceChecksum ?? undefined,
       pinned: frontmatter.pinned,
       tagNames: frontmatter.tags,
     });
@@ -86,12 +99,13 @@ export async function importMarkdownAsset(
     return { asset };
   }
 
-  return createAssetFromParsed(parsed, "imported");
+  return createAssetFromParsed(parsed, "imported", sourceMetadata);
 }
 
 async function createAssetFromParsed(
   parsed: ParsedMarkdownAsset,
   source: "imported",
+  sourceMetadata?: ImportSourceMetadata,
 ) {
   const { frontmatter, content } = parsed;
 
@@ -107,6 +121,12 @@ async function createAssetFromParsed(
     visibility: frontmatter.visibility,
     source,
     sourceUrl: frontmatter.sourceUrl ?? undefined,
+    sourceRef: frontmatter.sourceRef ?? undefined,
+    sourcePath: frontmatter.sourcePath ?? sourceMetadata?.sourcePath,
+    sourceImportedAt:
+      frontmatter.sourceImportedAt ?? sourceMetadata?.sourceImportedAt ?? Date.now(),
+    sourceChecksum:
+      frontmatter.sourceChecksum ?? sourceMetadata?.sourceChecksum ?? undefined,
     pinned: frontmatter.pinned,
     tagNames: frontmatter.tags,
   });

@@ -88,6 +88,24 @@ export function ImportPreview({
                 <dd className="truncate">{frontmatter.sourceUrl}</dd>
               </div>
             )}
+            {frontmatter.sourceRef && (
+              <div>
+                <dt className="text-muted-foreground">来源 Ref</dt>
+                <dd>{frontmatter.sourceRef}</dd>
+              </div>
+            )}
+            {frontmatter.sourcePath && (
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">来源路径</dt>
+                <dd className="truncate">{frontmatter.sourcePath}</dd>
+              </div>
+            )}
+            {frontmatter.sourceChecksum && (
+              <div className="sm:col-span-2">
+                <dt className="text-muted-foreground">来源 Checksum</dt>
+                <dd className="truncate font-mono text-xs">{frontmatter.sourceChecksum}</dd>
+              </div>
+            )}
             <div className="sm:col-span-2">
               <dt className="text-muted-foreground">syncId</dt>
               <dd className="font-mono text-xs">{frontmatter.syncId}</dd>

@@ -17,6 +17,10 @@ export interface MarkdownFrontmatter {
   visibility?: Visibility;
   source?: AssetSource;
   sourceUrl?: string | null;
+  sourceRef?: string | null;
+  sourcePath?: string | null;
+  sourceImportedAt?: number | null;
+  sourceChecksum?: string | null;
   pinned?: boolean;
   description?: string | null;
   scenario?: string | null;

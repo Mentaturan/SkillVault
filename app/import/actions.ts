@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { parseMarkdownForPreview, importMarkdownAsset } from "@/server/services/markdown-service";
 import { parseMarkdownToAsset } from "@/lib/markdown";
 import type { ImportConflictStrategy } from "@/lib/constants";
+import { createContentHash } from "@/lib/hash";
 
 export async function parseMarkdownAction(markdown: string) {
   try {
@@ -33,7 +34,11 @@ export async function batchImportAction(
         continue;
       }
 
-      const result = await importMarkdownAsset(parsed.data, "copy");
+      const result = await importMarkdownAsset(parsed.data, "copy", {
+        sourcePath: item.filename,
+        sourceChecksum: createContentHash(item.markdown),
+        sourceImportedAt: Date.now(),
+      });
 
       if ("cancelled" in result) {
         results.push({ filename: item.filename, success: false, error: "导入已取消" });
@@ -65,7 +70,10 @@ export async function importMarkdownAction(
       return { success: false, error: parsed.error.message };
     }
 
-    const result = await importMarkdownAsset(parsed.data, strategy);
+    const result = await importMarkdownAsset(parsed.data, strategy, {
+      sourceChecksum: createContentHash(markdown),
+      sourceImportedAt: Date.now(),
+    });
 
     if ("cancelled" in result) {
       return { success: true, cancelled: true };
