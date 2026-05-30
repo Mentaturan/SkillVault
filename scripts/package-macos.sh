@@ -19,6 +19,7 @@ echo "Creating .app bundle structure..."
 mkdir -p "${APP_BUNDLE}/Contents/MacOS"
 mkdir -p "${APP_BUNDLE}/Contents/Resources"
 mkdir -p "${APP_BUNDLE}/Contents/Server"
+mkdir -p "${APP_BUNDLE}/Contents/Frameworks"
 
 echo "Copying Info.plist..."
 cp macos/SkillVault/Info.plist "${APP_BUNDLE}/Contents/"
@@ -40,16 +41,42 @@ swiftc \
 
 echo "Copying standalone server output..."
 cp -R .next/standalone/* "${APP_BUNDLE}/Contents/Server/"
+cp -R .next/standalone/.next "${APP_BUNDLE}/Contents/Server/"
 mkdir -p "${APP_BUNDLE}/Contents/Server/.next/static"
 cp -R .next/static/* "${APP_BUNDLE}/Contents/Server/.next/static/"
 if [ -d "public" ]; then
   cp -R public "${APP_BUNDLE}/Contents/Server/public"
 fi
 
+echo "Copying database migrations..."
+mkdir -p "${APP_BUNDLE}/Contents/Server/db/migrations"
+cp -R db/migrations/* "${APP_BUNDLE}/Contents/Server/db/migrations/"
+
+echo "Bundling Node.js runtime..."
+NODE_BIN=$(which node)
+NODE_REAL=$(readlink -f "$NODE_BIN" 2>/dev/null || echo "$NODE_BIN")
+cp "$NODE_REAL" "${APP_BUNDLE}/Contents/Frameworks/node"
+chmod +x "${APP_BUNDLE}/Contents/Frameworks/node"
+echo "  Bundled: $(basename "$NODE_REAL") -> Contents/Frameworks/node"
+
+echo "Re-signing bundled node binary..."
+codesign --force --sign - "${APP_BUNDLE}/Contents/Frameworks/node" 2>&1 || echo "  Warning: codesign of node failed (non-critical)"
+
 echo "Creating icon assets..."
 if command -v iconutil &> /dev/null && [ -d "macos/SkillVault/Assets.xcassets/AppIcon.appiconset" ]; then
   iconutil -c icns -o "${APP_BUNDLE}/Contents/Resources/AppIcon.icns" macos/SkillVault/Assets.xcassets/AppIcon.appiconset || true
 fi
+
+echo "Removing quarantine and extended attributes..."
+xattr -cr "${APP_BUNDLE}" 2>&1 || true
+find "${APP_BUNDLE}" -name "._*" -delete 2>&1 || true
+
+echo "Signing .app bundle..."
+codesign --deep --force --sign - "${APP_BUNDLE}" 2>&1 || {
+  echo "  Deep sign failed, trying individual signing..."
+  codesign --force --sign - "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}" 2>&1 || true
+  codesign --force --sign - "${APP_BUNDLE}/Contents/Frameworks/node" 2>&1 || true
+}
 
 echo "Creating .zip archive..."
 cd dist
