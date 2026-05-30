@@ -6,6 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var webView: WKWebView!
     let serverManager = ServerManager()
     let bonjourService = BonjourService()
+    let updateManager = UpdateManager()
 
     let windowWidth: CGFloat = 1280
     let windowHeight: CGFloat = 800
@@ -21,6 +22,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 switch result {
                 case .success(let port):
                     self?.createWindow(port: port)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        self?.checkForUpdatesIfNeeded()
+                    }
                 case .failure(let error):
                     self?.showErrorAndQuit(error: error.localizedDescription)
                 }
@@ -56,7 +60,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         webView = WKWebView(frame: .zero, configuration: config)
         webView.uiDelegate = self
-        webView.customUserAgent = "SkillVault/1.0.0"
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.4.0"
+        webView.customUserAgent = "SkillVault/\(appVersion)"
         webView.navigationDelegate = self
 
         let loadingHTML = """
@@ -88,6 +93,111 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         alert.addButton(withTitle: "退出")
         alert.runModal()
         NSApplication.shared.terminate(nil)
+    }
+
+    func application(_ application: NSApplication, open urls: [URL]) {
+        for url in urls {
+            if url.scheme == "skillvault" && url.host == "check-update" {
+                updateManager.checkForUpdate { [weak self] result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let info):
+                            if let info = info {
+                                self?.showUpdateAlert(info: info)
+                            } else {
+                                let alert = NSAlert()
+                                alert.messageText = "已是最新版本"
+                                alert.informativeText = "当前版本 \(self?.updateManager.currentVersion ?? "") 已是最新。"
+                                alert.addButton(withTitle: "确定")
+                                alert.runModal()
+                            }
+                        case .failure:
+                            let alert = NSAlert()
+                            alert.messageText = "检查更新失败"
+                            alert.informativeText = "无法连接到更新服务器。"
+                            alert.addButton(withTitle: "确定")
+                            alert.runModal()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func checkForUpdatesIfNeeded() {
+        guard updateManager.shouldAutoCheck() else { return }
+        updateManager.checkForUpdate { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let info):
+                    if let info = info {
+                        self?.showUpdateAlert(info: info)
+                    }
+                case .failure:
+                    break
+                }
+            }
+        }
+    }
+
+    func showUpdateAlert(info: UpdateInfo) {
+        let alert = NSAlert()
+        alert.messageText = "发现新版本 SkillVault \(info.version)"
+        alert.informativeText = "当前版本: \(updateManager.currentVersion)\n\n\(info.notes.prefix(200))"
+        alert.addButton(withTitle: "下载更新")
+        alert.addButton(withTitle: "跳过此版本")
+        alert.addButton(withTitle: "稍后提醒")
+
+        let response = alert.runModal()
+        switch response {
+        case .alertFirstButtonReturn:
+            if let dmgUrl = info.dmgUrl {
+                downloadAndInstallUpdate(dmgUrl: dmgUrl)
+            } else {
+                if let url = URL(string: "https://github.com/Mentaturan/SkillVault/releases/latest") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+        case .alertSecondButtonReturn:
+            updateManager.skipVersion(info.version)
+        default:
+            break
+        }
+    }
+
+    func downloadAndInstallUpdate(dmgUrl: String) {
+        let alert = NSAlert()
+        alert.messageText = "正在下载更新..."
+        alert.informativeText = "下载完成后将自动打开 DMG 安装镜像。"
+        alert.addButton(withTitle: "取消")
+
+        let progressIndicator = NSProgressIndicator(frame: NSRect(x: 0, y: 0, width: 200, height: 20))
+        progressIndicator.isIndeterminate = true
+        progressIndicator.startAnimation(nil)
+        alert.accessoryView = progressIndicator
+
+        updateManager.downloadAndOpenDmg(from: dmgUrl) { result in
+            DispatchQueue.main.async {
+                progressIndicator.stopAnimation(nil)
+                alert.window.close()
+                switch result {
+                case .success:
+                    let doneAlert = NSAlert()
+                    doneAlert.messageText = "下载完成"
+                    doneAlert.informativeText = "DMG 已打开，请将 SkillVault 拖入 Applications 文件夹替换旧版本。"
+                    doneAlert.addButton(withTitle: "好的")
+                    doneAlert.runModal()
+                case .failure(let error):
+                    let errAlert = NSAlert()
+                    errAlert.messageText = "下载失败"
+                    errAlert.informativeText = error.localizedDescription
+                    errAlert.addButton(withTitle: "确定")
+                    errAlert.runModal()
+                }
+            }
+        }
+
+        alert.runModal()
     }
 
     private func savedWindowFrame() -> NSRect {

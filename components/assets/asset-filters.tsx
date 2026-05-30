@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
@@ -38,7 +39,9 @@ import {
   type SortOption,
   type TargetTool,
 } from "@/lib/constants";
-import type { Tag } from "@/db/schema";
+import type { Tag, SearchPreset } from "@/db/schema";
+import { saveSearchPresetAction, deleteSearchPresetAction } from "@/app/assets/search-preset-actions";
+import { parsePresetFilters } from "@/lib/search-preset";
 
 export interface AssetFilterValues {
   search?: string;
@@ -57,12 +60,20 @@ export interface AssetFilterValues {
 interface AssetFiltersProps {
   filters: AssetFilterValues;
   tags: Tag[];
+  presets: SearchPreset[];
 }
 
 const ALL_VALUE = "_all";
 
-export function AssetFilters({ filters, tags }: AssetFiltersProps) {
+export function AssetFilters({ filters, tags, presets }: AssetFiltersProps) {
   const router = useRouter();
+  const [pendingSearch, setPendingSearch] = useState<string | null>(null);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [presetName, setPresetName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const displaySearch = pendingSearch ?? filters.search ?? "";
 
   function buildQuery(updates: Partial<AssetFilterValues>) {
     const params = new URLSearchParams();
@@ -94,6 +105,8 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
   }
 
   function clearFilters() {
+    setPendingSearch(null);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     router.push("/assets");
   }
 
@@ -125,8 +138,52 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
     );
   })();
 
+  function applyPreset(preset: SearchPreset) {
+    const presetFilters = parsePresetFilters(preset.filters);
+    const qs = buildQuery(presetFilters);
+    router.push(qs ? `/assets?${qs}` : "/assets");
+  }
+
+  async function handleSavePreset() {
+    if (!presetName.trim()) return;
+    setIsSaving(true);
+    const currentFilters = { ...filters, search: pendingSearch ?? filters.search };
+    await saveSearchPresetAction(presetName.trim(), JSON.stringify(currentFilters));
+    setPresetName("");
+    setShowSaveDialog(false);
+    setIsSaving(false);
+  }
+
+  async function handleDeletePreset(id: string) {
+    await deleteSearchPresetAction(id);
+  }
+
   return (
     <div className="space-y-3 rounded-md border bg-background p-3">
+      {presets.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-medium">预设</span>
+          {presets.map((preset) => (
+            <div key={preset.id} className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => applyPreset(preset)}
+              >
+                {preset.name}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 text-muted-foreground"
+                onClick={() => handleDeletePreset(preset.id)}
+              >
+                ×
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
       <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[minmax(180px,1.4fr)_repeat(5,minmax(130px,1fr))_auto]">
         <div className="space-y-1.5">
           <Label htmlFor="q">搜索</Label>
@@ -135,12 +192,27 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
             <Input
               id="q"
               name="q"
-              defaultValue={filters.search ?? ""}
+              value={displaySearch}
               placeholder="标题、内容、标签"
               className="pl-8"
+              onChange={(e) => {
+                const value = e.target.value;
+                setPendingSearch(value);
+                if (debounceRef.current) clearTimeout(debounceRef.current);
+                debounceRef.current = setTimeout(() => {
+                  setPendingSearch(null);
+                  applyFilters({ search: value || undefined });
+                }, 300);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
+                  if (debounceRef.current) clearTimeout(debounceRef.current);
+                  setPendingSearch(null);
                   applyFilters({ search: (e.target as HTMLInputElement).value || undefined });
+                }
+                if (e.key === "Escape") {
+                  setPendingSearch(null);
+                  applyFilters({ search: undefined });
                 }
               }}
             />
@@ -365,14 +437,48 @@ export function AssetFilters({ filters, tags }: AssetFiltersProps) {
           </Button>
           <Button
             onClick={() => {
-              const searchInput = document.getElementById("q") as HTMLInputElement | null;
-              applyFilters({ search: searchInput?.value || undefined });
+              if (debounceRef.current) clearTimeout(debounceRef.current);
+              setPendingSearch(null);
+              applyFilters({ search: displaySearch || undefined });
             }}
           >
             应用
           </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSaveDialog(true)}
+          >
+            保存为预设
+          </Button>
         </div>
       </div>
+
+      {showSaveDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="w-full max-w-sm rounded-lg border bg-background p-4 shadow-lg">
+            <h3 className="text-sm font-medium mb-2">保存搜索预设</h3>
+            <Input
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              placeholder="预设名称"
+              className="mb-3"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSavePreset();
+                if (e.key === "Escape") setShowSaveDialog(false);
+              }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={() => setShowSaveDialog(false)}>
+                取消
+              </Button>
+              <Button size="sm" onClick={handleSavePreset} disabled={isSaving || !presetName.trim()}>
+                保存
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

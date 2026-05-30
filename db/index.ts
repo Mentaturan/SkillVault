@@ -17,6 +17,9 @@ export const db = drizzle(sqlite, { schema });
 const migrationsFolder = join(process.cwd(), "db/migrations");
 migrate(db, { migrationsFolder });
 
+import { initFtsTable } from "@/server/services/fts-service";
+initFtsTable();
+
 if (process.env.SKILLVAULT_SEED_ON_EMPTY === "1") {
   import("@/server/services/seed-service").then(({ seedPresetAssets }) => {
     seedPresetAssets(db).then((count) => {

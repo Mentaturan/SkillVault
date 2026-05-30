@@ -6,6 +6,7 @@ import { AssetSelectProvider } from "@/components/assets/asset-select-provider";
 import { BatchActionsToolbar } from "@/components/assets/batch-actions-toolbar";
 import { getAssets } from "@/server/services/asset-service";
 import { getAllTags } from "@/server/services/tag-service";
+import { getSearchPresets } from "@/server/services/search-preset-service";
 import {
   ASSET_SOURCES,
   ASSET_STATE_FILTERS,
@@ -82,7 +83,7 @@ function parseFilters(
 
 export default async function AssetsPage({ searchParams }: AssetsPageProps) {
   const filters = parseFilters(await searchParams);
-  const [assets, tags] = await Promise.all([
+  const [assets, tags, presets] = await Promise.all([
     getAssets({
       status: filters.status,
       stateFilter: filters.stateFilter,
@@ -97,6 +98,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
       sortBy: filters.sortBy,
     }),
     getAllTags(),
+    getSearchPresets(),
   ]);
 
   return (
@@ -131,7 +133,7 @@ export default async function AssetsPage({ searchParams }: AssetsPageProps) {
         </div>
       </div>
 
-      <AssetFilters filters={filters} tags={tags} />
+      <AssetFilters filters={filters} tags={tags} presets={presets} />
 
       {assets.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center">

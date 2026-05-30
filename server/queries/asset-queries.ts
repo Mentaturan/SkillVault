@@ -1,4 +1,4 @@
-import { eq, isNull, and, desc, asc, like, or, inArray } from "drizzle-orm";
+import { eq, isNull, and, desc, asc, like, or, inArray, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { assets, assetTags, tags } from "@/db/schema";
@@ -10,6 +10,7 @@ import type {
   SortOption,
   TargetTool,
 } from "@/lib/constants";
+import { searchFts } from "@/server/services/fts-service";
 
 export interface FindAllAssetsOptions {
   status?: AssetStatus;
@@ -93,28 +94,64 @@ export async function findAllAssets(options?: FindAllAssetsOptions) {
   }
 
   const search = options?.search?.trim();
+  let useFtsRank = false;
   if (search) {
-    const searchPattern = `%${search}%`;
-    const tagSearchSubquery = db
-      .selectDistinct({ assetId: assetTags.assetId })
-      .from(assetTags)
-      .innerJoin(tags, eq(assetTags.tagId, tags.id))
-      .where(like(tags.name, searchPattern));
+    const ftsResults = searchFts(search);
+    if (ftsResults.length > 0) {
+      const ftsIds = ftsResults.map((r) => r.assetId);
+      conditions.push(inArray(assets.id, ftsIds));
+      useFtsRank = true;
+    } else {
+      try {
+        const searchPattern = `%${search}%`;
+        const tagSearchSubquery = db
+          .selectDistinct({ assetId: assetTags.assetId })
+          .from(assetTags)
+          .innerJoin(tags, eq(assetTags.tagId, tags.id))
+          .where(like(tags.name, searchPattern));
 
-    conditions.push(
-      or(
-        like(assets.title, searchPattern),
-        like(assets.description, searchPattern),
-        like(assets.scenario, searchPattern),
-        like(assets.content, searchPattern),
-        inArray(assets.id, tagSearchSubquery),
-      ),
-    );
+        conditions.push(
+          or(
+            like(assets.title, searchPattern),
+            like(assets.description, searchPattern),
+            like(assets.scenario, searchPattern),
+            like(assets.content, searchPattern),
+            inArray(assets.id, tagSearchSubquery),
+          ),
+        );
+      } catch {
+        conditions.push(sql`1 = 0`);
+      }
+    }
   }
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
   let orderBy;
+  if (useFtsRank) {
+    const ftsResults = searchFts(options!.search!.trim());
+    const rankMap = new Map(ftsResults.map((r) => [r.assetId, r.rank]));
+
+    const result = await db.query.assets.findMany({
+      where,
+      with: {
+        assetTags: {
+          with: {
+            tag: true,
+          },
+        },
+      },
+    });
+
+    result.sort((a, b) => {
+      const rankA = rankMap.get(a.id) ?? 0;
+      const rankB = rankMap.get(b.id) ?? 0;
+      return rankA - rankB;
+    });
+
+    return result;
+  }
+
   switch (options?.sortBy) {
     case "createdAt_desc":
       orderBy = desc(assets.createdAt);

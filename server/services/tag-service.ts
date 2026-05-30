@@ -6,6 +6,7 @@ import {
   unbindTagFromAsset,
   findAllTags,
 } from "@/server/queries/tag-queries";
+import { syncAssetFts } from "@/server/services/fts-service";
 
 export async function getTagsByAssetId(assetId: string) {
   return findTagsByAssetId(assetId);
@@ -19,11 +20,13 @@ export async function addTagToAsset(assetId: string, tagName: string) {
   const tagId = createId();
   const tag = await findOrCreateTag(tagName.trim().toLowerCase(), tagId);
   await bindTagToAsset(assetId, tag.id);
+  syncAssetFts(assetId);
   return tag;
 }
 
 export async function removeTagFromAsset(assetId: string, tagId: string) {
   await unbindTagFromAsset(assetId, tagId);
+  syncAssetFts(assetId);
 }
 
 export async function syncAssetTags(assetId: string, tagNames: string[]) {
@@ -46,4 +49,6 @@ export async function syncAssetTags(assetId: string, tagNames: string[]) {
       await unbindTagFromAsset(assetId, currentTag.id);
     }
   }
+
+  syncAssetFts(assetId);
 }

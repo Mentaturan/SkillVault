@@ -25,6 +25,7 @@ import { createContentHash } from "@/lib/hash";
 import { createId } from "@/lib/id";
 import { parseMarkdownToAsset, type ParsedMarkdownAsset } from "@/lib/markdown";
 import { getRestorePreviewContext } from "@/server/queries/restore-queries";
+import { rebuildFtsIndex } from "@/server/services/fts-service";
 
 type ParsedRestoreAsset = {
   bundleAsset: BackupBundle["data"]["assets"][number];
@@ -562,6 +563,8 @@ export async function restoreBackupBundle(
       restoredProjects: bundle.data.projects.length,
     };
   });
+
+  rebuildFtsIndex();
 
   return { preview, result };
 }

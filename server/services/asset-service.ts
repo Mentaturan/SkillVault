@@ -14,6 +14,7 @@ import {
   archiveAsset,
 } from "@/server/queries/asset-queries";
 import { syncAssetTags } from "@/server/services/tag-service";
+import { syncAssetFts } from "@/server/services/fts-service";
 import { findAssetIdsWithTestCases } from "@/server/queries/test-case-queries";
 import {
   createInitialVersion,
@@ -196,6 +197,8 @@ export async function createNewAsset(input: CreateAssetInput) {
     await syncAssetTags(asset.id, input.tagNames);
   }
 
+  syncAssetFts(asset.id);
+
   const duplicateWarning = duplicate
     ? `已存在内容相同的资产：${duplicate.title}`
     : undefined;
@@ -260,6 +263,8 @@ export async function updateExistingAsset(input: UpdateAssetInput) {
     await syncAssetTags(asset.id, input.tagNames);
   }
 
+  syncAssetFts(asset.id);
+
   return asset;
 }
 
@@ -289,6 +294,8 @@ export async function rollbackAssetToVersion(assetId: string, versionId: string)
     changeNote: `Rollback to version ${version.version}`,
   });
 
+  syncAssetFts(asset.id);
+
   return asset;
 }
 
@@ -314,7 +321,9 @@ export async function deleteExistingAsset(id: string) {
   if (!existing) {
     throw new Error("资产不存在");
   }
-  return softDeleteAsset(id);
+  const asset = await softDeleteAsset(id);
+  syncAssetFts(id);
+  return asset;
 }
 
 export async function restoreExistingAsset(id: string) {
@@ -322,5 +331,7 @@ export async function restoreExistingAsset(id: string) {
   if (!existing) {
     throw new Error("资产不存在");
   }
-  return restoreAsset(id);
+  const asset = await restoreAsset(id);
+  syncAssetFts(id);
+  return asset;
 }

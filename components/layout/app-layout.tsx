@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
 
 const NAV_ITEMS: Array<{ href: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { href: "/", label: "仪表盘", icon: LayoutDashboard, exact: true },
@@ -77,6 +78,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <div className="flex min-h-screen">
+      <KeyboardShortcuts />
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r md:flex",

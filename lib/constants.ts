@@ -1,5 +1,5 @@
 export const APP_NAME = "SkillVault";
-export const APP_VERSION = "1.3.0";
+export const APP_VERSION = "1.4.0";
 
 export const THEMES = ["light", "dark", "claude", "glass"] as const;
 export type Theme = (typeof THEMES)[number];
@@ -353,4 +353,11 @@ export const PAGE_ROUTES = {
   projects: "/projects",
   restore: "/restore",
   settings: "/settings",
+} as const;
+
+export const KEYBOARD_SHORTCUTS = {
+  search: { key: "k", meta: true, label: "搜索" },
+  newAsset: { key: "n", meta: true, label: "新建资产" },
+  clearSearch: { key: "Escape", meta: false, label: "清空搜索" },
+  showHelp: { key: "/", meta: true, label: "快捷键帮助" },
 } as const;

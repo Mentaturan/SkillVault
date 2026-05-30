@@ -25,6 +25,10 @@ mkdir -p "${APP_BUNDLE}/Contents/Frameworks"
 echo "Copying Info.plist..."
 cp macos/SkillVault/Info.plist "${APP_BUNDLE}/Contents/"
 
+echo "Syncing version to Info.plist..."
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${VERSION}" "${APP_BUNDLE}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${VERSION}" "${APP_BUNDLE}/Contents/Info.plist"
+
 echo "Compiling Swift launcher..."
 swiftc \
   -o "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}" \
@@ -32,6 +36,7 @@ swiftc \
   macos/SkillVault/AppDelegate.swift \
   macos/SkillVault/ServerManager.swift \
   macos/SkillVault/BonjourService.swift \
+  macos/SkillVault/UpdateManager.swift \
   -framework Cocoa -framework WebKit \
   -parse-as-library 2>/dev/null || \
 swiftc \
@@ -40,6 +45,7 @@ swiftc \
   macos/SkillVault/AppDelegate.swift \
   macos/SkillVault/ServerManager.swift \
   macos/SkillVault/BonjourService.swift \
+  macos/SkillVault/UpdateManager.swift \
   -framework Cocoa -framework WebKit
 
 echo "Copying standalone server output..."

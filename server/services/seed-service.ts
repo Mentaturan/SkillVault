@@ -11,6 +11,7 @@ import { createContentHash } from "@/lib/hash";
 import { createId } from "@/lib/id";
 import { createSlug } from "@/lib/slug";
 import { nowTimestamp } from "@/lib/time";
+import { rebuildFtsIndex } from "@/server/services/fts-service";
 
 export const seedAssets = [
   {
@@ -330,6 +331,8 @@ export async function seedPresetAssets(database: typeof db): Promise<number> {
 
     count++;
   }
+
+  rebuildFtsIndex();
 
   return count;
 }

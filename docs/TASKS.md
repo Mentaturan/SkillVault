@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v1.0 is complete. v1.1 packaging, release, and onboarding polish is complete. v1.2 library maintenance and review ergonomics is complete. v1.3 filesystem exchange and capture expansion is complete. The package version is `1.3.0`.
+Local milestone state: v1.0 is complete. v1.1 packaging, release, and onboarding polish is complete. v1.2 library maintenance and review ergonomics is complete. v1.3 filesystem exchange and capture expansion is complete. v1.4 search efficiency and macOS update is complete. The package version is `1.4.0`.
 
 Implemented locally:
 
@@ -43,6 +43,13 @@ Implemented locally:
 - Deployment health summary view grouped by status.
 - Combined lifecycle filters with maintenance queue preset.
 - Batch action audit trail with operation history viewer.
+- FTS5 full-text search with rank-ordered results and LIKE fallback.
+- Instant debounced search with 300ms delay and Enter-to-search.
+- Search presets for saving and reusing filter combinations.
+- Keyboard shortcuts: Cmd/Ctrl+K search, Cmd/Ctrl+N new asset, Escape clear, Cmd/Ctrl+/ help.
+- macOS version auto-sync from package.json to Info.plist during packaging.
+- macOS one-click update: GitHub Releases check, DMG download, install prompt.
+- Settings page native update trigger via skillvault:// URL scheme.
 
 Known local caveats:
 
@@ -50,7 +57,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: v1.4 or later phase (to be defined).
+Next development focus: v1.5 or later phase (to be defined).
 
 ## Product Positioning
 
@@ -623,6 +630,52 @@ Exit criteria:
 - Additional local conversation sources can be previewed and converted deterministically.
 - Source and version provenance remain readable after export, import, and capture flows.
 - A user can switch between 4 UI themes from the sidebar or settings page, with the choice persisted in localStorage.
+
+## v1.4 - Search Efficiency and macOS Update
+
+Status: complete.
+
+Goal: improve daily search efficiency and add one-click update for the macOS app.
+
+Scope:
+
+- SQLite FTS5 full-text search replacing LIKE-based queries.
+- Instant debounced search with fallback to LIKE.
+- Search presets for saving and reusing filter combinations.
+- Keyboard shortcuts for common actions.
+- macOS version auto-sync from package.json to Info.plist.
+- macOS one-click update from GitHub Releases.
+
+Tasks:
+
+- [x] Add FTS5 virtual table, companion map table, and sync service.
+- [x] Replace LIKE search with FTS5 MATCH, keeping LIKE fallback.
+- [x] Add FTS5 sync calls to asset and tag mutation services.
+- [x] Add FTS5 index initialization on server startup.
+- [x] Add FTS5 index rebuild after restore and seed.
+- [x] Change search input to debounced instant search (300ms).
+- [x] Add search_presets table and CRUD queries/services/actions.
+- [x] Add preset save/load/delete UI in asset filters.
+- [x] Add keyboard shortcuts component (Cmd/Ctrl+K, N, Escape, /).
+- [x] Mount keyboard shortcuts in app layout.
+- [x] Update macOS packaging script to sync version from package.json.
+- [x] Update Info.plist version to 1.4.0.
+- [x] Update AppDelegate user agent to read version dynamically.
+- [x] Create UpdateManager.swift for GitHub Releases check and DMG download.
+- [x] Add auto-update check on macOS app launch (24h throttle).
+- [x] Add skillvault:// URL scheme for web-to-native update trigger.
+- [x] Add "检查并安装更新" button in settings page for native app.
+- [x] Bump package version to 1.4.0.
+- [x] Update README.md, AGENTS.md, and TASKS.md.
+
+Exit criteria:
+
+- FTS5 search returns results ranked by relevance.
+- Instant search triggers after 300ms debounce.
+- Search presets can be saved, applied, and deleted.
+- Keyboard shortcuts work in the asset list page.
+- macOS packaging script syncs version from package.json.
+- macOS app can check for updates and download DMG.
 
 ## Recurring Verification Checklist
 

@@ -28,9 +28,22 @@ export function UpdateCheck() {
           <span>{APP_VERSION}</span>
         </div>
         <div>
-          <Button onClick={handleCheck} disabled={isPending} size="sm">
-            {isPending ? "检查中..." : "检查更新"}
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleCheck} disabled={isPending} size="sm">
+              {isPending ? "检查中..." : "检查更新"}
+            </Button>
+            {typeof navigator !== "undefined" && navigator.userAgent.includes("SkillVault/") && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  window.open("skillvault://check-update", "_self");
+                }}
+              >
+                检查并安装更新
+              </Button>
+            )}
+          </div>
         </div>
         {result && (
           <div>

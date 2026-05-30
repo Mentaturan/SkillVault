@@ -323,6 +323,13 @@ export const batchAuditLogs = sqliteTable(
   }),
 );
 
+export const searchPresets = sqliteTable("search_presets", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  filters: text("filters").notNull(),
+  createdAt: integer("created_at").notNull(),
+});
+
 import { relations } from "drizzle-orm";
 
 export const assetsRelations = relations(assets, ({ many }) => ({
@@ -455,3 +462,5 @@ export type CaptureImportSource = typeof captureImportSources.$inferSelect;
 export type NewCaptureImportSource = typeof captureImportSources.$inferInsert;
 export type BatchAuditLog = typeof batchAuditLogs.$inferSelect;
 export type NewBatchAuditLog = typeof batchAuditLogs.$inferInsert;
+export type SearchPreset = typeof searchPresets.$inferSelect;
+export type NewSearchPreset = typeof searchPresets.$inferInsert;
