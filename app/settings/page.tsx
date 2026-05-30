@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { APP_NAME, APP_VERSION } from "@/lib/constants";
 import { dbPath } from "@/db";
 import { DiagnosticsPanel } from "@/components/settings/diagnostics-panel";
+import { UpdateCheck } from "@/components/settings/update-check";
 import { DeploymentTargetSettings } from "@/components/settings/deployment-target-settings";
 import { getDeploymentTargets } from "@/server/services/deployment-service";
 
@@ -81,6 +82,8 @@ export default async function SettingsPage() {
           <DeploymentTargetSettings initialTargets={deploymentTargets} />
         </CardContent>
       </Card>
+
+      <UpdateCheck />
 
       <DiagnosticsPanel />
     </div>

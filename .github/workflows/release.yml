@@ -31,5 +31,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/SkillVault-macOS-*.zip
+          files: |
+            dist/SkillVault-macOS-*.dmg
+            dist/SkillVault-macOS-*.zip
           generate_release_notes: true

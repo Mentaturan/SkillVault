@@ -146,6 +146,7 @@ class ServerManager {
         environment["PORT"] = String(port)
         environment["SKILLVAULT_DB_PATH"] = dbPath
         environment["HOSTNAME"] = "localhost"
+        environment["SKILLVAULT_SEED_ON_EMPTY"] = "1"
 
         let envArray = environment.map { "\($0.key)=\($0.value)" }
 

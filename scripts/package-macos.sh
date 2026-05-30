@@ -83,6 +83,25 @@ cd dist
 zip -r -q "SkillVault-macOS-v${VERSION}.zip" "${APP_NAME}.app"
 cd ..
 
+echo "Creating DMG installer..."
+DMG_NAME="SkillVault-macOS-v${VERSION}.dmg"
+DMG_PATH="${BUILD_DIR}/${DMG_NAME}"
+DMG_STAGING="${BUILD_DIR}/dmg-staging"
+
+rm -rf "${DMG_STAGING}" "${DMG_PATH}"
+mkdir -p "${DMG_STAGING}"
+
+cp -R "${APP_BUNDLE}" "${DMG_STAGING}/"
+ln -s /Applications "${DMG_STAGING}/Applications"
+
+hdiutil create -volname "SkillVault" \
+  -srcfolder "${DMG_STAGING}" \
+  -ov -format UDZO \
+  "${DMG_PATH}"
+
+rm -rf "${DMG_STAGING}"
+
 echo ""
 echo "✓ Packaged: dist/SkillVault-macOS-v${VERSION}.zip"
+echo "✓ DMG: dist/SkillVault-macOS-v${VERSION}.dmg"
 echo "✓ App bundle: ${APP_BUNDLE}"
