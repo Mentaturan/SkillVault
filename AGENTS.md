@@ -12,7 +12,7 @@ It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration pl
 
 Use `docs/TASKS.md` as the source of truth.
 
-As of 2026-05-30, v1.0 stable personal local release is complete and v1.1 packaging, release, and onboarding polish is complete and v1.2 library maintenance and review ergonomics is complete and v1.3 filesystem exchange and capture expansion is in progress:
+As of 2026-05-30, v1.0 stable personal local release is complete and v1.1 packaging, release, and onboarding polish is complete and v1.2 library maintenance and review ergonomics is complete and v1.3 filesystem exchange and capture expansion is complete:
 
 - v0.1-alpha core asset library is complete.
 - v0.1-beta organization and evaluation is complete.
@@ -28,9 +28,9 @@ As of 2026-05-30, v1.0 stable personal local release is complete and v1.1 packag
 - v1.1 packaging, release, and onboarding polish is complete.
 - v1.1 local enhancements already landed include GitHub release update checks, optional preset seeding for empty libraries, bundled Node.js runtime in the macOS app, `.zip` plus `.dmg` packaging outputs, Windows C# WebView2 native wrapper, iOS companion app with Bonjour discovery, and desktop Bonjour/mDNS broadcasting.
 - v1.2 library maintenance and review ergonomics is complete.
-- v1.3 filesystem exchange and capture expansion is in progress.
+- v1.3 filesystem exchange and capture expansion is complete.
 
-The package version is `1.1.0`.
+The package version is `1.3.0`.
 
 ## Product Principles
 

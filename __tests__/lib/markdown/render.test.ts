@@ -30,6 +30,7 @@ function makeAsset(overrides: Partial<Asset> = {}): Asset {
     createdAt: 1000000,
     updatedAt: 1000000,
     deletedAt: null,
+    lastSyncedAt: null,
     ...overrides,
   };
 }

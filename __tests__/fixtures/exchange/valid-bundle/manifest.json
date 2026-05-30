@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "exportedAt": 1700000000,
+  "asset": {
+    "syncId": "fixture-sync-001",
+    "slug": "test-skill",
+    "title": "Test Skill Fixture",
+    "type": "agent_skill",
+    "targetTool": "codex",
+    "exportPreset": "general_markdown",
+    "description": "A test skill for fixture validation",
+    "scenario": "Testing exchange round-trips",
+    "status": "active",
+    "visibility": "private",
+    "source": "self_created",
+    "sourceUrl": null,
+    "sourceRef": null,
+    "sourcePath": null,
+    "sourceImportedAt": null,
+    "sourceChecksum": null,
+    "pinned": false,
+    "rating": 4,
+    "tags": ["test", "fixture"],
+    "contentHash": "abc123hash"
+  },
+  "supportFiles": []
+}

@@ -27,11 +27,6 @@ export interface ValidationResult {
   score: number;
 }
 
-interface ParsedLine {
-  lineIndex: number;
-  data: ClaudeCodeConversation;
-}
-
 const USER_MIN_LENGTH = 100;
 const ASSISTANT_MIN_LENGTH = 140;
 const TITLE_MAX_LENGTH = 50;
@@ -64,12 +59,6 @@ function collectText(
     .filter(Boolean)
     .join("\n\n")
     .trim();
-}
-
-function toTimestamp(value: string | undefined): number | null {
-  if (!value) return null;
-  const ts = new Date(value).getTime();
-  return Number.isNaN(ts) ? null : ts;
 }
 
 function hasStructuredInstructions(text: string): boolean {

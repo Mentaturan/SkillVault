@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v1.0 is complete. v1.1 packaging, release, and onboarding polish is complete. v1.2 library maintenance and review ergonomics is complete. The package version is `1.1.0`.
+Local milestone state: v1.0 is complete. v1.1 packaging, release, and onboarding polish is complete. v1.2 library maintenance and review ergonomics is complete. v1.3 filesystem exchange and capture expansion is complete. The package version is `1.3.0`.
 
 Implemented locally:
 
@@ -50,7 +50,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: v1.3 filesystem exchange and capture expansion.
+Next development focus: v1.4 or later phase (to be defined).
 
 ## Product Positioning
 
@@ -594,7 +594,7 @@ Exit criteria:
 
 ## v1.3 - Filesystem Exchange and Capture Expansion
 
-Status: in progress.
+Status: complete.
 
 Goal: deepen deterministic exchange with local files and broaden supported local capture sources without turning SkillVault into a sync platform.
 
@@ -611,11 +611,11 @@ Tasks:
 - [x] Add multi-theme UI system: light, dark, Claude, and Liquid Glass themes with next-themes integration.
 - [x] Add theme switcher in sidebar and theme selector in settings page.
 - [x] Add Liquid Glass theme with backdrop-blur, semi-transparent backgrounds, and glass border effects.
-- [ ] Define an exchange folder shape that can include a primary Markdown asset plus support files and structured metadata.
-- [ ] Add preview-first import/export for support-file bundles without losing version readability.
-- [ ] Extend local capture beyond current Codex rollout handling, starting with the already-modeled `claude_code_jsonl` source type.
-- [ ] Add provenance-preserving re-import flows for captured/imported assets when the source is unchanged versus changed.
-- [ ] Add fixture-based tests for exchange round-trips and capture parsing.
+- [x] Define an exchange folder shape that can include a primary Markdown asset plus support files and structured metadata.
+- [x] Add preview-first import/export for support-file bundles without losing version readability.
+- [x] Extend local capture beyond current Codex rollout handling, starting with the already-modeled `claude_code_jsonl` source type.
+- [x] Add provenance-preserving re-import flows for captured/imported assets when the source is unchanged versus changed.
+- [x] Add fixture-based tests for exchange round-trips and capture parsing.
 
 Exit criteria:
 

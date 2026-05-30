@@ -1,5 +1,5 @@
 export const APP_NAME = "SkillVault";
-export const APP_VERSION = "1.1.0";
+export const APP_VERSION = "1.3.0";
 
 export const THEMES = ["light", "dark", "claude", "glass"] as const;
 export type Theme = (typeof THEMES)[number];
