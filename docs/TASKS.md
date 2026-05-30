@@ -8,7 +8,7 @@ Date of review: 2026-05-30.
 
 Repository: `Mentaturan/SkillVault`.
 
-Local milestone state: v0.7 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
+Local milestone state: v0.8 is implemented. The package version still reads `0.1.0-alpha`; do not change package version until a release pass is done.
 
 Implemented locally:
 
@@ -36,7 +36,7 @@ Known local caveats:
 - `scripts/debug-ui.py` and `scripts/debug-ui2.py` are currently untracked. Do not remove them unless explicitly asked.
 - There is no `READ.md`; update `README.md` when the user asks for the project readme.
 
-Next development focus: continue v0.8 diff, test runs, and use history. Version diffing, copy-driven `lastUsedAt`, manual review due dates, the shared run-log model, and asset state filters are in place. The next slice should decide whether model/tool compatibility fields materially improve filtering without bloating the form.
+Next development focus: start v0.9 import sources, curated assets, and Git-friendly exchange. The first slice should define source metadata for imported assets: source URL, ref, path, imported at, and checksum.
 
 ## Product Positioning
 
@@ -410,7 +410,7 @@ Exit criteria:
 
 ## v0.8 - Diff, Test Runs, and Use History
 
-Status: in progress.
+Status: complete.
 
 Goal: help maintain quality after assets are used repeatedly.
 
@@ -428,7 +428,7 @@ Tasks:
 - [x] Keep run logs in the existing test case model; no separate v0.8 entity is needed.
 - [x] Track copy events enough to update `lastUsedAt`.
 - [x] Add filters for stale, recently used, never used, low-rated, and untested assets.
-- [ ] Add model/tool compatibility fields only if they improve filtering without bloating forms.
+- [x] Keep using existing `type` and `targetTool` fields in v0.8; extra compatibility fields would bloat the form without materially improving filtering.
 - [x] Add review due date and review queue.
 
 Exit criteria:

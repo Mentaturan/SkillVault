@@ -12,7 +12,7 @@ It is not a SaaS, prompt market, AI chat tool, RAG system, team collaboration pl
 
 Use `docs/TASKS.md` as the source of truth.
 
-As of the current plan, v0.7 is implemented locally and v0.8 is in progress:
+As of the current plan, v0.8 is implemented locally and v0.9 is in progress:
 
 - v0.1-alpha core asset library is complete.
 - v0.1-beta organization and evaluation is complete.
@@ -22,7 +22,8 @@ As of the current plan, v0.7 is implemented locally and v0.8 is in progress:
 - v0.5 local folder library and tool deployment is complete.
 - v0.6 deterministic validation and safety checks is complete.
 - v0.7 capture inbox and local conversation mining is complete.
-- v0.8 diff, test runs, and use history is the current development phase.
+- v0.8 diff, test runs, and use history is complete.
+- v0.9 import sources, curated assets, and Git-friendly exchange is the current development phase.
 
 The package version may still be `0.1.0-alpha`. Do not infer roadmap status from `package.json` alone.
 
@@ -42,6 +43,7 @@ Current v0.8 progress:
 - Assets can carry a manual `reviewDueAt`, and a dedicated review queue page surfaces overdue and upcoming reviews.
 - Run logs stay in the existing test case model via `kind`, so v0.8 does not add a separate run-log entity.
 - Asset filters now cover stale, recently used, never used, low-rated, and untested views with explicit deterministic thresholds.
+- v0.8 intentionally does not add extra model/tool compatibility fields because existing `type` and `targetTool` already cover the current filtering need.
 
 ## Product Principles
 
